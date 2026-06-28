@@ -1,0 +1,6 @@
+// SCSS design tokens -- imported globally via nuxt.config.ts vite preprocessor
+$font-primary: 'Inter', system-ui, sans-serif;
+$transition-base: 150ms ease-in-out;
+$border-radius-base: 0.5rem;
+$shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);

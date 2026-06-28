@@ -1,0 +1,35 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["ESNext", "DOM"],
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"],
+      "~~/*": ["./*"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.vue",
+    ".nuxt/nuxt.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    ".output",
+    "dist"
+  ]
+}

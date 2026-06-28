@@ -1,0 +1,43 @@
+// Global styles -- imported once in nuxt.config.ts via css[]
+@use 'variables' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: $font-primary;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  transition: color $transition-base;
+}
+
+.heading-1 {
+  color: #111827;
+  font-size: 1.875rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.heading-2 {
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.6;
+}

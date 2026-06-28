@@ -1,0 +1,12 @@
+﻿{
+  "root": true,
+  "extends": ["@nuxt/eslint-config"],
+  "rules": {
+    "no-console": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-explicit-any": "error",
+    "vue/multi-word-component-names": "off",
+    "vue/no-multiple-template-root": "off"
+  }
+}
