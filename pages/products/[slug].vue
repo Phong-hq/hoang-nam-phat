@@ -49,7 +49,7 @@
 
               <h1 class="text-2xl lg:text-3xl font-bold leading-snug">{{ product.name }}</h1>
 
-              <div v-if="product.rating" class="flex items-center gap-2">
+              <!-- <div v-if="product.rating" class="flex items-center gap-2">
                 <div class="rating rating-sm">
                   <input
                     v-for="i in 5"
@@ -61,7 +61,7 @@
                   />
                 </div>
                 <span class="text-sm text-base-content/70">({{ product.reviewCount }} đánh giá)</span>
-              </div>
+              </div> -->
 
               <div class="flex items-baseline gap-3">
                 <span class="text-3xl font-bold text-primary">{{ formatCurrency(product.price) }}</span>
@@ -110,7 +110,7 @@
               </div>
 
               <!-- Quick specs -->
-              <div v-if="product.specifications?.length" class="bg-base-50 rounded-lg border border-base-200 divide-y divide-base-200 mt-2">
+              <!-- <div v-if="product.specifications?.length" class="bg-base-50 rounded-lg border border-base-200 divide-y divide-base-200 mt-2">
                 <div
                   v-for="spec in product.specifications.slice(0, 4)"
                   :key="spec.label"
@@ -119,7 +119,7 @@
                   <dt class="col-span-2 text-xs text-base-content/55 font-medium">{{ spec.label }}</dt>
                   <dd class="col-span-3 text-xs text-base-content font-semibold">{{ spec.value }}</dd>
                 </div>
-              </div>
+              </div> -->
 
               <div class="text-xs text-base-content/40 pt-1">SKU: {{ product.sku }}</div>
             </div>

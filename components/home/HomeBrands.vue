@@ -1,5 +1,5 @@
 <template>
-  <section class="py-12 bg-white border-y border-base-200">
+  <section class="py-12 bg-[#EEF2F7] border-y border-base-200">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2.5">

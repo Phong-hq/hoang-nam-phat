@@ -21,14 +21,14 @@
 
     <!-- Main header: logo + search + cart + phone -->
     <header class="bg-white border-b border-gray-200">
-      <div class="container mx-auto px-4 py-2.5 flex items-center gap-4">
+      <div class="container mx-auto px-4 py-1 flex items-center gap-4">
 
         <!-- Logo image -->
         <NuxtLink to="/" class="flex-shrink-0">
           <img
             src="~/assets/images/logo.png"
             alt="Hoàng Nam Phát"
-            class="h-12 w-auto object-contain"
+            class="h-24 w-auto object-contain"
           />
         </NuxtLink>
 

@@ -1,5 +1,5 @@
 <template>
-  <section class="py-14 bg-white">
+  <section class="py-14 bg-[#EEF2F7]">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <BaseSectionHeader label="Hạ tầng mạng" title="Router · Switch · WiFi" to="/products?category=router" />
 

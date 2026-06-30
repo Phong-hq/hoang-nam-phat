@@ -2,17 +2,18 @@
   <div class="bg-[#EEF2F7] min-h-screen">
     <HomeHero />
     <!-- <HomeCategories /> -->
-    <HomeBestSellers />
     <HomeFlashSale />
+    <HomeBestSellers />
     <HomeCameraSection />
+
     <HomeLaptopSection />
     <HomeNetworkingSection />
     <HomeNasSection />
     <HomeBrands />
-    <HomeBusinessSolutions />
+    <!-- <HomeBusinessSolutions /> -->
     <HomeTrustFeatures />
-    <HomeReviews />
-    <HomeBlog />
+    <!-- <HomeReviews />
+    <HomeBlog /> -->
     <HomeNewsletter />
   </div>
 </template>

@@ -31,6 +31,14 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       ],
+      script: [
+        {
+          src: 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v23.0',
+          async: true,
+          defer: true,
+          crossorigin: 'anonymous' as const,
+        },
+      ],
     },
   },
 
@@ -121,8 +129,9 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
     prerender: {
-      crawlLinks: true,
-      routes: ['/sitemap.xml', '/robots.txt'],
+      failOnError: false,
+      // crawlLinks: true,
+      // routes: ['/sitemap.xml', '/robots.txt'],
     },
   },
 
