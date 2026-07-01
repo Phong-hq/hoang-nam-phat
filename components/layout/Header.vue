@@ -21,7 +21,7 @@
 
     <!-- Main header: logo + search + cart + phone -->
     <header class="bg-white border-b border-gray-200">
-      <div class="container mx-auto px-4 py-1 flex items-center gap-4">
+      <div class="container mx-auto px-4 py-1 flex items-center justift-center gap-4">
 
         <!-- Logo image -->
         <NuxtLink to="/" class="flex-shrink-0">
@@ -96,7 +96,7 @@
     <!-- Main site navigation -->
     <nav class="bg-primary" aria-label="Điều hướng chính">
       <div class="container mx-auto px-4">
-        <ul class="flex items-center overflow-x-auto">
+        <ul class="flex items-center overflow-x-auto justify-center">
           <li v-for="item in navItems" :key="item.label" class="relative">
             <NuxtLink
               :to="item.href"

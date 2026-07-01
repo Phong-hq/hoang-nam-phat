@@ -1,5 +1,5 @@
 <template>
-  <section class="py-16 bg-white">
+  <section class="py-16">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <div class="rounded-2xl overflow-hidden grid lg:grid-cols-2" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);">
 

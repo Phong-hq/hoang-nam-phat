@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-primary py-5">
+  <section class="py-5">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <div v-for="feat in features" :key="feat.title" class="flex items-center gap-3">

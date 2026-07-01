@@ -1,5 +1,5 @@
 <template>
-  <section class="py-14 bg-white">
+  <section class="py-14">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <div class="max-w-2xl mx-auto text-center">
         <span class="inline-block text-primary text-xs font-bold uppercase tracking-widest mb-3">Bản tin công nghệ</span>
