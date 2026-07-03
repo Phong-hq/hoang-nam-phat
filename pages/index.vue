@@ -11,7 +11,7 @@
 
     <div :class="altBgs[productSections.length % 2]"><HomeBrands /></div>
     <div class="bg-primary"><HomeTrustFeatures /></div>
-    <HomeNewsletter />
+    <!-- <HomeNewsletter /> -->
   </div>
 </template>
 

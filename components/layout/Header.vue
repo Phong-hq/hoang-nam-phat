@@ -2,7 +2,7 @@
   <div class="sticky top-0 z-40 shadow-md">
 
     <!-- Top announcement bar -->
-    <div class="bg-[#8b0000] text-white py-1.5 text-xs">
+    <div class="bg-[#8b0000] text-white py-1.5 text-sm">
       <div class="container mx-auto px-4 flex items-center justify-between">
         <span class="hidden sm:block text-red-200">
           Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình
@@ -38,7 +38,7 @@
             <input
               type="text"
               placeholder="Tìm kiếm sản phẩm, thương hiệu..."
-              class="flex-1 min-w-0 px-4 py-2.5 text-sm outline-none text-gray-700 bg-white placeholder:text-gray-400"
+              class="flex-1 min-w-0 px-4 py-2.5 text-base outline-none text-gray-700 bg-white placeholder:text-gray-400"
             />
             <button
               class="bg-primary text-white px-5 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
@@ -71,8 +71,8 @@
               </span>
             </div>
             <div class="hidden lg:block text-left">
-              <p class="text-[10px] text-gray-400 leading-none">Giỏ hàng</p>
-              <p class="text-sm font-bold text-gray-800 leading-tight">0₫</p>
+              <p class="text-xs text-gray-400 leading-none">Giỏ hàng</p>
+              <p class="text-base font-bold text-gray-800 leading-tight">0₫</p>
             </div>
           </NuxtLink>
 
@@ -84,8 +84,8 @@
               </svg>
             </div>
             <div class="text-left">
-              <p class="text-[10px] text-gray-400 leading-none">Hotline hỗ trợ</p>
-              <p class="text-sm font-bold text-primary leading-tight">0937.813.788</p>
+              <p class="text-xs text-gray-400 leading-none">Hotline hỗ trợ</p>
+              <p class="text-base font-bold text-primary leading-tight">0937.813.788</p>
             </div>
           </a>
 
@@ -100,7 +100,7 @@
           <li v-for="item in navItems" :key="item.label" class="relative">
             <NuxtLink
               :to="item.href"
-              class="text-white/85 hover:text-white hover:bg-white/15 px-5 py-2.5 text-sm font-medium whitespace-nowrap block transition-colors"
+              class="text-white/85 hover:text-white hover:bg-white/15 px-5 py-2.5 text-base font-medium whitespace-nowrap block transition-colors"
               :exact-active-class="item.exact ? 'text-white bg-white/20 font-bold' : ''"
               active-class="text-white bg-white/20 font-bold"
             >

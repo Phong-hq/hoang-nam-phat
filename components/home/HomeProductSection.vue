@@ -3,10 +3,20 @@
     <div class="container mx-auto px-4 max-w-screen-xl">
       <BaseSectionHeader :label="label" :title="title" :subtitle="subtitle" :to="to" />
 
+      <div class="flex gap-2 overflow-x-auto scrollbar-none -mt-4 mb-6">
+        <button v-for="brand in brands" :key="brand" @click="activeBrand = brand"
+          class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors flex-shrink-0 border"
+          :class="activeBrand === brand
+            ? 'bg-primary text-primary-content border-primary'
+            : 'bg-white text-base-content/60 border-base-200 hover:text-primary hover:border-primary'">
+          {{ brand }}
+        </button>
+      </div>
+
       <div class="relative">
         <ClientOnly>
-          <Swiper :modules="swiperModules" :breakpoints="breakpoints" :autoplay="autoplayConfig" :loop="true" @swiper="onSwiper">
-            <SwiperSlide v-for="p in products" :key="p.id" class="!h-auto pb-1">
+          <Swiper :key="activeBrand" :modules="swiperModules" :breakpoints="breakpoints" :autoplay="autoplayConfig" :loop="activeProducts.length > 1" @swiper="onSwiper">
+            <SwiperSlide v-for="p in activeProducts" :key="p.id" class="!h-auto pb-1">
               <HomeProductCard :product="p" />
             </SwiperSlide>
           </Swiper>
@@ -26,7 +36,7 @@
 
           <template #fallback>
             <div class="flex gap-4 overflow-x-auto pb-2 snap-x">
-              <div v-for="p in products" :key="p.id" class="flex-shrink-0 w-[220px] snap-start">
+              <div v-for="p in activeProducts" :key="p.id" class="flex-shrink-0 w-[220px] snap-start">
                 <HomeProductCard :product="p" />
               </div>
             </div>
@@ -51,6 +61,13 @@ const props = defineProps<{
   products: HomeProduct[]
   autoplayDelay?: number
 }>()
+
+const brands = computed(() => Array.from(new Set(props.products.map((p) => p.brand))))
+const activeBrand = ref(brands.value[0] ?? '')
+watch(brands, (newBrands) => {
+  if (!newBrands.includes(activeBrand.value)) activeBrand.value = newBrands[0] ?? ''
+})
+const activeProducts = computed(() => props.products.filter((p) => p.brand === activeBrand.value))
 
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
