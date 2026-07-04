@@ -31,13 +31,19 @@ a {
 
 .heading-1 {
   color: #111827;
-  font-size: 1.875rem;
+  font-size: 2.25rem;
   font-weight: 800;
   line-height: 1.25;
 }
 
 .heading-2 {
   color: #374151;
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.6;
+}
+
+@media (min-width: 320px) and (max-width: 639.98px) {
+  .container {
+    max-width: 95%;
+  }
 }

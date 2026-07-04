@@ -2,16 +2,16 @@
   <div class="sticky top-0 z-40 shadow-md">
 
     <!-- Top announcement bar -->
-    <div class="bg-[#8b0000] text-white py-1.5 text-sm">
-      <div class="container mx-auto px-4 flex items-center justify-between">
+    <div class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm">
+      <div class="container mx-auto px-3 sm:px-4 flex items-center justify-between">
         <span class="hidden sm:block text-red-200">
           Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình
         </span>
         <a
           href="tel:0937813788"
-          class="flex items-center gap-1.5 font-semibold hover:text-yellow-300 transition-colors ml-auto"
+          class="flex items-center gap-1 sm:gap-1.5 font-semibold hover:text-yellow-300 transition-colors ml-auto"
         >
-          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+          <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
           </svg>
           0937.813.788 – Mua hàng online
@@ -21,80 +21,116 @@
 
     <!-- Main header: logo + search + cart + phone -->
     <header class="bg-white border-b border-gray-200">
-      <div class="container mx-auto px-4 py-1 flex items-center justift-center gap-4">
+      <div class="container mx-auto px-3 sm:px-4 py-2 md:py-1.5  max-w-screen-xl">
 
-        <!-- Logo image -->
-        <NuxtLink to="/" class="flex-shrink-0">
-          <img
-            src="~/assets/images/logo.png"
-            alt="Hoàng Nam Phát"
-            class="h-24 w-auto object-contain"
-          />
-        </NuxtLink>
+        <!-- Brand row: logo is the visual anchor, cart alongside it -->
+        <div class="flex items-center gap-4">
 
-        <!-- Search bar -->
-        <div class="flex-1 min-w-0 max-w-2xl mx-auto">
-          <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
-            <input
-              type="text"
-              placeholder="Tìm kiếm sản phẩm, thương hiệu..."
-              class="flex-1 min-w-0 px-4 py-2.5 text-base outline-none text-gray-700 bg-white placeholder:text-gray-400"
+          <!-- Logo image -->
+          <NuxtLink to="/" class="flex-shrink-0">
+            <img
+              src="~/assets/images/hnp.png"
+              alt="Hoàng Nam Phát"
+              class="h-12 sm:h-14 md:h-16 lg:h-24 w-auto object-contain"
             />
-            <button
-              class="bg-primary text-white px-5 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
-              aria-label="Tìm kiếm"
-            >
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
+          </NuxtLink>
+
+          <!-- Search bar: inline, centered, desktop/tablet only -->
+          <div class="hidden md:block flex-1 min-w-0 max-w-2xl mx-auto">
+            <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
+              <input
+                type="text"
+                placeholder="Tìm kiếm sản phẩm, thương hiệu..."
+                class="flex-1 min-w-0 px-4 py-2.5 text-base outline-none text-gray-700 bg-white placeholder:text-gray-400"
+              />
+              <button
+                class="bg-primary text-white px-5 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
+                aria-label="Tìm kiếm"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Cart + Hotline -->
+          <div class="flex items-center gap-4 md:gap-5 ml-auto md:ml-0 flex-shrink-0">
+
+            <!-- Cart -->
+            <NuxtLink to="/cart" class="flex items-center gap-2 group">
+              <div class="relative">
+                <svg
+                  class="w-6 h-6 md:w-7 md:h-7 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                  0
+                </span>
+              </div>
+              <div class="hidden lg:block text-left">
+                <p class="text-xs text-gray-400 leading-none">Giỏ hàng</p>
+                <p class="text-base font-bold text-gray-800 leading-tight">0₫</p>
+              </div>
+            </NuxtLink>
+
+            <!-- Hotline -->
+            <a href="tel:0937813788" class="hidden xl:flex items-center gap-2.5">
+              <div class="bg-primary/10 rounded-full p-2">
+                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="text-xs text-gray-400 leading-none">Hotline hỗ trợ</p>
+                <p class="text-base font-bold text-primary leading-tight">0937.813.788</p>
+              </div>
+            </a>
+
           </div>
         </div>
 
-        <!-- Right: Cart + Hotline -->
-        <div class="flex items-center gap-5 flex-shrink-0">
+        <!-- Utility row: menu button + search share one row, mobile only -->
+        <div class="flex items-center gap-2 mt-2 md:hidden">
+          <button
+            type="button"
+            class="flex-shrink-0 p-1.5 -ml-1.5 text-gray-700"
+            aria-label="Mở menu"
+            @click="isMenuOpen = true"
+          >
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
 
-          <!-- Cart -->
-          <NuxtLink to="/cart" class="flex items-center gap-2 group">
-            <div class="relative">
-              <svg
-                class="w-7 h-7 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.8"
+          <div class="flex-1 min-w-0">
+            <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
+              <input
+                type="text"
+                placeholder="Tìm kiếm sản phẩm, thương hiệu..."
+                class="flex-1 min-w-0 px-4 py-2 text-sm outline-none text-gray-700 bg-white placeholder:text-gray-400"
+              />
+              <button
+                class="bg-primary text-white px-4 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
+                aria-label="Tìm kiếm"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
-                0
-              </span>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
             </div>
-            <div class="hidden lg:block text-left">
-              <p class="text-xs text-gray-400 leading-none">Giỏ hàng</p>
-              <p class="text-base font-bold text-gray-800 leading-tight">0₫</p>
-            </div>
-          </NuxtLink>
-
-          <!-- Hotline -->
-          <a href="tel:0937813788" class="hidden xl:flex items-center gap-2.5">
-            <div class="bg-primary/10 rounded-full p-2">
-              <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-              </svg>
-            </div>
-            <div class="text-left">
-              <p class="text-xs text-gray-400 leading-none">Hotline hỗ trợ</p>
-              <p class="text-base font-bold text-primary leading-tight">0937.813.788</p>
-            </div>
-          </a>
-
+          </div>
         </div>
       </div>
     </header>
 
     <!-- Main site navigation -->
-    <nav class="bg-primary" aria-label="Điều hướng chính">
+    <nav class="bg-primary hidden md:block" aria-label="Điều hướng chính">
       <div class="container mx-auto px-4">
         <ul class="flex items-center overflow-x-auto justify-center">
           <li v-for="item in navItems" :key="item.label" class="relative">
@@ -111,10 +147,69 @@
       </div>
     </nav>
 
+    <!-- Mobile menu drawer -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="isMenuOpen"
+          class="fixed inset-0 z-50 bg-black/50 md:hidden"
+          @click="isMenuOpen = false"
+        />
+      </Transition>
+      <Transition name="slide">
+        <aside
+          v-if="isMenuOpen"
+          class="fixed top-0 left-0 z-50 h-full w-72 max-w-[80%] bg-white shadow-xl md:hidden flex flex-col"
+        >
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+            <span class="font-bold text-primary">Danh mục</span>
+            <button
+              type="button"
+              aria-label="Đóng menu"
+              class="p-2 text-gray-500"
+              @click="isMenuOpen = false"
+            >
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <ul class="flex-1 overflow-y-auto py-2">
+            <li v-for="item in navItems" :key="item.label">
+              <NuxtLink
+                :to="item.href"
+                class="block px-4 py-3 text-gray-700 hover:bg-gray-50"
+                :exact-active-class="item.exact ? 'text-primary font-bold bg-primary/5' : ''"
+                active-class="text-primary font-bold bg-primary/5"
+                @click="isMenuOpen = false"
+              >
+                {{ item.label }}
+              </NuxtLink>
+            </li>
+          </ul>
+          <div class="border-t border-gray-100 p-4">
+            <a
+              href="tel:0937813788"
+              class="flex items-center justify-center gap-2 bg-primary text-white font-semibold rounded-lg py-3 hover:bg-primary/90 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+              </svg>
+              Gọi ngay: 0937.813.788
+            </a>
+          </div>
+        </aside>
+      </Transition>
+    </Teleport>
+
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
+const isMenuOpen = ref(false)
+
 const navItems = [
   { label: 'Trang chủ',  href: '/',          exact: true },
   { label: 'Sản phẩm',   href: '/products',  exact: false },
@@ -124,3 +219,23 @@ const navItems = [
   { label: 'Liên hệ',    href: '/contact',   exact: false },
 ]
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.25s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(-100%);
+}
+</style>

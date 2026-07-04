@@ -2,7 +2,7 @@
   <div class="bg-[#EEF2F7] min-h-screen">
 
     <!-- Page banner -->
-    <div class="bg-white border-b border-gray-200 py-8">
+    <div class="bg-white border-b border-gray-200 py-6 sm:py-8">
       <div class="container mx-auto px-4">
         <nav class="text-sm text-gray-400 mb-3 flex items-center gap-1.5">
           <NuxtLink to="/" class="hover:text-primary transition-colors">Trang chủ</NuxtLink>
@@ -17,14 +17,14 @@
     </div>
 
     <!-- Contact content -->
-    <div class="container mx-auto px-4 py-12 space-y-4">
+    <div class="container mx-auto px-4 py-6 sm:py-12 space-y-4">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         <!-- Contact info cards -->
         <div class="flex flex-col gap-4">
 
           <!-- Phone -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-6 flex items-start gap-4">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
             <div class="bg-green-100 rounded-xl p-3 flex-shrink-0">
               <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
@@ -40,7 +40,7 @@
           </div>
 
           <!-- Zalo -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-6 flex items-start gap-4">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
             <div class="bg-blue-100 rounded-xl p-3 flex-shrink-0">
               <span class="text-blue-600 text-sm font-extrabold">Zalo</span>
             </div>
@@ -59,7 +59,7 @@
           </div>
 
           <!-- Email -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-6 flex items-start gap-4">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
             <div class="bg-red-100 rounded-xl p-3 flex-shrink-0">
               <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -75,7 +75,7 @@
           </div>
 
           <!-- Address -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-6 flex items-start gap-4">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
             <div class="bg-yellow-100 rounded-xl p-3 flex-shrink-0">
               <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -91,7 +91,7 @@
           </div>
 
           <!-- Business hours -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-6">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6">
             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Giờ làm việc</p>
             <ul class="space-y-2 text-sm">
               <li class="flex justify-between">
@@ -113,7 +113,7 @@
 
         <!-- Contact form -->
         <div>
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-8">
+          <div class="bg-white rounded-2xl border border-gray-200 shadow p-5 sm:p-8">
             <h2 class="text-xl font-bold text-gray-800 mb-1">Gửi yêu cầu tư vấn</h2>
             <p class="text-sm text-gray-500 mb-6">Điền thông tin bên dưới, đội ngũ chúng tôi sẽ liên hệ lại trong thời gian sớm nhất.</p>
 
@@ -249,7 +249,7 @@
     </div>
 
     <!-- Quick contact CTA bar -->
-    <div class="bg-primary text-white py-8">
+    <div class="bg-primary text-white py-6 sm:py-8">
       <div class="container mx-auto px-4">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-5">
           <div>
