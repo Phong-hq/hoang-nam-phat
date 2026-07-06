@@ -12,7 +12,7 @@
         <ul>
           <li><NuxtLink to="/">Trang chủ</NuxtLink></li>
           <li><NuxtLink to="/products">Sản phẩm</NuxtLink></li>
-          <li><NuxtLink :to="`/categories/${product.category.toLowerCase()}`">{{ product.category }}</NuxtLink></li>
+          <li><NuxtLink :to="`/products?category=${product.category.slug}`">{{ product.category.name }}</NuxtLink></li>
           <li class="text-base-content/60">{{ product.name }}</li>
         </ul>
       </nav>
@@ -25,8 +25,8 @@
             <!-- Gallery -->
             <div class="product-images">
               <NuxtImg
-                v-if="product.thumbnail"
-                :src="product.thumbnail"
+                v-if="selectedVariant?.images[0]"
+                :src="selectedVariant.images[0]"
                 :alt="product.name"
                 width="600"
                 height="600"
@@ -43,56 +43,47 @@
             <!-- Product info -->
             <div class="product-info space-y-4">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="badge badge-primary">{{ product.brand }}</span>
-                <span class="badge badge-ghost">{{ product.category }}</span>
+                <span class="badge badge-primary">{{ product.brand.name }}</span>
+                <span class="badge badge-ghost">{{ product.category.name }}</span>
               </div>
 
               <h1 class="text-2xl lg:text-3xl font-bold leading-snug">{{ product.name }}</h1>
 
-              <!-- <div v-if="product.rating" class="flex items-center gap-2">
-                <div class="rating rating-sm">
-                  <input
-                    v-for="i in 5"
-                    :key="i"
-                    type="radio"
-                    class="mask mask-star-2 bg-orange-400"
-                    :checked="i === Math.round(product.rating ?? 0)"
-                    disabled
-                  />
-                </div>
-                <span class="text-sm text-base-content/70">({{ product.reviewCount }} đánh giá)</span>
-              </div> -->
-
               <div class="flex items-baseline gap-3">
-                <span class="text-3xl font-bold text-primary">{{ formatCurrency(product.price) }}</span>
-                <span v-if="product.originalPrice" class="text-lg line-through text-base-content/50">
-                  {{ formatCurrency(product.originalPrice) }}
-                </span>
-                <span
-                  v-if="product.originalPrice && product.originalPrice > product.price"
-                  class="badge badge-primary badge-sm font-bold"
-                >
-                  -{{ Math.round((1 - product.price / product.originalPrice) * 100) }}%
-                </span>
+                <span class="text-3xl font-bold text-primary">{{ formatCurrency(selectedVariant?.unit_price ?? product.unit_price) }}</span>
               </div>
 
-              <!-- Stock indicator -->
-              <div v-if="product.stock !== undefined" class="flex items-center gap-2">
-                <span
-                  class="w-2 h-2 rounded-full"
-                  :class="product.stock > 0 ? 'bg-success' : 'bg-error'"
-                />
-                <span
-                  class="text-sm font-medium"
-                  :class="product.stock > 0 ? 'text-success' : 'text-error'"
-                >
-                  {{ product.stock > 0 ? `Còn hàng (${product.stock} sản phẩm)` : 'Hết hàng' }}
-                </span>
+              <p v-if="product.short_description" class="text-base-content/70 text-sm leading-relaxed line-clamp-3">
+                {{ product.short_description }}
+              </p>
+
+              <!-- Options -->
+              <div v-for="option in product.product_options" :key="option.key" class="space-y-2">
+                <div class="text-sm font-medium text-base-content">{{ option.name }}</div>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="value in option.values"
+                    :key="value.slug"
+                    type="button"
+                    class="px-3 py-1.5 rounded-lg border text-sm transition-colors flex items-center gap-2"
+                    :class="
+                      selectedOptions[option.key] === value.slug
+                        ? 'border-primary text-primary bg-primary/5 font-semibold'
+                        : 'border-base-200 text-base-content/70 hover:border-primary/40'
+                    "
+                    @click="selectOption(option.key, value.slug)"
+                  >
+                    <span
+                      v-if="value.additional_data"
+                      class="w-3.5 h-3.5 rounded-full border border-base-300"
+                      :style="{ backgroundColor: value.additional_data }"
+                    />
+                    {{ value.value }}
+                  </button>
+                </div>
               </div>
 
               <div class="divider my-2" />
-
-              <p class="text-base-content/80 leading-relaxed text-sm line-clamp-4">{{ product.description }}</p>
 
               <!-- CTAs -->
               <div class="flex gap-3 pt-1">
@@ -109,19 +100,9 @@
                 </BaseButton>
               </div>
 
-              <!-- Quick specs -->
-              <!-- <div v-if="product.specifications?.length" class="bg-base-50 rounded-lg border border-base-200 divide-y divide-base-200 mt-2">
-                <div
-                  v-for="spec in product.specifications.slice(0, 4)"
-                  :key="spec.label"
-                  class="grid grid-cols-5 px-4 py-2.5 gap-2 items-start"
-                >
-                  <dt class="col-span-2 text-xs text-base-content/55 font-medium">{{ spec.label }}</dt>
-                  <dd class="col-span-3 text-xs text-base-content font-semibold">{{ spec.value }}</dd>
-                </div>
-              </div> -->
-
-              <div class="text-xs text-base-content/40 pt-1">SKU: {{ product.sku }}</div>
+              <div v-if="selectedVariant" class="text-xs text-base-content/40 pt-1">
+                Phiên bản: {{ selectedVariant.name }}
+              </div>
             </div>
           </div>
 
@@ -131,7 +112,7 @@
           </div>
 
           <!-- Similar products -->
-          <ProductSimilar :current-slug="product.slug" :category="product.category" />
+          <ProductSimilar :current-slug="product.slug" :category-slug="product.category.slug" />
         </div>
 
         <!-- Right sidebar: similar products (desktop only) -->
@@ -139,7 +120,7 @@
           <div class="flex items-center justify-between mb-1">
             <h3 class="font-bold text-sm text-base-content">Có thể bạn quan tâm</h3>
             <NuxtLink
-              :to="`/products?category=${encodeURIComponent(product.category)}`"
+              :to="`/products?category=${product.category.slug}`"
               class="text-xs text-primary hover:underline"
             >
               Xem thêm
@@ -155,8 +136,8 @@
             >
               <div class="w-16 h-16 flex-shrink-0 bg-base-100 rounded-lg overflow-hidden">
                 <NuxtImg
-                  v-if="item.thumbnail"
-                  :src="item.thumbnail"
+                  v-if="item.variants[0]?.images[0]"
+                  :src="item.variants[0].images[0]"
                   :alt="item.name"
                   width="64"
                   height="64"
@@ -174,11 +155,8 @@
                   {{ item.name }}
                 </p>
                 <div class="mt-1.5">
-                  <span v-if="item.originalPrice" class="text-[10px] text-base-content/40 line-through block leading-none">
-                    {{ formatCurrency(item.originalPrice) }}
-                  </span>
                   <span class="text-sm font-bold text-primary leading-tight">
-                    {{ formatCurrency(item.price) }}
+                    {{ formatCurrency(item.unit_price) }}
                   </span>
                 </div>
               </div>
@@ -197,16 +175,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { formatCurrency } from '~/utils'
-import type { Product, ProductListItem } from '~/types'
+import { useProductCatalog } from '~/composables/useProductCatalog'
+import { productCatalogService } from '~/services/productCatalog.service'
+import type { ProductCatalogItem, ProductVariant } from '~/types'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
+const { fetchProductDetail } = useProductCatalog()
+
 const { data: product, pending, error } = await useAsyncData(
   `product-${slug.value}`,
-  () => $fetch<Product>(`/api/products/${slug.value}`).catch(() => null),
+  () => fetchProductDetail(slug.value).catch(() => null),
   { watch: [slug] },
 )
 
@@ -218,16 +200,40 @@ if (product.value) {
   useProductSeo(product.value)
 }
 
+const selectedOptions = ref<Record<string, string>>({})
+
+watch(
+  product,
+  (p) => {
+    const initial: Record<string, string> = {}
+    p?.variants[0]?.meta_field.forEach((m) => {
+      initial[m.key] = m.slug
+    })
+    selectedOptions.value = initial
+  },
+  { immediate: true },
+)
+
+function selectOption(key: string, valueSlug: string) {
+  selectedOptions.value = { ...selectedOptions.value, [key]: valueSlug }
+}
+
+const selectedVariant = computed<ProductVariant | undefined>(() => {
+  if (!product.value) return undefined
+  const match = product.value.variants.find((v) =>
+    v.meta_field.every((m) => selectedOptions.value[m.key] === m.slug),
+  )
+  return match ?? product.value.variants[0]
+})
+
 const { data: similarData } = await useAsyncData(
-  `similar-${slug.value}`,
-  () => $fetch<{ data: ProductListItem[] }>('/api/products'),
+  `similar-sidebar-${slug.value}`,
+  () => (product.value ? productCatalogService.getList({ category_slug: product.value.category.slug }) : []),
   { watch: [slug] },
 )
 
-const sidebarProducts = computed<ProductListItem[]>(() => {
-  if (!similarData.value?.data || !product.value) return []
-  return similarData.value.data
-    .filter((p: ProductListItem) => p.category === product.value!.category && p.slug !== product.value!.slug)
-    .slice(0, 6)
+const sidebarProducts = computed<ProductCatalogItem[]>(() => {
+  if (!similarData.value || !product.value) return []
+  return similarData.value.filter((p) => p.slug !== product.value!.slug).slice(0, 6)
 })
 </script>

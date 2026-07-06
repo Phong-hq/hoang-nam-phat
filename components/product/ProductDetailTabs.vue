@@ -21,9 +21,10 @@
     <div class="p-6 lg:p-8">
       <!-- Mô tả sản phẩm -->
       <template v-if="activeTab === 'description'">
-        <p class="text-base-content/80 leading-relaxed text-sm lg:text-base whitespace-pre-line">
-          {{ product.description }}
-        </p>
+        <div
+          class="prose prose-sm lg:prose-base max-w-none text-base-content/80"
+          v-html="product.description"
+        />
 
         <!-- Điểm nổi bật -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
@@ -45,16 +46,7 @@
 
       <!-- Thông số kỹ thuật -->
       <template v-if="activeTab === 'specs'">
-        <div v-if="product.specifications?.length" class="divide-y divide-base-200">
-          <div
-            v-for="spec in product.specifications"
-            :key="spec.label"
-            class="grid grid-cols-5 py-3.5 gap-4 items-start even:bg-base-50 -mx-6 lg:-mx-8 px-6 lg:px-8"
-          >
-            <dt class="col-span-2 text-sm text-base-content/55 font-medium">{{ spec.label }}</dt>
-            <dd class="col-span-3 text-sm text-base-content font-medium">{{ spec.value }}</dd>
-          </div>
-        </div>
+        <div v-if="product.specifications" class="prose prose-sm max-w-none" v-html="product.specifications" />
         <p v-else class="text-center text-base-content/40 text-sm py-12">
           Chưa có thông số kỹ thuật
         </p>
@@ -64,9 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import type { Product } from '~/types'
+import type { ProductDetail } from '~/types'
 
-const props = defineProps<{ product: Product }>()
+const props = defineProps<{ product: ProductDetail }>()
 
 const tabs = [
   { id: 'description', label: 'Mô tả sản phẩm' },
@@ -75,18 +67,14 @@ const tabs = [
 
 const activeTab = ref('description')
 
-const highlights = computed(() => {
-  const base = [
-    { icon: '🛡️', title: 'Bảo hành chính hãng', desc: '12 tháng bảo hành tại trung tâm uỷ quyền toàn quốc' },
-    { icon: '🚀', title: 'Giao hàng nhanh', desc: 'Giao hàng trong ngày tại TP.HCM, 1–2 ngày toàn quốc' },
-    { icon: '↩️', title: 'Đổi trả dễ dàng', desc: '7 ngày đổi trả miễn phí nếu có lỗi từ nhà sản xuất' },
-    { icon: '💳', title: 'Trả góp 0%', desc: 'Hỗ trợ trả góp 0% qua thẻ tín dụng và ví điện tử' },
-  ]
-
-  if (props.product.stock && props.product.stock > 0) {
-    base.push({ icon: '✅', title: 'Hàng chính hãng', desc: `Còn ${props.product.stock} sản phẩm — xuất hoá đơn VAT theo yêu cầu` })
-  }
-
-  return base.slice(0, 4)
-})
+const highlights = computed(() => [
+  {
+    icon: '🛡️',
+    title: 'Bảo hành chính hãng',
+    desc: props.product.warranty_description || '12 tháng bảo hành tại trung tâm uỷ quyền toàn quốc',
+  },
+  { icon: '🚀', title: 'Giao hàng nhanh', desc: 'Giao hàng trong ngày tại TP.HCM, 1–2 ngày toàn quốc' },
+  { icon: '↩️', title: 'Đổi trả dễ dàng', desc: '7 ngày đổi trả miễn phí nếu có lỗi từ nhà sản xuất' },
+  { icon: '💳', title: 'Trả góp 0%', desc: 'Hỗ trợ trả góp 0% qua thẻ tín dụng và ví điện tử' },
+])
 </script>

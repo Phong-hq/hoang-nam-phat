@@ -2,20 +2,36 @@
   <div class="sticky top-0 z-40 shadow-md">
 
     <!-- Top announcement bar -->
-    <div class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm">
-      <div class="container mx-auto px-3 sm:px-4 flex items-center justify-between">
-        <span class="hidden sm:block text-red-200">
-          Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình
+    <div class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm overflow-hidden">
+      <div class="flex w-max items-center whitespace-nowrap animate-marquee">
+        <span class="flex items-center gap-8 pr-8 shrink-0 text-red-200">
+          <span>Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình</span>
+          <span aria-hidden="true">•</span>
+          <span>Giờ làm việc: 8:00 - 18:00</span>
+          <span aria-hidden="true">•</span>
+          <span>Email: info.hoangnamphat@gmail.com</span>
+          <span aria-hidden="true">•</span>
+          <a href="tel:0937813788" class="flex items-center gap-1 sm:gap-1.5 font-semibold hover:text-yellow-300 transition-colors">
+            <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+            </svg>
+            0937.813.788 – Mua hàng online
+          </a>
         </span>
-        <a
-          href="tel:0937813788"
-          class="flex items-center gap-1 sm:gap-1.5 font-semibold hover:text-yellow-300 transition-colors ml-auto"
-        >
-          <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-          </svg>
-          0937.813.788 – Mua hàng online
-        </a>
+        <span class="flex items-center gap-8 pr-8 shrink-0 text-red-200" aria-hidden="true">
+          <span>Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình</span>
+          <span>•</span>
+          <span>Giờ làm việc: 8:00 - 18:00</span>
+          <span>•</span>
+          <span>Email: info.hoangnamphat@gmail.com</span>
+          <span>•</span>
+          <span class="flex items-center gap-1 sm:gap-1.5 font-semibold">
+            <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+            </svg>
+            0937.813.788 – Mua hàng online
+          </span>
+        </span>
       </div>
     </div>
 
@@ -31,12 +47,12 @@
             <img
               src="~/assets/images/hnp.png"
               alt="Hoàng Nam Phát"
-              class="h-12 sm:h-14 md:h-16 lg:h-24 w-auto object-contain"
+              class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-36 w-auto object-contain"
             />
           </NuxtLink>
 
           <!-- Search bar: inline, centered, desktop/tablet only -->
-          <div class="hidden md:block flex-1 min-w-0 max-w-2xl mx-auto">
+          <div class="hidden md:block flex-1 min-w-0 max-w-[60%] mx-auto">
             <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
               <input
                 type="text"
@@ -221,6 +237,18 @@ const navItems = [
 </script>
 
 <style scoped>
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;

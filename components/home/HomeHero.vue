@@ -16,26 +16,26 @@
               Danh mục sản phẩm
             </div>
             <ul class="flex-1 py-1 overflow-hidden">
-              <li v-for="cat in menuCategories" :key="cat.label" @mouseenter="hoveredCat = cat">
+              <li v-for="cat in categoryStore.categories" :key="cat.id" @mouseenter="hoveredCat = cat">
                 <NuxtLink
-                  :to="cat.href"
+                  :to="`/products?category=${cat.slug}`"
                   :class="[
                     'flex items-center justify-between px-3.5 py-[9px] text-sm transition-colors',
-                    hoveredCat?.label === cat.label
+                    hoveredCat?.id === cat.id
                       ? 'bg-primary text-white'
                       : 'text-gray-700 hover:bg-gray-50',
                   ]"
                 >
                   <span class="flex items-center gap-2 min-w-0">
-                    <span
-                      :class="['w-4 h-4 flex-shrink-0 flex items-center justify-center', cat.color]"
-                      v-html="cat.icon"
-                    />
-                    <span class="truncate font-medium">{{ cat.label }}</span>
+                    <span class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary">
+                      <img v-if="cat.icon" :src="cat.icon" alt="" class="w-full h-full object-contain" />
+                      <span v-else v-html="defaultCategoryIcon" />
+                    </span>
+                    <span class="truncate font-medium">{{ cat.name }}</span>
                   </span>
                   <svg
                     class="w-3.5 h-3.5 flex-shrink-0"
-                    :class="hoveredCat?.label === cat.label ? 'opacity-80' : 'opacity-25'"
+                    :class="hoveredCat?.id === cat.id ? 'opacity-80' : 'opacity-25'"
                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
                   >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -59,26 +59,29 @@
               class="absolute top-0 left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
             >
               <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <span :class="['w-4 h-4 flex items-center justify-center', hoveredCat.color]" v-html="hoveredCat.icon" />
-                {{ hoveredCat.label }}
+                <span class="w-4 h-4 flex items-center justify-center text-primary">
+                  <img v-if="hoveredCat.icon" :src="hoveredCat.icon" alt="" class="w-full h-full object-contain" />
+                  <span v-else v-html="defaultCategoryIcon" />
+                </span>
+                {{ hoveredCat.name }}
               </p>
               <div class="grid grid-cols-1 gap-0.5">
                 <NuxtLink
-                  v-for="sub in hoveredCat.subs"
-                  :key="sub.label"
-                  :to="sub.href"
+                  v-for="brand in hoveredCat.brands"
+                  :key="brand.id"
+                  :to="`/products?category=${hoveredCat.slug}&brand=${slugify(brand.name)}`"
                   class="flex items-center gap-1.5 px-2.5 py-2 text-sm text-gray-600 hover:bg-primary/5 hover:text-primary rounded-lg transition-colors"
                 >
                   <span class="w-1.5 h-1.5 rounded-full bg-primary/30 flex-shrink-0" />
-                  <span class="truncate">{{ sub.label }}</span>
+                  <span class="truncate">{{ brand.name }}</span>
                 </NuxtLink>
               </div>
               <div class="border-t border-gray-100 mt-3 pt-3">
                 <NuxtLink
-                  :to="hoveredCat.href"
+                  :to="`/products?category=${hoveredCat.slug}`"
                   class="text-xs text-primary hover:underline font-semibold flex items-center gap-1"
                 >
-                  Xem tất cả {{ hoveredCat.label }}
+                  Xem tất cả {{ hoveredCat.name }}
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -198,139 +201,26 @@
 </template>
 
 <script setup lang="ts">
-interface MenuSub { label: string; href: string }
-interface MenuCategory { label: string; icon: string; color: string; href: string; subs: MenuSub[] }
+import { onMounted, ref } from 'vue'
+import { useCategoryStore } from '~/stores/category.store'
+import type { ProductCategory } from '~/types'
 
-const hoveredCat = ref<MenuCategory | null>(null)
+const categoryStore = useCategoryStore()
+const hoveredCat = ref<ProductCategory | null>(null)
+
+const defaultCategoryIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+</svg>`
+
+onMounted(() => {
+  if (!categoryStore.categories.length) categoryStore.fetchCategories()
+})
 
 const stats = [
   { value: '15+', label: 'Năm kinh nghiệm' },
   { value: '50K+', label: 'Sản phẩm' },
   { value: '200K+', label: 'Khách hàng' },
   { value: '24/7', label: 'Hỗ trợ kỹ thuật' },
-]
-
-const menuCategories: MenuCategory[] = [
-  {
-    label: 'Thiết bị Router',
-    color: 'text-primary',
-    href: '/products?category=router',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-    </svg>`,
-    subs: [
-      { label: 'Mikrotik', href: '/products?brand=mikrotik' },
-      { label: 'TP-Link', href: '/products?brand=tplink&category=router' },
-      { label: 'Ruijie-Reyee', href: '/products?brand=ruijie' },
-      { label: 'Grandstream', href: '/products?brand=grandstream' },
-      { label: 'Cisco', href: '/products?brand=cisco&category=router' },
-      { label: 'Ubiquiti', href: '/products?brand=ubiquiti' },
-    ],
-  },
-  {
-    label: 'WiFi / Access Point',
-    color: 'text-primary',
-    href: '/products?category=wifi',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 0 1 1.06 0Z" />
-    </svg>`,
-    subs: [
-      { label: 'Ubiquiti UniFi', href: '/products?brand=ubiquiti&category=wifi' },
-      { label: 'TP-Link EAP', href: '/products?brand=tplink&category=wifi' },
-      { label: 'Ruijie AP', href: '/products?brand=ruijie&category=wifi' },
-      { label: 'Aruba', href: '/products?brand=aruba' },
-      { label: 'Grandstream AP', href: '/products?brand=grandstream&category=wifi' },
-      { label: 'Cisco AP', href: '/products?brand=cisco&category=wifi' },
-    ],
-  },
-  {
-    label: 'Switch & Thiết bị mạng',
-    color: 'text-primary',
-    href: '/products?category=switch',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
-    </svg>`,
-    subs: [
-      { label: 'Cisco Switch', href: '/products?brand=cisco&category=switch' },
-      { label: 'TP-Link Switch', href: '/products?brand=tplink&category=switch' },
-      { label: 'Ruijie Switch', href: '/products?brand=ruijie&category=switch' },
-      { label: 'Ubiquiti Switch', href: '/products?brand=ubiquiti&category=switch' },
-      { label: 'Mikrotik CRS', href: '/products?brand=mikrotik&category=switch' },
-    ],
-  },
-  {
-    label: 'Camera quan sát',
-    color: 'text-primary',
-    href: '/products?category=camera',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
-    </svg>`,
-    subs: [
-      { label: 'Hikvision', href: '/products?brand=hikvision' },
-      { label: 'Dahua', href: '/products?brand=dahua' },
-      { label: 'Kbvision', href: '/products?brand=kbvision' },
-      { label: 'Vantech', href: '/products?brand=vantech' },
-      { label: 'Ezviz', href: '/products?brand=ezviz' },
-    ],
-  },
-  {
-    label: 'WiFi Camera',
-    color: 'text-primary',
-    href: '/products?category=wifi-camera',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-      <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-    </svg>`,
-    subs: [
-      { label: 'Hikvision WiFi', href: '/products?brand=hikvision&category=wifi-camera' },
-      { label: 'Imou', href: '/products?brand=imou' },
-      { label: 'Ezviz WiFi', href: '/products?brand=ezviz&category=wifi-camera' },
-      { label: 'Dahua WiFi', href: '/products?brand=dahua&category=wifi-camera' },
-    ],
-  },
-  {
-    label: 'NAS Storage',
-    color: 'text-primary',
-    href: '/products?category=nas',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-    </svg>`,
-    subs: [
-      { label: 'Synology', href: '/products?brand=synology' },
-      { label: 'QNAP', href: '/products?brand=qnap' },
-      { label: 'WD NAS', href: '/products?brand=wd&category=nas' },
-      { label: 'Seagate NAS', href: '/products?brand=seagate&category=nas' },
-    ],
-  },
-  {
-    label: 'Laptop',
-    color: 'text-primary',
-    href: '/products?category=laptop',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0H3" />
-    </svg>`,
-    subs: [
-      { label: 'Dell', href: '/products?brand=dell' },
-      { label: 'HP', href: '/products?brand=hp' },
-      { label: 'Lenovo', href: '/products?brand=lenovo' },
-      { label: 'Asus', href: '/products?brand=asus' },
-      { label: 'Acer', href: '/products?brand=acer' },
-    ],
-  },
-  {
-    label: 'Tủ Rack & Phụ kiện',
-    color: 'text-primary',
-    href: '/products?category=rack',
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
-    </svg>`,
-    subs: [
-      { label: 'Tủ rack 19"', href: '/products?category=rack&type=cabinet' },
-      { label: 'Patch Panel', href: '/products?category=rack&type=patch-panel' },
-      { label: 'Cáp mạng Cat6', href: '/products?category=rack&type=cable' },
-      { label: 'Keystone Jack', href: '/products?category=rack&type=keystone' },
-    ],
-  },
 ]
 
 const sideBanners = [

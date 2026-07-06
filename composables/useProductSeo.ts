@@ -2,25 +2,27 @@
 // Orchestrates all SEO tags, structured data, and canonical for a product page
 // Call server-side only -- inside useAsyncData or setup at top-level
 
-import type { Product } from '~/types'
+import type { ProductDetail } from '~/types'
 import { SITE_URL, SITE_NAME } from '~/constants'
 import { useSeo } from './useSeo'
 import { useBreadcrumb } from './useBreadcrumb'
 import { useJsonLd } from './useJsonLd'
 
-export function useProductSeo(product: Product) {
+export function useProductSeo(product: ProductDetail) {
   const runtimeConfig = useRuntimeConfig()
   const siteUrl = runtimeConfig.public.siteUrl || SITE_URL
 
   const canonicalUrl = `${siteUrl}/products/${product.slug}`
+  const image = product.variants[0]?.images[0]
+  const seoDescription = product.short_description || product.name
 
   useSeo({
-    title: product.seoTitle,
-    description: product.seoDescription,
+    title: product.name,
+    description: seoDescription,
     canonical: canonicalUrl,
-    ogTitle: product.seoTitle,
-    ogDescription: product.seoDescription,
-    ogImage: product.thumbnail || undefined,
+    ogTitle: product.name,
+    ogDescription: seoDescription,
+    ogImage: image,
     ogType: 'product',
     ogUrl: canonicalUrl,
     twitterCard: 'summary_large_image',
@@ -28,7 +30,7 @@ export function useProductSeo(product: Product) {
 
   useBreadcrumb([
     { name: 'Trang chu', path: '/' },
-    { name: product.category, path: `/categories/${product.category.toLowerCase()}` },
+    { name: product.category.name, path: `/categories/${product.category.slug}` },
     { name: product.name },
   ])
 
@@ -36,17 +38,16 @@ export function useProductSeo(product: Product) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    description: product.description,
-    sku: product.sku,
-    image: product.images?.length ? product.images : product.thumbnail ? [product.thumbnail] : [],
+    description: seoDescription,
+    image: product.variants.flatMap((v) => v.images),
     brand: {
       '@type': 'Brand',
-      name: product.brand,
+      name: product.brand.name,
     },
     offers: {
       '@type': 'Offer',
       priceCurrency: 'VND',
-      price: product.price,
+      price: product.unit_price,
       availability: 'https://schema.org/InStock',
       url: canonicalUrl,
       seller: {
@@ -54,15 +55,6 @@ export function useProductSeo(product: Product) {
         name: SITE_NAME,
       },
     },
-    ...(product.rating && product.reviewCount
-      ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: product.rating,
-            reviewCount: product.reviewCount,
-          },
-        }
-      : {}),
   }
 
   useJsonLd(productSchema)

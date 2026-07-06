@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"http://localhost:3001/products\" --max-time 15 -o /tmp/products_page.html -w \"HTTP %{http_code}\\\\n\")",
+      "Read(//tmp/**)",
+      "Bash(grep -o 'products-page\\\\|NuxtError\\\\|error-page\\\\|<pre' /tmp/products_page.html | sort -u *)"
+    ]
+  }
+}

@@ -2,10 +2,10 @@
 // Shared across repositories and services
 
 export interface ApiResponse<T = unknown> {
-  success: boolean
+  status: boolean
   data: T
-  message?: string
-  errors?: Record<string, string[]>
+  messages: string
+  code: number
 }
 
 export interface ApiError {
@@ -21,6 +21,27 @@ export interface RequestOptions {
   headers?: Record<string, string>
   body?: unknown
   query?: Record<string, string | number | boolean>
+}
+
+export interface ApiListLinks {
+  self: { href: string }
+  first: { href: string }
+  last: { href: string }
+  next?: { href: string }
+  prev?: { href: string }
+}
+
+export interface ApiListMeta {
+  totalCount: number
+  pageCount: number
+  currentPage: number
+  perPage: number
+}
+
+export interface ApiListResponse<T> {
+  items: T[]
+  _links: ApiListLinks
+  _meta: ApiListMeta
 }
 
 export interface SitemapEntry {
