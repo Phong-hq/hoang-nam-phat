@@ -73,7 +73,7 @@
         </div>
 
         <!-- Right sidebar: filter -->
-        <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-24">
+        <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-[var(--header-height)] z-10">
           <ProductCategoryFilter
             :model-value="selectedCategoryModel"
             :categories="categories"

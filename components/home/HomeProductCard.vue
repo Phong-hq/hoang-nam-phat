@@ -7,7 +7,7 @@
       <!-- Discount badge -->
       <span
         v-if="product.discount"
-        class="absolute top-2 left-2 z-10 bg-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded"
+        class="absolute top-2 left-2 z-10 bg-primary text-white text-sm font-extrabold px-2.5 py-1 rounded shadow-md"
       >
         -{{ product.discount }}%
       </span>

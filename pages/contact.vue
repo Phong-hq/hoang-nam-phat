@@ -159,6 +159,35 @@
                 />
               </div>
 
+              <!-- Address: Province / Ward -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <!-- Province -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Tỉnh / Thành phố</label>
+                  <select
+                    v-model="form.province"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-primary transition-colors bg-white disabled:bg-gray-50"
+                    :disabled="loadingProvinces"
+                  >
+                    <option value="">{{ loadingProvinces ? 'Đang tải...' : '-- Chọn tỉnh / thành phố --' }}</option>
+                    <option v-for="p in provinces" :key="p.code" :value="String(p.code)">{{ p.name }}</option>
+                  </select>
+                </div>
+
+                <!-- Ward -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Phường / Xã</label>
+                  <select
+                    v-model="form.ward"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-primary transition-colors bg-white disabled:bg-gray-50"
+                    :disabled="!form.province || loadingWards"
+                  >
+                    <option value="">{{ loadingWards ? 'Đang tải...' : '-- Chọn phường / xã --' }}</option>
+                    <option v-for="w in wards" :key="w.code" :value="String(w.code)">{{ w.name }}</option>
+                  </select>
+                </div>
+              </div>
+
               <!-- Subject -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Chủ đề</label>
@@ -289,10 +318,14 @@ useSeo({
     'Liên hệ Hoàng Nam Phát để được tư vấn thiết bị mạng, camera quan sát, laptop. Hotline: 0937.813.788 – Email: info@hoangnamphat.vn – 745/62/2 Quang Trung, Cần Thơ.',
 })
 
+const { provinces, wards, loadingProvinces, loadingWards, fetchProvinces, fetchWards } = useVietnamAddress()
+
 const form = reactive({
   name: '',
   phone: '',
   email: '',
+  province: '',
+  ward: '',
   subject: '',
   message: '',
 })
@@ -300,6 +333,13 @@ const form = reactive({
 const submitting = ref(false)
 const submitted = ref(false)
 const agreeTerms = ref(false)
+
+onMounted(fetchProvinces)
+
+watch(() => form.province, (code) => {
+  form.ward = ''
+  fetchWards(code)
+})
 
 async function handleSubmit() {
   submitting.value = true
@@ -309,6 +349,8 @@ async function handleSubmit() {
   form.name = ''
   form.phone = ''
   form.email = ''
+  form.province = ''
+  form.ward = ''
   form.subject = ''
   form.message = ''
   agreeTerms.value = false

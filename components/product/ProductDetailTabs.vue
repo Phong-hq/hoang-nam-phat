@@ -22,29 +22,16 @@
       <!-- Mô tả sản phẩm -->
       <template v-if="activeTab === 'description'">
         <div
+          v-if="product.description"
           class="prose prose-sm lg:prose-base max-w-none text-base-content/80"
           v-html="product.description"
         />
-
-        <!-- Điểm nổi bật -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
-          <div
-            v-for="highlight in highlights"
-            :key="highlight.title"
-            class="flex items-start gap-3 p-4 rounded-lg bg-base-50 border border-base-200 hover:border-primary/30 transition-colors"
-          >
-            <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 text-lg">
-              {{ highlight.icon }}
-            </div>
-            <div>
-              <div class="text-sm font-semibold text-base-content">{{ highlight.title }}</div>
-              <div class="text-xs text-base-content/55 mt-0.5 leading-relaxed">{{ highlight.desc }}</div>
-            </div>
-          </div>
-        </div>
+        <p v-else class="text-center text-base-content/40 text-sm py-12">
+          Chưa có mô tả sản phẩm
+        </p>
       </template>
 
-      <!-- Thông số kỹ thuật -->
+      <!-- Thông số kỹ thuật (tạm thời ẩn) -->
       <template v-if="activeTab === 'specs'">
         <div v-if="product.specifications" class="prose prose-sm max-w-none" v-html="product.specifications" />
         <p v-else class="text-center text-base-content/40 text-sm py-12">
@@ -58,23 +45,13 @@
 <script setup lang="ts">
 import type { ProductDetail } from '~/types'
 
-const props = defineProps<{ product: ProductDetail }>()
+defineProps<{ product: ProductDetail }>()
 
 const tabs = [
   { id: 'description', label: 'Mô tả sản phẩm' },
-  { id: 'specs', label: 'Thông số kỹ thuật' },
+  // Thông số kỹ thuật tạm thời ẩn
+  // { id: 'specs', label: 'Thông số kỹ thuật' },
 ]
 
 const activeTab = ref('description')
-
-const highlights = computed(() => [
-  {
-    icon: '🛡️',
-    title: 'Bảo hành chính hãng',
-    desc: props.product.warranty_description || '12 tháng bảo hành tại trung tâm uỷ quyền toàn quốc',
-  },
-  { icon: '🚀', title: 'Giao hàng nhanh', desc: 'Giao hàng trong ngày tại TP.HCM, 1–2 ngày toàn quốc' },
-  { icon: '↩️', title: 'Đổi trả dễ dàng', desc: '7 ngày đổi trả miễn phí nếu có lỗi từ nhà sản xuất' },
-  { icon: '💳', title: 'Trả góp 0%', desc: 'Hỗ trợ trả góp 0% qua thẻ tín dụng và ví điện tử' },
-])
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="sticky top-0 z-40 shadow-md">
+  <div ref="headerRoot" class="sticky top-0 z-40 shadow-md">
 
     <!-- Top announcement bar -->
     <div class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm overflow-hidden">
@@ -52,12 +52,16 @@
           </NuxtLink>
 
           <!-- Search bar: inline, centered, desktop/tablet only -->
-          <div class="hidden md:block flex-1 min-w-0 max-w-[60%] mx-auto">
+          <div class="hidden md:block relative flex-1 min-w-0 max-w-[60%] mx-auto">
             <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
               <input
+                v-model="searchQuery"
                 type="text"
                 placeholder="Tìm kiếm sản phẩm, thương hiệu..."
                 class="flex-1 min-w-0 px-4 py-2.5 text-base outline-none text-gray-700 bg-white placeholder:text-gray-400"
+                @focus="openSearch"
+                @blur="scheduleCloseSearch"
+                @keydown.esc="isSearchOpen = false"
               />
               <button
                 class="bg-primary text-white px-5 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
@@ -67,6 +71,19 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
+            </div>
+
+            <!-- Results dropdown -->
+            <div
+              v-if="isSearchOpen"
+              class="absolute left-0 right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[28rem] overflow-y-auto z-50"
+              @mousedown.prevent="cancelCloseSearch"
+            >
+              <LayoutHeaderSearchResults
+                :is-loading="isSearchLoading"
+                :results="searchResults"
+                @select="isSearchOpen = false"
+              />
             </div>
           </div>
 
@@ -124,12 +141,16 @@
             </svg>
           </button>
 
-          <div class="flex-1 min-w-0">
+          <div class="relative flex-1 min-w-0">
             <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
               <input
+                v-model="searchQuery"
                 type="text"
                 placeholder="Tìm kiếm sản phẩm, thương hiệu..."
                 class="flex-1 min-w-0 px-4 py-2 text-sm outline-none text-gray-700 bg-white placeholder:text-gray-400"
+                @focus="openSearch"
+                @blur="scheduleCloseSearch"
+                @keydown.esc="isSearchOpen = false"
               />
               <button
                 class="bg-primary text-white px-4 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
@@ -139,6 +160,19 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
+            </div>
+
+            <!-- Results dropdown -->
+            <div
+              v-if="isSearchOpen"
+              class="absolute left-0 right-0 top-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-[24rem] overflow-y-auto z-50"
+              @mousedown.prevent="cancelCloseSearch"
+            >
+              <LayoutHeaderSearchResults
+                :is-loading="isSearchLoading"
+                :results="searchResults"
+                @select="isSearchOpen = false"
+              />
             </div>
           </div>
         </div>
@@ -222,9 +256,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useProduct } from '~/composables/useProduct'
+import type { ProductListItem } from '~/types'
 
 const isMenuOpen = ref(false)
+const headerRoot = ref<HTMLElement | null>(null)
+
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+  if (!headerRoot.value) return
+
+  const updateHeaderHeight = () => {
+    document.documentElement.style.setProperty('--header-height', `${headerRoot.value!.offsetHeight}px`)
+  }
+
+  updateHeaderHeight()
+  resizeObserver = new ResizeObserver(updateHeaderHeight)
+  resizeObserver.observe(headerRoot.value)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
+})
+
+// Search dropdown -- UI preview: shows the full product list regardless of
+// the typed keyword, so the design can be reviewed before real search is wired up.
+const { fetchProducts } = useProduct()
+
+const searchQuery = ref('')
+const isSearchOpen = ref(false)
+const isSearchLoading = ref(false)
+const searchResults = ref<ProductListItem[]>([])
+let searchBlurTimeout: ReturnType<typeof setTimeout> | null = null
+
+async function openSearch() {
+  isSearchOpen.value = true
+  if (searchResults.value.length > 0) return
+
+  isSearchLoading.value = true
+  try {
+    const res = await fetchProducts()
+    searchResults.value = res.data
+  } finally {
+    isSearchLoading.value = false
+  }
+}
+
+function scheduleCloseSearch() {
+  searchBlurTimeout = setTimeout(() => {
+    isSearchOpen.value = false
+  }, 150)
+}
+
+function cancelCloseSearch() {
+  if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
+}
 
 const navItems = [
   { label: 'Trang chủ',  href: '/',          exact: true },

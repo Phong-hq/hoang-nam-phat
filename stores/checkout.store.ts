@@ -34,7 +34,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     email: '',
     phone: '',
     province: '',
-    district: '',
     ward: '',
     address: '',
     notes: '',

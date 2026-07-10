@@ -5,11 +5,10 @@
       <p class="text-sm text-base-content/50 mt-0.5">Vui lòng điền đầy đủ thông tin để giao hàng</p>
     </div>
 
-    <form class="px-6 py-6 space-y-5" @submit.prevent>
+    <form class="px-6 py-6 space-y-4" @submit.prevent>
       <!-- Gender -->
-      <div>
-        <p class="text-sm font-medium text-base-content/80 mb-2">Danh xưng</p>
-        <div class="flex items-center gap-6">
+      <CheckoutFormRow label="Danh xưng">
+        <div class="flex items-center gap-6 sm:pt-2">
           <BaseRadio
             v-model="form.gender"
             value="mr"
@@ -23,83 +22,83 @@
             name="gender"
           />
         </div>
-      </div>
+      </CheckoutFormRow>
 
-      <!-- Name + Phone -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="divider my-0" />
+
+      <!-- Full Name -->
+      <CheckoutFormRow label="Họ và tên" required>
         <BaseInput
           v-model="form.fullName"
-          label="Họ và tên"
           placeholder="Nguyễn Văn A"
           :error="errors.fullName"
-          required
           @blur="touch('fullName')"
         />
+      </CheckoutFormRow>
+
+      <!-- Phone -->
+      <CheckoutFormRow label="Số điện thoại" required>
         <BaseInput
           v-model="form.phone"
-          label="Số điện thoại"
           placeholder="0901 234 567"
           type="tel"
           :error="errors.phone"
-          required
           @blur="touch('phone')"
         />
-      </div>
+      </CheckoutFormRow>
 
-      <!-- Email + Province -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Email -->
+      <CheckoutFormRow label="Email" required>
         <BaseInput
           v-model="form.email"
-          label="Email"
           placeholder="email@example.com"
           type="email"
           :error="errors.email"
-          required
           @blur="touch('email')"
         />
+      </CheckoutFormRow>
+
+      <!-- Province -->
+      <CheckoutFormRow label="Tỉnh / Thành phố" required>
         <BaseSelect
           v-model="form.province"
-          label="Tỉnh / Thành phố"
-          placeholder="Chọn tỉnh / TP"
+          :placeholder="loadingProvinces ? 'Đang tải...' : 'Chọn tỉnh / TP'"
           :options="provinceOptions"
+          :disabled="loadingProvinces"
           :error="errors.province"
-          required
           @blur="touch('province')"
         />
-      </div>
+      </CheckoutFormRow>
 
-      <!-- District + Ward -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <BaseInput
-          v-model="form.district"
-          label="Quận / Huyện"
-          placeholder="Quận 1"
-        />
-        <BaseInput
+      <!-- Ward -->
+      <CheckoutFormRow label="Phường / Xã">
+        <BaseSelect
           v-model="form.ward"
-          label="Phường / Xã"
-          placeholder="Phường Bến Nghé"
+          :placeholder="loadingWards ? 'Đang tải...' : 'Chọn phường / xã'"
+          :options="wardOptions"
+          :disabled="!form.province || loadingWards"
         />
-      </div>
+      </CheckoutFormRow>
 
       <!-- Address -->
-      <BaseInput
-        v-model="form.address"
-        label="Địa chỉ giao hàng"
-        placeholder="Số nhà, tên đường..."
-        :error="errors.address"
-        required
-        @blur="touch('address')"
-      />
+      <CheckoutFormRow label="Địa chỉ giao hàng" required>
+        <BaseInput
+          v-model="form.address"
+          placeholder="Số nhà, tên đường..."
+          :error="errors.address"
+          @blur="touch('address')"
+        />
+      </CheckoutFormRow>
 
       <!-- Notes -->
-      <BaseTextarea
-        v-model="form.notes"
-        label="Ghi chú đơn hàng"
-        placeholder="Giao giờ hành chính, gọi trước khi giao..."
-        :rows="3"
-        hint="Không bắt buộc"
-      />
+      <CheckoutFormRow label="Ghi chú đơn hàng">
+        <BaseTextarea
+          v-model="form.notes"
+          placeholder="Giao giờ hành chính, gọi trước khi giao..."
+          :rows="3"
+          hint="Không bắt buộc"
+        />
+      </CheckoutFormRow>
 
       <!-- Divider -->
       <div class="divider my-1" />
@@ -126,9 +125,20 @@
 </template>
 
 <script setup lang="ts">
-import { PROVINCES } from '~/constants'
-
 const { form, errors, touch } = useCheckout()
+const { provinces, wards, loadingProvinces, loadingWards, fetchProvinces, fetchWards } = useVietnamAddress()
 
-const provinceOptions = PROVINCES.map((p) => ({ value: p, label: p }))
+const provinceOptions = computed(() =>
+  provinces.value.map((p) => ({ value: String(p.code), label: p.name })),
+)
+const wardOptions = computed(() =>
+  wards.value.map((w) => ({ value: String(w.code), label: w.name })),
+)
+
+onMounted(fetchProvinces)
+
+watch(() => form.province, (code) => {
+  form.ward = ''
+  fetchWards(code)
+})
 </script>

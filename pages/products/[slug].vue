@@ -116,7 +116,7 @@
         </div>
 
         <!-- Right sidebar: similar products (desktop only) -->
-        <aside class="hidden lg:flex flex-col gap-3 w-64 flex-shrink-0 sticky top-24">
+        <aside class="hidden lg:flex flex-col gap-3 w-64 flex-shrink-0 sticky top-[var(--header-height)] z-10">
           <div class="flex items-center justify-between mb-1">
             <h3 class="font-bold text-sm text-base-content">Có thể bạn quan tâm</h3>
             <NuxtLink

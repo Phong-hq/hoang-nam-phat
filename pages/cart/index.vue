@@ -7,7 +7,7 @@
         <ul>
           <li><NuxtLink to="/">Trang chủ</NuxtLink></li>
           <li><NuxtLink to="/products">Sản phẩm</NuxtLink></li>
-          <li class="text-base-content/50">Thanh toán</li>
+          <li class="text-base-content/50">Giỏ hàng</li>
         </ul>
       </nav>
 
@@ -77,7 +77,7 @@
 const { isSuccess, orderResult } = useCheckout()
 
 useSeo({
-  title: 'Thanh toán',
+  title: 'Giỏ hàng',
   description: 'Hoàn tất đơn hàng của bạn tại Hoàng Nam Phát.',
 })
 </script>
@@ -115,7 +115,8 @@ useSeo({
 
   .checkout-sticky {
     position: sticky;
-    top: 1.5rem;
+    top: calc(var(--header-height, 5rem) + 1rem);
+    z-index: 10;
   }
 }
 </style>
