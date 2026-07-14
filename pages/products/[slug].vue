@@ -27,7 +27,7 @@
               <NuxtImg
                 v-if="selectedVariant?.images[0]"
                 :src="selectedVariant.images[0]"
-                :alt="product.name"
+                :alt="`${product.brand.name} ${product.name}`"
                 width="600"
                 height="600"
                 loading="eager"

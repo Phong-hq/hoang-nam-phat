@@ -159,35 +159,6 @@
                 />
               </div>
 
-              <!-- Address: Province / Ward -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <!-- Province -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Tỉnh / Thành phố</label>
-                  <select
-                    v-model="form.province"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-primary transition-colors bg-white disabled:bg-gray-50"
-                    :disabled="loadingProvinces"
-                  >
-                    <option value="">{{ loadingProvinces ? 'Đang tải...' : '-- Chọn tỉnh / thành phố --' }}</option>
-                    <option v-for="p in provinces" :key="p.code" :value="String(p.code)">{{ p.name }}</option>
-                  </select>
-                </div>
-
-                <!-- Ward -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Phường / Xã</label>
-                  <select
-                    v-model="form.ward"
-                    class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-primary transition-colors bg-white disabled:bg-gray-50"
-                    :disabled="!form.province || loadingWards"
-                  >
-                    <option value="">{{ loadingWards ? 'Đang tải...' : '-- Chọn phường / xã --' }}</option>
-                    <option v-for="w in wards" :key="w.code" :value="String(w.code)">{{ w.name }}</option>
-                  </select>
-                </div>
-              </div>
-
               <!-- Subject -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Chủ đề</label>
@@ -196,11 +167,7 @@
                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-primary transition-colors bg-white"
                 >
                   <option value="">-- Chọn chủ đề --</option>
-                  <option value="tuvan">Tư vấn sản phẩm</option>
-                  <option value="baogiaduan">Báo giá dự án</option>
-                  <option value="hotrokt">Hỗ trợ kỹ thuật</option>
-                  <option value="baohanh">Bảo hành / Sửa chữa</option>
-                  <option value="khac">Khác</option>
+                  <option v-for="s in SUBJECT_OPTIONS" :key="s.value" :value="s.value">{{ s.label }}</option>
                 </select>
               </div>
 
@@ -251,6 +218,14 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p class="text-sm text-green-700 font-medium">Gửi thành công! Chúng tôi sẽ liên hệ lại bạn sớm nhất.</p>
+              </div>
+
+              <!-- Error message -->
+              <div v-if="errorMessage" class="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-center gap-2.5">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zM12 15.75h.008" />
+                </svg>
+                <p class="text-sm text-red-700 font-medium">{{ errorMessage }}</p>
               </div>
             </form>
           </div>
@@ -318,14 +293,20 @@ useSeo({
     'Liên hệ Hoàng Nam Phát để được tư vấn thiết bị mạng, camera quan sát, laptop. Hotline: 0937.813.788 – Email: info@hoangnamphat.vn – 745/62/2 Quang Trung, Cần Thơ.',
 })
 
-const { provinces, wards, loadingProvinces, loadingWards, fetchProvinces, fetchWards } = useVietnamAddress()
+const SUBJECT_OPTIONS = [
+  { value: 'tuvan', label: 'Tư vấn sản phẩm' },
+  { value: 'baogiaduan', label: 'Báo giá dự án' },
+  { value: 'hotrokt', label: 'Hỗ trợ kỹ thuật' },
+  { value: 'baohanh', label: 'Bảo hành / Sửa chữa' },
+  { value: 'khac', label: 'Khác' },
+]
+
+const { createFeedback } = useFeedback()
 
 const form = reactive({
   name: '',
   phone: '',
   email: '',
-  province: '',
-  ward: '',
   subject: '',
   message: '',
 })
@@ -333,26 +314,32 @@ const form = reactive({
 const submitting = ref(false)
 const submitted = ref(false)
 const agreeTerms = ref(false)
-
-onMounted(fetchProvinces)
-
-watch(() => form.province, (code) => {
-  form.ward = ''
-  fetchWards(code)
-})
+const errorMessage = ref('')
 
 async function handleSubmit() {
   submitting.value = true
-  await new Promise((resolve) => setTimeout(resolve, 1200))
-  submitting.value = false
-  submitted.value = true
-  form.name = ''
-  form.phone = ''
-  form.email = ''
-  form.province = ''
-  form.ward = ''
-  form.subject = ''
-  form.message = ''
-  agreeTerms.value = false
+  errorMessage.value = ''
+  try {
+    const subjectLabel = SUBJECT_OPTIONS.find((s) => s.value === form.subject)?.label ?? form.subject
+    await createFeedback({
+      subject: subjectLabel,
+      fullname: form.name,
+      phone: form.phone,
+      email: form.email,
+      content: form.message,
+      is_confirm_term: agreeTerms.value ? 1 : 0,
+    })
+    submitted.value = true
+    form.name = ''
+    form.phone = ''
+    form.email = ''
+    form.subject = ''
+    form.message = ''
+    agreeTerms.value = false
+  } catch {
+    errorMessage.value = 'Gửi yêu cầu thất bại. Vui lòng thử lại sau.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>

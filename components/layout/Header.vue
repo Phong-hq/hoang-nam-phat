@@ -297,7 +297,7 @@ let searchDebounceTimeout: ReturnType<typeof setTimeout> | null = null
 async function runSearch() {
   isSearchLoading.value = true
   try {
-    searchResults.value = await fetchProducts({ name: searchQuery.value.trim() })
+    searchResults.value = await fetchProducts({ keyword: searchQuery.value.trim() })
   } finally {
     isSearchLoading.value = false
   }

@@ -59,10 +59,11 @@ const props = defineProps<{
   subtitle?: string
   to: string
   products: HomeProduct[]
+  brands: string[]
   autoplayDelay?: number
 }>()
 
-const brands = computed(() => Array.from(new Set(props.products.map((p) => p.brand))))
+const brands = computed(() => props.brands)
 const activeBrand = ref(brands.value[0] ?? '')
 watch(brands, (newBrands) => {
   if (!newBrands.includes(activeBrand.value)) activeBrand.value = newBrands[0] ?? ''

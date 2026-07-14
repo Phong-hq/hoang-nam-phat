@@ -30,31 +30,56 @@ export function useProductSeo(product: ProductDetail) {
 
   useBreadcrumb([
     { name: 'Trang chu', path: '/' },
-    { name: product.category.name, path: `/categories/${product.category.slug}` },
+    { name: product.category.name, path: `/products?category=${product.category.slug}` },
     { name: product.name },
   ])
+
+  const prices = product.variants.length ? product.variants.map((v) => v.unit_price) : [product.unit_price]
+  const lowPrice = Math.min(...prices)
+  const highPrice = Math.max(...prices)
+
+  const offers = lowPrice === highPrice
+    ? {
+        '@type': 'Offer',
+        priceCurrency: 'VND',
+        price: lowPrice,
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        url: canonicalUrl,
+        seller: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+        },
+      }
+    : {
+        '@type': 'AggregateOffer',
+        priceCurrency: 'VND',
+        lowPrice,
+        highPrice,
+        offerCount: prices.length,
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        url: canonicalUrl,
+        seller: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+        },
+      }
 
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: seoDescription,
+    sku: String(product.id),
+    url: canonicalUrl,
+    category: product.category.name,
     image: product.variants.flatMap((v) => v.images),
     brand: {
       '@type': 'Brand',
       name: product.brand.name,
     },
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: 'VND',
-      price: product.unit_price,
-      availability: 'https://schema.org/InStock',
-      url: canonicalUrl,
-      seller: {
-        '@type': 'Organization',
-        name: SITE_NAME,
-      },
-    },
+    offers,
   }
 
   useJsonLd(productSchema)

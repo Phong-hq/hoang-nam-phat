@@ -26,6 +26,8 @@ export interface JsonLdProduct {
   name: string
   description: string
   sku: string
+  url?: string
+  category?: string
   image: string | string[]
   brand: {
     '@type': string
@@ -34,8 +36,12 @@ export interface JsonLdProduct {
   offers: {
     '@type': string
     priceCurrency: string
-    price: number
+    price?: number
+    lowPrice?: number
+    highPrice?: number
+    offerCount?: number
     availability: string
+    itemCondition?: string
     url?: string
     seller?: {
       '@type': string

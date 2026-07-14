@@ -1,7 +1,7 @@
 <template>
   <section class="py-14 bg-white">
     <div class="container mx-auto px-4 max-w-screen-xl">
-      <BaseSectionHeader label="Được mua nhiều nhất" title="Sản phẩm bán chạy" to="/products" />
+      <BaseSectionHeader label="Được mua nhiều nhất" title="Sản phẩm bán chạy" to="" />
 
       <!-- Swiper -->
       <div class="relative">

@@ -17,7 +17,7 @@
     </div>
 
     <!-- Same content as home -->
-    <HomeCategories />
+    <!-- <HomeCategories />
     <HomeBestSellers />
     <HomeFlashSale />
     <HomeCameraSection />
@@ -29,7 +29,7 @@
     <HomeTrustFeatures />
     <HomeReviews />
     <HomeBlog />
-    <HomeNewsletter />
+    <HomeNewsletter /> -->
   </div>
 </template>
 

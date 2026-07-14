@@ -10,6 +10,7 @@
 
       <ClientOnly>
         <Swiper
+          v-if="brands.length"
           :modules="swiperModules"
           :slides-per-view="'auto'"
           :space-between="12"
@@ -21,9 +22,9 @@
           :allow-touch-move="false"
           class="brands-swiper"
         >
-          <SwiperSlide v-for="brand in brands" :key="brand.name" style="width: 140px;">
+          <SwiperSlide v-for="brand in brands" :key="brand.id" style="width: 140px;">
             <NuxtLink
-              :to="`/products?brand=${brand.slug}`"
+              :to="`/products?brand=${brand.code}`"
               class="flex flex-col items-center gap-2 p-4 rounded-xl border border-base-200 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
             >
               <div class="w-16 h-10 flex items-center justify-center">
@@ -39,8 +40,8 @@
           <div class="flex gap-3 overflow-x-auto pb-2">
             <NuxtLink
               v-for="brand in brands"
-              :key="brand.name"
-              :to="`/products?brand=${brand.slug}`"
+              :key="brand.id"
+              :to="`/products?brand=${brand.code}`"
               class="flex-shrink-0 w-[140px] flex flex-col items-center gap-2 p-4 rounded-xl border border-base-200 bg-white"
             >
               <span class="text-sm font-extrabold text-base-content/50">{{ brand.name }}</span>
@@ -53,30 +54,16 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, FreeMode } from 'swiper/modules'
+import { useBrandStore } from '~/stores/brand.store'
 
 const swiperModules = [Autoplay, FreeMode]
 const autoplay = { delay: 0, disableOnInteraction: false }
 
-const brands = [
-  { name: 'MikroTik',    slug: 'mikrotik' },
-  { name: 'TP-Link',     slug: 'tplink' },
-  { name: 'Hikvision',   slug: 'hikvision' },
-  { name: 'Dahua',       slug: 'dahua' },
-  { name: 'Cisco',       slug: 'cisco' },
-  { name: 'Ubiquiti',    slug: 'ubiquiti' },
-  { name: 'Ruijie',      slug: 'ruijie' },
-  { name: 'Grandstream', slug: 'grandstream' },
-  { name: 'Dell',        slug: 'dell' },
-  { name: 'HP',          slug: 'hp' },
-  { name: 'Synology',    slug: 'synology' },
-  { name: 'QNAP',        slug: 'qnap' },
-  { name: 'Aruba',       slug: 'aruba' },
-  { name: 'Ezviz',       slug: 'ezviz' },
-  { name: 'Lenovo',      slug: 'lenovo' },
-  { name: 'Imou',        slug: 'imou' },
-]
+const brandStore = useBrandStore()
+const { brands } = storeToRefs(brandStore)
 </script>
 
 <style>
