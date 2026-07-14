@@ -4,10 +4,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { categoryService } from '~/services/category.service'
-import type { ProductCategory } from '~/types'
+import type { ProductCategoryMenuItem } from '~/types'
 
 export const useCategoryStore = defineStore('category', () => {
-  const categories = ref<ProductCategory[]>([])
+  const categories = ref<ProductCategoryMenuItem[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -15,7 +15,7 @@ export const useCategoryStore = defineStore('category', () => {
     isLoading.value = true
     error.value = null
     try {
-      categories.value = await categoryService.getList()
+      categories.value = await categoryService.getMenu()
     } catch {
       error.value = 'Không thể tải danh mục'
     } finally {

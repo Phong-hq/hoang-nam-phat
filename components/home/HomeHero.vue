@@ -16,7 +16,11 @@
               Danh mục sản phẩm
             </div>
             <ul class="flex-1 py-1 overflow-hidden">
-              <li v-for="cat in categoryStore.categories" :key="cat.id" @mouseenter="hoveredCat = cat">
+              <li
+                v-for="cat in categoryStore.categories"
+                :key="cat.id"
+                @mouseenter="hoveredCat = cat.latest_products.length ? cat : null"
+              >
                 <NuxtLink
                   :to="`/products?category=${cat.slug}`"
                   :class="[
@@ -27,13 +31,14 @@
                   ]"
                 >
                   <span class="flex items-center gap-2 min-w-0">
-                    <span class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary">
-                      <img v-if="cat.icon" :src="cat.icon" alt="" class="w-full h-full object-contain" />
-                      <span v-else v-html="defaultCategoryIcon" />
-                    </span>
+                    <span
+                      class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary"
+                      v-html="defaultCategoryIcon"
+                    />
                     <span class="truncate font-medium">{{ cat.name }}</span>
                   </span>
                   <svg
+                    v-if="cat.latest_products.length"
                     class="w-3.5 h-3.5 flex-shrink-0"
                     :class="hoveredCat?.id === cat.id ? 'opacity-80' : 'opacity-25'"
                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
@@ -59,21 +64,21 @@
               class="absolute top-0 left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
             >
               <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <span class="w-4 h-4 flex items-center justify-center text-primary">
-                  <img v-if="hoveredCat.icon" :src="hoveredCat.icon" alt="" class="w-full h-full object-contain" />
-                  <span v-else v-html="defaultCategoryIcon" />
-                </span>
+                <span
+                  class="w-4 h-4 flex items-center justify-center text-primary"
+                  v-html="defaultCategoryIcon"
+                />
                 {{ hoveredCat.name }}
               </p>
               <div class="grid grid-cols-1 gap-0.5">
                 <NuxtLink
-                  v-for="brand in hoveredCat.brands"
-                  :key="brand.id"
-                  :to="`/products?category=${hoveredCat.slug}&brand=${slugify(brand.name)}`"
-                  class="flex items-center gap-1.5 px-2.5 py-2 text-sm text-gray-600 hover:bg-primary/5 hover:text-primary rounded-lg transition-colors"
+                  v-for="item in hoveredCat.latest_products"
+                  :key="item.id"
+                  :to="`/products/${item.slug}`"
+                  class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <span class="w-1.5 h-1.5 rounded-full bg-primary/30 flex-shrink-0" />
-                  <span class="truncate">{{ brand.name }}</span>
+                  <span class="text-sm text-gray-700 truncate">{{ item.name }}</span>
+                  <span class="text-xs font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.unit_price) }}</span>
                 </NuxtLink>
               </div>
               <div class="border-t border-gray-100 mt-3 pt-3">
@@ -203,10 +208,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useCategoryStore } from '~/stores/category.store'
-import type { ProductCategory } from '~/types'
+import { formatCurrency } from '~/utils'
+import type { ProductCategoryMenuItem } from '~/types'
 
 const categoryStore = useCategoryStore()
-const hoveredCat = ref<ProductCategory | null>(null)
+const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 
 const defaultCategoryIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
   <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />

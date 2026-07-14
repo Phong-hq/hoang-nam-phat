@@ -256,9 +256,9 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { useProduct } from '~/composables/useProduct'
-import type { ProductListItem } from '~/types'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useProductCatalog } from '~/composables/useProductCatalog'
+import type { ProductCatalogItem } from '~/types'
 
 const isMenuOpen = ref(false)
 const headerRoot = ref<HTMLElement | null>(null)
@@ -280,30 +280,39 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
+  if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout)
 })
 
-// Search dropdown -- UI preview: shows the full product list regardless of
-// the typed keyword, so the design can be reviewed before real search is wired up.
-const { fetchProducts } = useProduct()
+// Search dropdown -- calls the product catalog service directly with the
+// typed keyword; no store needed since results aren't shared across the app.
+const { fetchProducts } = useProductCatalog()
 
 const searchQuery = ref('')
 const isSearchOpen = ref(false)
 const isSearchLoading = ref(false)
-const searchResults = ref<ProductListItem[]>([])
+const searchResults = ref<ProductCatalogItem[]>([])
 let searchBlurTimeout: ReturnType<typeof setTimeout> | null = null
+let searchDebounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-async function openSearch() {
-  isSearchOpen.value = true
-  if (searchResults.value.length > 0) return
-
+async function runSearch() {
   isSearchLoading.value = true
   try {
-    const res = await fetchProducts()
-    searchResults.value = res.data
+    searchResults.value = await fetchProducts({ name: searchQuery.value.trim() })
   } finally {
     isSearchLoading.value = false
   }
 }
+
+function openSearch() {
+  isSearchOpen.value = true
+  if (searchResults.value.length === 0) runSearch()
+}
+
+watch(searchQuery, () => {
+  if (!isSearchOpen.value) return
+  if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout)
+  searchDebounceTimeout = setTimeout(runSearch, 300)
+})
 
 function scheduleCloseSearch() {
   searchBlurTimeout = setTimeout(() => {

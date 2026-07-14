@@ -25,3 +25,23 @@ export interface ProductCategory {
   status: number
   slug: string
 }
+
+export interface ProductCategoryMenuLatestProduct {
+  id: number
+  name: string
+  slug: string
+  unit_price: number
+  category_id: number
+}
+
+export interface ProductCategoryMenuItem {
+  id: number
+  name: string
+  code: string
+  created_at: string
+  updated_at: string
+  brands: CategoryBrand[]
+  status: number
+  slug: string
+  latest_products: ProductCategoryMenuLatestProduct[]
+}

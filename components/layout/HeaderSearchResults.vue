@@ -17,8 +17,8 @@
       >
         <div class="w-12 h-12 flex-shrink-0 rounded-md bg-gray-100 overflow-hidden flex items-center justify-center">
           <img
-            v-if="!brokenImages.has(item.id)"
-            :src="item.thumbnail"
+            v-if="item.variants[0]?.images[0] && !brokenImages.has(item.id)"
+            :src="item.variants[0].images[0]"
             :alt="item.name"
             class="w-full h-full object-contain"
             @error="brokenImages.add(item.id)"
@@ -33,10 +33,10 @@
           </svg>
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-xs text-gray-400">{{ item.brand }}</p>
+          <p class="text-xs text-gray-400">{{ item.brand.name }}</p>
           <p class="text-sm text-gray-800 truncate">{{ item.name }}</p>
         </div>
-        <p class="text-sm font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.price) }}</p>
+        <p class="text-sm font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.unit_price) }}</p>
       </NuxtLink>
     </template>
 
@@ -49,11 +49,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { formatCurrency } from '~/utils'
-import type { ProductListItem } from '~/types'
+import type { ProductCatalogItem } from '~/types'
 
 defineProps<{
   isLoading: boolean
-  results: ProductListItem[]
+  results: ProductCatalogItem[]
 }>()
 
 const emit = defineEmits<{ select: [] }>()
