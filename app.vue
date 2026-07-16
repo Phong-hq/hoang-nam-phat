@@ -1,10 +1,19 @@
 ﻿<script setup lang="ts">
 const categoryStore = useCategoryStore()
 const brandStore = useBrandStore()
+const businessStore = useBusinessStore()
+const socialStore = useSocialStore()
 const isReady = ref(false)
 
+useBusinessSeo()
+
 onMounted(async () => {
-  await Promise.all([categoryStore.fetchCategories(), brandStore.fetchBrands()])
+  brandStore.fetchBrands()
+  await Promise.all([
+    categoryStore.fetchCategories(),
+    businessStore.fetchBusinessInfo(),
+    socialStore.fetchSocialLinks(),
+  ])
   isReady.value = true
 })
 </script>

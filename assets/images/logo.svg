@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="black"/>
+
+  <!-- LEFT : thấp hơn, chiều cao đã giảm -->
+  <path id="left"
+        d="M165 208 L212 167 L212 304 L165 345 Z"
+        fill="#FF1020"/>
+
+  <!-- CENTER TOP -->
+  <path id="center-top"
+        d="M232 150 L280 109 L280 237 L232 237 Z"
+        fill="#FF1020"/>
+
+  <!-- CENTER BOTTOM -->
+  <path id="center-bottom"
+        d="M232 260 L280 260 L280 345 L232 386 Z"
+        fill="#FF1020"/>
+
+  <!-- RIGHT : nâng lên để góc dưới phải thẳng hàng theo đường chéo -->
+  <path id="right"
+        d="M300 190 L347 149 L347 286 L300 327 Z"
+        fill="#FF1020"/>
+</svg>

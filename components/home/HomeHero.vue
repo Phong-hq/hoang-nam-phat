@@ -19,7 +19,7 @@
               <li
                 v-for="cat in categoryStore.categories"
                 :key="cat.id"
-                @mouseenter="hoveredCat = cat.latest_products.length ? cat : null"
+                @mouseenter="onCatHover(cat, $event)"
               >
                 <NuxtLink
                   :to="`/products?category=${cat.slug}`"
@@ -61,7 +61,8 @@
           >
             <div
               v-if="hoveredCat"
-              class="absolute top-0 left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
+              class="absolute left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
+              :style="{ top: hoveredTop + 'px' }"
             >
               <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <span
@@ -213,6 +214,16 @@ import type { ProductCategoryMenuItem } from '~/types'
 
 const categoryStore = useCategoryStore()
 const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
+const hoveredTop = ref(0)
+
+function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
+  if (!cat.latest_products.length) {
+    hoveredCat.value = null
+    return
+  }
+  hoveredCat.value = cat
+  hoveredTop.value = (event.currentTarget as HTMLElement).offsetTop
+}
 
 const defaultCategoryIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
   <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />

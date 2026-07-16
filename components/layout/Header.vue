@@ -7,29 +7,29 @@
         <span class="flex items-center gap-8 pr-8 shrink-0 text-red-200">
           <span>Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình</span>
           <span aria-hidden="true">•</span>
-          <span>Giờ làm việc: 8:00 - 18:00</span>
+          <span>Giờ làm việc: {{ workingHourDisplay }}</span>
           <span aria-hidden="true">•</span>
-          <span>Email: info.hoangnamphat@gmail.com</span>
+          <span>Email: {{ emailDisplay }}</span>
           <span aria-hidden="true">•</span>
-          <a href="tel:0937813788" class="flex items-center gap-1 sm:gap-1.5 font-semibold hover:text-yellow-300 transition-colors">
+          <a :href="phoneHref" class="flex items-center gap-1 sm:gap-1.5 font-semibold hover:text-yellow-300 transition-colors">
             <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
             </svg>
-            0937.813.788 – Mua hàng online
+            {{ phoneDisplay }} – Mua hàng online
           </a>
         </span>
         <span class="flex items-center gap-8 pr-8 shrink-0 text-red-200" aria-hidden="true">
           <span>Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình</span>
           <span>•</span>
-          <span>Giờ làm việc: 8:00 - 18:00</span>
+          <span>Giờ làm việc: {{ workingHourDisplay }}</span>
           <span>•</span>
-          <span>Email: info.hoangnamphat@gmail.com</span>
+          <span>Email: {{ emailDisplay }}</span>
           <span>•</span>
           <span class="flex items-center gap-1 sm:gap-1.5 font-semibold">
             <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
             </svg>
-            0937.813.788 – Mua hàng online
+            {{ phoneDisplay }} – Mua hàng online
           </span>
         </span>
       </div>
@@ -47,12 +47,12 @@
             <img
               src="~/assets/images/hnp.png"
               alt="Hoàng Nam Phát"
-              class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-36 w-auto object-contain"
+              class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-24 w-auto object-contain"
             />
           </NuxtLink>
 
           <!-- Search bar: inline, centered, desktop/tablet only -->
-          <div class="hidden md:block relative flex-1 min-w-0 max-w-[60%] mx-auto">
+          <div class="hidden md:block relative flex-1 min-w-0 max-w-[55%] mx-auto">
             <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
               <input
                 v-model="searchQuery"
@@ -113,7 +113,7 @@
             </NuxtLink>
 
             <!-- Hotline -->
-            <a href="tel:0937813788" class="hidden xl:flex items-center gap-2.5">
+            <a :href="phoneHref" class="hidden xl:flex items-center gap-2.5">
               <div class="bg-primary/10 rounded-full p-2">
                 <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
@@ -121,7 +121,7 @@
               </div>
               <div class="text-left">
                 <p class="text-xs text-gray-400 leading-none">Hotline hỗ trợ</p>
-                <p class="text-base font-bold text-primary leading-tight">0937.813.788</p>
+                <p class="text-base font-bold text-primary leading-tight">{{ phoneDisplay }}</p>
               </div>
             </a>
 
@@ -239,13 +239,13 @@
           </ul>
           <div class="border-t border-gray-100 p-4">
             <a
-              href="tel:0937813788"
+              :href="phoneHref"
               class="flex items-center justify-center gap-2 bg-primary text-white font-semibold rounded-lg py-3 hover:bg-primary/90 transition-colors"
             >
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
               </svg>
-              Gọi ngay: 0937.813.788
+              Gọi ngay: {{ phoneDisplay }}
             </a>
           </div>
         </aside>
@@ -256,8 +256,10 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useProductCatalog } from '~/composables/useProductCatalog'
+import { useBusinessStore } from '~/stores/business.store'
 import type { ProductCatalogItem } from '~/types'
 
 const isMenuOpen = ref(false)
@@ -276,6 +278,20 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(updateHeaderHeight)
   resizeObserver.observe(headerRoot.value)
 })
+
+// Business info -- populated at app startup (see app.vue); fetch here too
+// as a guard in case this component ever mounts before that.
+const businessStore = useBusinessStore()
+const { businessInfo } = storeToRefs(businessStore)
+
+onMounted(() => {
+  businessStore.fetchBusinessInfo()
+})
+
+const workingHourDisplay = computed(() => businessInfo.value?.working_hour ?? '8:00 - 18:00')
+const emailDisplay = computed(() => businessInfo.value?.email ?? 'info.hoangnamphat@gmail.com')
+const phoneDisplay = computed(() => businessInfo.value?.phone?.[0] ?? '0937.813.788')
+const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937813788').replace(/\D/g, '')}`)
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
