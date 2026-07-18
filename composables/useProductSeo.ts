@@ -74,7 +74,7 @@ export function useProductSeo(product: ProductDetail) {
     sku: String(product.id),
     url: canonicalUrl,
     category: product.category.name,
-    image: product.variants.flatMap((v) => v.images),
+    // image: product?.variants?.flatMap((v) => v.images),
     brand: {
       '@type': 'Brand',
       name: product.brand.name,

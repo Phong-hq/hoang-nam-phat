@@ -28,7 +28,7 @@
         enter-from-class="opacity-0 scale-95"
         enter-to-class="opacity-100 scale-100"
       >
-        <div v-if="isSuccess && orderResult" class="max-w-lg mx-auto">
+        <div v-if="isSuccess" class="max-w-lg mx-auto">
           <div class="bg-white rounded-2xl shadow-sm border border-base-200 p-8 text-center">
             <div class="w-16 h-16 bg-success/15 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-8 h-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -38,14 +38,8 @@
             <h2 class="text-2xl font-extrabold text-base-content mb-2">Đặt hàng thành công!</h2>
             <p class="text-base-content/60 text-sm mb-4">Cảm ơn bạn đã tin tưởng Hoàng Nam Phát.</p>
 
-            <div class="bg-base-50 rounded-xl px-6 py-4 mb-6 border border-base-200">
-              <p class="text-xs text-base-content/50 mb-1">Mã đơn hàng của bạn</p>
-              <p class="text-lg font-extrabold text-primary tracking-widest">{{ orderResult.orderId }}</p>
-            </div>
-
             <p class="text-sm text-base-content/60 mb-6 leading-relaxed">
-              Chúng tôi sẽ gọi xác nhận đơn hàng trong vòng <strong>30 phút</strong>.
-              Thông tin đơn hàng sẽ được gửi về email của bạn.
+              Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận đơn hàng.
             </p>
 
             <div class="flex flex-col sm:flex-row gap-3">
@@ -74,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-const { isSuccess, orderResult } = useCheckout()
+const { isSuccess } = useCheckout()
 
 useSeo({
   title: 'Giỏ hàng',
