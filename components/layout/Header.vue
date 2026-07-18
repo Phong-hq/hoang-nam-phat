@@ -92,7 +92,7 @@
 
             <!-- Cart -->
             <NuxtLink to="/cart" class="flex items-center gap-2 group">
-              <div class="relative">
+              <div class="relative" :class="{ 'animate-cart-bump': isCartBumping }">
                 <svg
                   class="w-6 h-6 md:w-7 md:h-7 text-primary"
                   fill="none"
@@ -102,13 +102,19 @@
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
-                  0
-                </span>
+                <Transition name="cart-count">
+                  <span
+                    v-if="totalQuantity > 0"
+                    :key="totalQuantity"
+                    class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none"
+                  >
+                    {{ totalQuantity }}
+                  </span>
+                </Transition>
               </div>
               <div class="hidden lg:block text-left">
                 <p class="text-xs text-gray-400 leading-none">Giỏ hàng</p>
-                <p class="text-base font-bold text-gray-800 leading-tight">0₫</p>
+                <p class="text-base font-bold text-gray-800 leading-tight">{{ formatCurrency(subtotal) }}</p>
               </div>
             </NuxtLink>
 
@@ -260,7 +266,26 @@ import { onBeforeUnmount, onMounted, ref, watch, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useBusinessStore } from '~/stores/business.store'
+import { useCartStore } from '~/stores/cart.store'
+import { formatCurrency } from '~/utils'
 import type { ProductCatalogItem } from '~/types'
+
+const { totalQuantity, subtotal } = storeToRefs(useCartStore())
+
+const isCartBumping = ref(false)
+let cartBumpTimeout: ReturnType<typeof setTimeout> | null = null
+
+watch(totalQuantity, (newQty, oldQty) => {
+  if (newQty <= oldQty) return
+  isCartBumping.value = false
+  requestAnimationFrame(() => {
+    isCartBumping.value = true
+    if (cartBumpTimeout) clearTimeout(cartBumpTimeout)
+    cartBumpTimeout = setTimeout(() => {
+      isCartBumping.value = false
+    }, 400)
+  })
+})
 
 const isMenuOpen = ref(false)
 const headerRoot = ref<HTMLElement | null>(null)
@@ -297,6 +322,7 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
   if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout)
+  if (cartBumpTimeout) clearTimeout(cartBumpTimeout)
 })
 
 // Search dropdown -- calls the product catalog service directly with the
@@ -379,5 +405,38 @@ const navItems = [
 .slide-enter-from,
 .slide-leave-to {
   transform: translateX(-100%);
+}
+
+@keyframes cart-bump {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.35) rotate(-8deg);
+  }
+  60% {
+    transform: scale(0.95) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+.animate-cart-bump {
+  animation: cart-bump 0.4s ease;
+}
+
+.cart-count-enter-active {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.cart-count-leave-active {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.cart-count-enter-from {
+  transform: scale(0);
+  opacity: 0;
+}
+.cart-count-leave-to {
+  transform: scale(0);
+  opacity: 0;
 }
 </style>

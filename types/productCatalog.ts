@@ -49,6 +49,7 @@ export interface ProductCatalogItem {
   name: string
   slug: string
   unit_price: number
+  compare_price: number | null
   brand: ProductBrand
   category: ProductCategorySummary
   product_options: ProductOption[]
@@ -67,6 +68,9 @@ export interface ProductQueryParams {
   keyword?: string
   brand_slug?: string
   category_slug?: string
+  category_id?: string
+  brand_id?: string
+  ids?: string
   min_price?: number
   max_price?: number
   tags?: string

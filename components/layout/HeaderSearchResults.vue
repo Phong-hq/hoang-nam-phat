@@ -36,7 +36,12 @@
           <p class="text-xs text-gray-400">{{ item.brand.name }}</p>
           <p class="text-sm text-gray-800 truncate">{{ item.name }}</p>
         </div>
-        <p class="text-sm font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.unit_price) }}</p>
+        <div class="text-right whitespace-nowrap">
+          <p v-if="item.compare_price && item.compare_price > item.unit_price" class="text-xs text-gray-400 line-through">
+            {{ formatCurrency(item.compare_price) }}
+          </p>
+          <p class="text-sm font-bold text-primary">{{ formatCurrency(item.unit_price) }}</p>
+        </div>
       </NuxtLink>
     </template>
 

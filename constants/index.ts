@@ -30,5 +30,4 @@ export const API_ROUTES = {
   PRODUCTS: '/api/products',
   PRODUCT: (slug: string) => `/api/products/${slug}`,
   CATEGORIES: '/api/categories',
-  CHECKOUT: '/api/checkout',
 } as const

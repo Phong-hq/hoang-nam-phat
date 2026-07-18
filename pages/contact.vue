@@ -32,31 +32,31 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Điện thoại / Hotline</p>
-              <a href="tel:0937813788" class="text-lg font-bold text-gray-800 hover:text-primary transition-colors block">
-                0937.813.788
+              <a :href="`tel:${phoneRaw}`" class="text-lg font-bold text-gray-800 hover:text-primary transition-colors block">
+                {{ phoneDisplay }}
               </a>
               <p class="text-sm text-gray-500 mt-0.5">Thứ 2 – Thứ 7: 8:00 – 18:00</p>
             </div>
           </div>
 
           <!-- Zalo -->
-          <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
+          <!-- <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
             <div class="bg-blue-100 rounded-xl p-3 flex-shrink-0">
               <span class="text-blue-600 text-sm font-extrabold">Zalo</span>
             </div>
             <div>
               <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Nhắn tin Zalo</p>
               <a
-                href="https://zalo.me/0937813788"
+                :href="zaloHref"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-lg font-bold text-gray-800 hover:text-primary transition-colors block"
               >
-                0937.813.788
+                {{ phoneDisplay }}
               </a>
               <p class="text-sm text-gray-500 mt-0.5">Phản hồi trong vòng 15 phút</p>
             </div>
-          </div>
+          </div> -->
 
           <!-- Email -->
           <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
@@ -67,8 +67,8 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Email</p>
-              <a href="mailto:info@hoangnamphat.vn" class="text-base font-bold text-gray-800 hover:text-primary transition-colors block break-all">
-                info@hoangnamphat.vn
+              <a :href="`mailto:${emailValue}`" class="text-base font-bold text-gray-800 hover:text-primary transition-colors block break-all">
+                {{ emailValue }}
               </a>
               <p class="text-sm text-gray-500 mt-0.5">Phản hồi trong 1–2 giờ làm việc</p>
             </div>
@@ -84,29 +84,33 @@
             </div>
             <div>
               <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Địa chỉ showroom</p>
-              <p class="text-base font-bold text-gray-800">745/62/2 Quang Trung</p>
-              <p class="text-sm text-gray-600">Phường An Hội Tây, Quận Ninh Kiều</p>
-              <p class="text-sm text-gray-600">Thành phố Cần Thơ</p>
+              <p class="text-base font-bold text-gray-800">{{ addressParts[0] }}</p>
+              <p v-for="(part, i) in addressParts.slice(1)" :key="i" class="text-sm text-gray-600">{{ part }}</p>
             </div>
           </div>
 
           <!-- Business hours -->
           <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6">
             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Giờ làm việc</p>
-            <ul class="space-y-2 text-sm">
-              <li class="flex justify-between">
-                <span class="text-gray-600">Thứ 2 – Thứ 6</span>
-                <span class="font-semibold text-gray-800">08:00 – 18:00</span>
-              </li>
-              <li class="flex justify-between">
-                <span class="text-gray-600">Thứ 7</span>
-                <span class="font-semibold text-gray-800">08:00 – 17:00</span>
-              </li>
-              <li class="flex justify-between">
-                <span class="text-gray-600">Chủ nhật</span>
-                <span class="font-semibold text-red-500">Nghỉ</span>
-              </li>
-            </ul>
+            <p class="text-sm font-semibold text-gray-800">{{ workingHourDisplay }}</p>
+          </div>
+
+          <!-- Social links -->
+          <div v-if="socialItems.length" class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6">
+            <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Kết nối mạng xã hội</p>
+            <div class="flex items-center gap-3">
+              <a v-for="social in socialItems" :key="social.label"
+                :href="social.href" target="_blank" rel="noopener noreferrer" :title="social.label"
+                class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"
+              >
+                <template v-if="social.type === 'text'">
+                  <span class="text-xs font-extrabold">{{ social.label }}</span>
+                </template>
+                <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path :d="social.icon" />
+                </svg>
+              </a>
+            </div>
           </div>
 
         </div>
@@ -236,10 +240,10 @@
       <div class="bg-white rounded-2xl border border-gray-200 shadow overflow-hidden mt-4">
         <div class="p-5 border-b border-gray-100">
           <h2 class="text-base font-bold text-gray-800">Bản đồ</h2>
-          <p class="text-sm text-gray-500">745/62/2 Quang Trung, P. An Hội Tây, Q. Ninh Kiều, TP. Cần Thơ</p>
+          <p class="text-sm text-gray-500">{{ addressParts.join(', ') }}</p>
         </div>
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3928.841080097063!2d105.78200747498374!3d10.028521890097757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0895a41c9c3f9%3A0x22d2742d8a0aecac!2zUXVhbmcgVHJ1bmcsIE5pbmggS2nhu4F1LCBD4bqnbiBUaMah!5e0!3m2!1svi!2svn!4v1718000000000!5m2!1svi!2svn"
+          :src="mapEmbedUrl"
           width="100%"
           height="400"
           style="border:0;"
@@ -262,7 +266,7 @@
           </div>
           <div class="flex items-center gap-4 flex-shrink-0">
             <a
-              href="tel:0937813788"
+              :href="`tel:${phoneRaw}`"
               class="bg-white text-primary font-bold text-sm px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -271,7 +275,7 @@
               Gọi ngay
             </a>
             <a
-              href="https://zalo.me/0937813788"
+              :href="zaloHref"
               target="_blank"
               rel="noopener noreferrer"
               class="bg-blue-500 hover:bg-blue-600 text-white font-bold text-sm px-6 py-3 rounded-xl transition-colors"
@@ -287,6 +291,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useBusinessStore } from '~/stores/business.store'
+import { useSocialStore } from '~/stores/social.store'
+
 useSeo({
   title: 'Liên hệ',
   description:
@@ -302,6 +311,53 @@ const SUBJECT_OPTIONS = [
 ]
 
 const { createFeedback } = useFeedback()
+
+const businessStore = useBusinessStore()
+const { businessInfo } = storeToRefs(businessStore)
+
+const socialStore = useSocialStore()
+const { socialLinks: socialRecord } = storeToRefs(socialStore)
+
+onMounted(() => {
+  businessStore.fetchBusinessInfo()
+  socialStore.fetchSocialLinks()
+})
+
+const phoneDisplay = computed(() => businessInfo.value?.phone?.[0] ?? '0937.813.788')
+const phoneRaw = computed(() => phoneDisplay.value.replace(/\D/g, ''))
+const zaloHref = computed(() => socialRecord.value?.zalo ?? `https://zalo.me/${phoneRaw.value}`)
+const emailValue = computed(() => businessInfo.value?.email ?? 'info@hoangnamphat.vn')
+const workingHourDisplay = computed(
+  () => businessInfo.value?.working_hour ?? '08:00 – 18:00 (Thứ 2 – Thứ 7), Chủ nhật nghỉ',
+)
+const addressParts = computed(() =>
+  (businessInfo.value?.address ?? '745/62/2 Quang Trung, Phường An Hội Tây, Quận Ninh Kiều, Thành phố Cần Thơ')
+    .split(',')
+    .map(part => part.trim()),
+)
+const mapEmbedUrl = computed(
+  () =>
+    businessInfo.value?.map,
+)
+
+const socialItems = computed(() => {
+  const items = [
+    { label: 'Zalo', href: socialRecord.value?.zalo, type: 'text' as const },
+    {
+      label: 'TikTok', href: socialRecord.value?.tiktok, type: 'svg' as const,
+      icon: 'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z',
+    },
+    {
+      label: 'YouTube', href: socialRecord.value?.youtube, type: 'svg' as const,
+      icon: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z',
+    },
+    {
+      label: 'Instagram', href: socialRecord.value?.instagram, type: 'svg' as const,
+      icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z',
+    },
+  ]
+  return items.filter((item): item is typeof item & { href: string } => Boolean(item.href))
+})
 
 const form = reactive({
   name: '',
@@ -320,14 +376,14 @@ async function handleSubmit() {
   submitting.value = true
   errorMessage.value = ''
   try {
-    const subjectLabel = SUBJECT_OPTIONS.find((s) => s.value === form.subject)?.label ?? form.subject
     await createFeedback({
-      subject: subjectLabel,
+      title: 'Customer Feedback Online',
       fullname: form.name,
       phone: form.phone,
       email: form.email,
       content: form.message,
       is_confirm_term: agreeTerms.value ? 1 : 0,
+      subject: form.subject,
     })
     submitted.value = true
     form.name = ''

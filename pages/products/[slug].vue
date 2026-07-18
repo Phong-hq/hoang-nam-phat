@@ -51,6 +51,12 @@
 
               <div class="flex items-baseline gap-3">
                 <span class="text-3xl font-bold text-primary">{{ formatCurrency(selectedVariant?.unit_price ?? product.unit_price) }}</span>
+                <span
+                  v-if="product.compare_price && product.compare_price > (selectedVariant?.unit_price ?? product.unit_price)"
+                  class="text-lg text-base-content/40 line-through"
+                >
+                  {{ formatCurrency(product.compare_price) }}
+                </span>
               </div>
 
               <p v-if="product.short_description" class="text-base-content/70 text-sm leading-relaxed line-clamp-3">
@@ -87,7 +93,7 @@
 
               <!-- CTAs -->
               <div class="flex gap-3 pt-1">
-                <BaseButton variant="primary" size="lg" class="flex-1">
+                <BaseButton variant="primary" size="lg" class="flex-1" @click="handleAddToCart">
                   <svg class="w-5 h-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
@@ -178,6 +184,9 @@
 import { computed, ref, watch } from 'vue'
 import { formatCurrency } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
+import { useCartStore } from '~/stores/cart.store'
+import { useUiStore } from '~/stores/ui.store'
+import { useProductStore } from '~/stores/product.store'
 import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
 
@@ -185,10 +194,28 @@ const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
 const { fetchProductDetail } = useProductCatalog()
+const productStore = useProductStore()
 
 const { data: product, pending, error } = await useAsyncData(
   `product-${slug.value}`,
-  () => fetchProductDetail(slug.value).catch(() => null),
+  async () => {
+    const detail = await fetchProductDetail(slug.value).catch(() => null)
+    if (!detail) return null
+
+    // The /view detail endpoint can return stale variant data; the product
+    // list endpoint (already loaded in productStore when browsing) is the
+    // source of truth for variants/pricing, so prefer it when available.
+    const listMatch = productStore.products.find((p) => p.slug === detail.slug)
+    if (!listMatch) return detail
+
+    return {
+      ...detail,
+      unit_price: listMatch.unit_price,
+      compare_price: listMatch.compare_price,
+      product_options: listMatch.product_options,
+      variants: listMatch.variants,
+    }
+  },
   { watch: [slug] },
 )
 
@@ -236,4 +263,23 @@ const sidebarProducts = computed<ProductCatalogItem[]>(() => {
   if (!similarData.value || !product.value) return []
   return similarData.value.filter((p) => p.slug !== product.value!.slug).slice(0, 6)
 })
+
+const cartStore = useCartStore()
+const uiStore = useUiStore()
+
+function handleAddToCart() {
+  if (!product.value) return
+  const variant = selectedVariant.value
+
+  cartStore.addItem({
+    id: variant?.id ?? product.value.id,
+    productId: product.value.id,
+    name: product.value.name,
+    thumbnail: variant?.images[0] ?? '',
+    price: variant?.unit_price ?? product.value.unit_price,
+    slug: product.value.slug,
+  })
+
+  uiStore.addToast({ type: 'success', message: 'Đã thêm sản phẩm vào giỏ hàng' })
+}
 </script>

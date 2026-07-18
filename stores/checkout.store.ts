@@ -1,40 +1,19 @@
-import { submitOrder } from '~/services/checkout.service'
+import { orderService } from '~/services/order.service'
 import { validateCheckout, isCheckoutValid } from '~/validators/checkout.validator'
-import type { CartItem, CheckoutFormData, CheckoutErrors, CheckoutStatus, OrderResult } from '~/types'
-
-const MOCK_CART: CartItem[] = [
-  {
-    id: 1,
-    productId: 1,
-    name: 'iPhone 16 Pro Max 256GB - Titan Đen',
-    thumbnail: '/images/products/iphone-16-pro-max.jpg',
-    price: 30000000,
-    originalPrice: 33000000,
-    discount: 9,
-    quantity: 1,
-    slug: 'iphone-16-pro-max',
-  },
-  {
-    id: 2,
-    productId: 2,
-    name: 'Samsung Galaxy S25 Ultra 512GB',
-    thumbnail: '/images/products/galaxy-s25-ultra.jpg',
-    price: 28000000,
-    originalPrice: 30000000,
-    discount: 7,
-    quantity: 1,
-    slug: 'samsung-galaxy-s25-ultra',
-  },
-]
+import { useCartStore } from '~/stores/cart.store'
+import type { CheckoutFormData, CheckoutErrors, CheckoutStatus, OrderResult, OrderCreateRequest } from '~/types'
 
 export const useCheckoutStore = defineStore('checkout', () => {
+  const cartStore = useCartStore()
   const form = reactive<CheckoutFormData>({
     gender: 'mr',
     fullName: '',
     email: '',
     phone: '',
     province: '',
+    provinceName: '',
     ward: '',
+    wardName: '',
     address: '',
     notes: '',
     invoiceRequested: false,
@@ -55,7 +34,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
     ) as CheckoutErrors
   })
 
-  const items = ref<CartItem[]>([...MOCK_CART])
+  const items = computed(() => cartStore.items)
   const status = ref<CheckoutStatus>('idle')
   const orderResult = ref<OrderResult | null>(null)
 
@@ -76,31 +55,49 @@ export const useCheckoutStore = defineStore('checkout', () => {
   }
 
   function updateQuantity(id: number, quantity: number) {
-    const item = items.value.find((i) => i.id === id)
-    if (item) item.quantity = Math.max(1, quantity)
+    cartStore.updateQuantity(id, Math.max(1, quantity))
   }
 
   function removeItem(id: number) {
-    items.value = items.value.filter((i) => i.id !== id)
+    cartStore.removeItem(id)
   }
 
   async function submit() {
     if (!validateAll() || !items.value.length) return
+console.log(form);
 
     status.value = 'submitting'
     try {
-      const result = await submitOrder({
-        form: { ...form },
-        items: items.value,
-        summary: {
-          subtotal: subtotal.value,
-          shippingFee: shippingFee.value,
-          discount: discount.value,
-          total: total.value,
-        },
+      const fullAddress = [form.address, form.wardName, form.provinceName].filter(Boolean).join(', ')
+      const address = JSON.stringify({
+        name: form.fullName,
+        phone: form.phone,
+        address: fullAddress,
       })
-      orderResult.value = result
+
+      const payload: OrderCreateRequest = {
+        carts: items.value.map((item) => ({
+          product_id: item.productId,
+          product_variant_id: item.id,
+          quantity: item.quantity,
+          unit_price: item.price,
+        })),
+        total_price: subtotal.value - discount.value,
+        discount: discount.value,
+        email: form.email,
+        note: form.notes,
+        shipping_address: address,
+        order_address: address,
+      }
+
+      const { order } = await orderService.create(payload)
+      orderResult.value = {
+        orderId: String(order.id),
+        status: 'success',
+        message: 'Đặt hàng thành công',
+      }
       status.value = 'success'
+      cartStore.clearCart()
     } catch {
       status.value = 'error'
     }

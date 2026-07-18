@@ -34,16 +34,6 @@
             <span v-if="false" class="text-base-content/40 font-bold text-2xl -mt-4">:</span>
           </div>
         </div>
-
-        <NuxtLink
-          to="/products?sale=true"
-          class="hidden sm:flex items-center gap-1 text-sm text-primary font-semibold hover:gap-2 transition-all duration-200"
-        >
-          Xem tất cả
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </NuxtLink>
       </div>
 
       <!-- Swiper -->
@@ -93,7 +83,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import { formatCurrency } from '~/utils'
-import type { FlashSaleApiRecord, FlashSaleProduct } from '~/types'
+import type { FlashSaleProduct, FlashSaleRecordWithPricing } from '~/types'
 import { useFlashSale } from '~/composables/useFlashSale'
 
 const swiper = ref<SwiperType | null>(null)
@@ -132,22 +122,24 @@ onMounted(() => {
 })
 onUnmounted(() => clearInterval(timer))
 
-function toFlashProduct(record: FlashSaleApiRecord): FlashSaleProduct {
-  const { product } = record
+function toFlashProduct(record: FlashSaleRecordWithPricing): FlashSaleProduct {
+  const { product, unitPrice, comparePrice } = record
+  const hasDiscount = comparePrice != null && comparePrice > unitPrice
   return {
     id: product.id,
+    slug: product.slug,
     name: product.name,
     brand: '',
-    price: product.unit_price,
-    originalPrice: product.unit_price,
-    discount: 0,
+    price: unitPrice,
+    originalPrice: hasDiscount ? comparePrice : undefined,
+    discount: hasDiscount ? Math.round(((comparePrice - unitPrice) / comparePrice) * 100) : undefined,
     soldPercent: 0,
     image: product.images[0],
   }
 }
 
 const { fetchFlashSaleProducts } = useFlashSale()
-const flashSaleRecords = ref<FlashSaleApiRecord[]>([])
+const flashSaleRecords = ref<FlashSaleRecordWithPricing[]>([])
 const products = computed(() => flashSaleRecords.value.map(toFlashProduct))
 
 onMounted(async () => {

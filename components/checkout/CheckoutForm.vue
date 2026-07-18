@@ -139,6 +139,12 @@ onMounted(fetchProvinces)
 
 watch(() => form.province, (code) => {
   form.ward = ''
+  form.wardName = ''
+  form.provinceName = provinceOptions.value.find((p) => p.value === code)?.label ?? ''
   fetchWards(code)
+})
+
+watch(() => form.ward, (code) => {
+  form.wardName = wardOptions.value.find((w) => w.value === code)?.label ?? ''
 })
 </script>

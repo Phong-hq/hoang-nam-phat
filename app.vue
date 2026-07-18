@@ -12,7 +12,6 @@ onMounted(async () => {
   await Promise.all([
     categoryStore.fetchCategories(),
     businessStore.fetchBusinessInfo(),
-    socialStore.fetchSocialLinks(),
   ])
   isReady.value = true
 })

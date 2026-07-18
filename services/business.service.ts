@@ -5,7 +5,7 @@
 import { httpClient } from '~/utils/httpClient'
 import type { ApiListResponse, BusinessInfoApiRecord } from '~/types'
 
-const BUSINESS_INFO_API_URL = '/api/v1/frontend/cms/record/business_info'
+const BUSINESS_INFO_API_URL = '/api/v1/frontend/cms/record/businness_info'
 
 export const businessService = {
   async getList(): Promise<BusinessInfoApiRecord[]> {

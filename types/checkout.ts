@@ -4,7 +4,9 @@ export interface CheckoutFormData {
   email: string
   phone: string
   province: string
+  provinceName: string
   ward: string
+  wardName: string
   address: string
   notes: string
   invoiceRequested: boolean
@@ -23,19 +25,6 @@ export interface CartItem {
   discount?: number
   quantity: number
   slug: string
-}
-
-export interface OrderSummary {
-  subtotal: number
-  shippingFee: number
-  discount: number
-  total: number
-}
-
-export interface CheckoutOrder {
-  form: CheckoutFormData
-  items: CartItem[]
-  summary: OrderSummary
 }
 
 export interface OrderResult {

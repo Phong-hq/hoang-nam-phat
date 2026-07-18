@@ -17,14 +17,22 @@ export interface FlashSaleApiRecord {
   updated_at: string
 }
 
+// Flash sale record enriched with real pricing from the product catalog API
+// (the flash_sale record itself only exposes the variant's unit_price, not compare_price)
+export interface FlashSaleRecordWithPricing extends FlashSaleApiRecord {
+  unitPrice: number
+  comparePrice: number | null
+}
+
 // Display-ready shape consumed by the Flash Sale card component
 export interface FlashSaleProduct {
   id: number
+  slug: string
   name: string
   brand: string
   price: number
-  originalPrice: number
-  discount: number
+  originalPrice?: number
+  discount?: number
   image?: string
   soldPercent: number
 }

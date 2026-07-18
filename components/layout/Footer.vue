@@ -101,6 +101,7 @@
 
               <!-- Facebook embed -->
               <div class="fb-page block h-[200px] overflow-hidden rounded-lg"
+              v-if="facebookHref"
                 :data-href="facebookHref"
                 data-tabs=""
                 data-width="380"
@@ -135,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, nextTick, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBusinessStore } from '~/stores/business.store'
 import { useCategoryStore } from '~/stores/category.store'
@@ -158,7 +159,29 @@ onMounted(() => {
 const companyName = computed(() => businessInfo.value?.name ?? 'Hoàng Nam Phát')
 
 const zaloHref = computed(() => socialRecord.value?.zalo ?? '#')
-const facebookHref = computed(() => socialRecord.value?.facebook ?? 'https://www.facebook.com/thietbimanghoangnamphat/?ref=embed_page#')
+const facebookHref = computed(() => socialRecord.value?.facebook ?? '')
+
+// The fb-page div only appears once socialRecord loads from the API, which
+// happens after the Facebook SDK's own automatic XFBML scan already ran —
+// so it must be parsed manually once the div shows up in the DOM.
+watch(facebookHref, async (href) => {
+  if (!href) return
+  await nextTick()
+  parseFacebookPlugins()
+}, { immediate: true })
+
+function parseFacebookPlugins() {
+  const win = window as any
+  if (win.FB?.XFBML) {
+    win.FB.XFBML.parse()
+    return
+  }
+  const previousInit = win.fbAsyncInit
+  win.fbAsyncInit = () => {
+    previousInit?.()
+    win.FB?.XFBML?.parse()
+  }
+}
 
 const contactInfo = computed(() => [
   {

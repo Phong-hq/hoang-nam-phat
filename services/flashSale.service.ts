@@ -5,7 +5,7 @@
 import { httpClient } from '~/utils/httpClient'
 import type { ApiListResponse, FlashSaleApiRecord } from '~/types'
 
-const FLASH_SALE_API_URL = '/api/v1/frontend/cms/record/variant?expand=product'
+const FLASH_SALE_API_URL = '/api/v1/frontend/cms/record/flash_sale'
 
 export const flashSaleService = {
   async getList(): Promise<FlashSaleApiRecord[]> {

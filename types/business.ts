@@ -10,6 +10,7 @@ export interface BusinessInfoApiRecord {
   logo: string | null
   tax_code: string
   email: string
+  map: string | null
   created_at: string
   updated_at: string
 }

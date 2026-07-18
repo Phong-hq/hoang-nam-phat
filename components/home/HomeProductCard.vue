@@ -1,5 +1,6 @@
 <template>
-  <div
+  <NuxtLink
+    :to="product.slug ? `/products/${product.slug}` : ''"
     class="group relative bg-white rounded-xl border border-base-200 overflow-hidden hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col"
   >
     <!-- Image area -->
@@ -95,8 +96,9 @@
       <button
         class="btn btn-primary btn-sm w-full mt-3 text-white font-semibold gap-1.5"
         :disabled="product.inStock === false"
+        @click.stop.prevent="handleAddToCart"
       >
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -106,14 +108,36 @@
         Thêm vào giỏ
       </button>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
 import { formatCurrency } from '~/utils'
+import { useCartStore } from '~/stores/cart.store'
+import { useUiStore } from '~/stores/ui.store'
 import type { HomeProduct } from '~/types'
 
-defineProps<{ product: HomeProduct }>()
+const props = defineProps<{ product: HomeProduct }>()
 
 const wishlisted = ref(false)
+
+const cartStore = useCartStore()
+const uiStore = useUiStore()
+
+function handleAddToCart() {
+  if (props.product.inStock === false) return
+
+  cartStore.addItem({
+    id: props.product.id,
+    productId: props.product.id,
+    name: props.product.name,
+    thumbnail: props.product.image ?? '',
+    price: props.product.price,
+    originalPrice: props.product.originalPrice,
+    discount: props.product.discount,
+    slug: props.product.slug ?? '',
+  })
+
+  uiStore.addToast({ type: 'success', message: 'Đã thêm sản phẩm vào giỏ hàng' })
+}
 </script>
