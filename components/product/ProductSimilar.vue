@@ -17,8 +17,8 @@
       >
         <figure class="aspect-square overflow-hidden bg-base-200">
           <NuxtImg
-            v-if="item.variants[0]?.images[0]"
-            :src="item.variants[0].images[0]"
+            v-if="item.variants?.images[0]"
+            :src="item.variants.images[0]"
             :alt="item.name"
             width="300"
             height="300"

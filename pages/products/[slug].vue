@@ -25,8 +25,8 @@
             <!-- Gallery -->
             <div class="product-images">
               <NuxtImg
-                v-if="selectedVariant?.images[0]"
-                :src="selectedVariant.images[0]"
+                v-if="variant?.images[0]"
+                :src="variant.images[0]"
                 :alt="`${product.brand.name} ${product.name}`"
                 width="600"
                 height="600"
@@ -50,9 +50,9 @@
               <h1 class="text-2xl lg:text-3xl font-bold leading-snug">{{ product.name }}</h1>
 
               <div class="flex items-baseline gap-3">
-                <span class="text-3xl font-bold text-primary">{{ formatCurrency(selectedVariant?.unit_price ?? product.unit_price) }}</span>
+                <span class="text-3xl font-bold text-primary">{{ formatCurrency(variant?.unit_price ?? product.unit_price) }}</span>
                 <span
-                  v-if="product.compare_price && product.compare_price > (selectedVariant?.unit_price ?? product.unit_price)"
+                  v-if="product.compare_price && product.compare_price > (variant?.unit_price ?? product.unit_price)"
                   class="text-lg text-base-content/40 line-through"
                 >
                   {{ formatCurrency(product.compare_price) }}
@@ -62,27 +62,6 @@
               <p v-if="product.short_description" class="text-base-content/70 text-sm leading-relaxed line-clamp-3">
                 {{ product.short_description }}
               </p>
-
-              <!-- Variants -->
-              <div v-if="product.variants.length > 1" class="space-y-2">
-                <div class="text-sm font-medium text-base-content">Phiên bản</div>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="variant in product.variants"
-                    :key="variant.slug"
-                    type="button"
-                    class="px-3 py-1.5 rounded-lg border text-sm transition-colors"
-                    :class="
-                      selectedVariantSlug === variant.slug
-                        ? 'border-primary text-primary bg-primary/5 font-semibold'
-                        : 'border-base-200 text-base-content/70 hover:border-primary/40'
-                    "
-                    @click="selectVariant(variant.slug)"
-                  >
-                    {{ variant.name }}
-                  </button>
-                </div>
-              </div>
 
               <div class="divider my-2" />
 
@@ -104,8 +83,8 @@
                 </BaseButton>
               </div>
 
-              <div v-if="selectedVariant" class="text-xs text-base-content/40 pt-1">
-                Phiên bản: {{ selectedVariant.name }}
+              <div v-if="variant" class="text-xs text-base-content/40 pt-1">
+                Phiên bản: {{ variant.name }}
               </div>
             </div>
           </div>
@@ -141,8 +120,8 @@
             >
               <div class="w-16 h-16 flex-shrink-0 bg-base-100 rounded-lg overflow-hidden">
                 <NuxtImg
-                  v-if="item.variants[0]?.images[0]"
-                  :src="item.variants[0].images[0]"
+                  v-if="item.variants?.images[0]"
+                  :src="item.variants.images[0]"
                   :alt="item.name"
                   width="64"
                   height="64"
@@ -180,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
@@ -264,25 +243,7 @@ if (servedFromCache) {
     .catch(() => {})
 }
 
-const selectedVariantSlug = ref<string | undefined>()
-
-watch(
-  product,
-  (p) => {
-    selectedVariantSlug.value = p?.variants[0]?.slug
-  },
-  { immediate: true },
-)
-
-function selectVariant(slug: string) {
-  selectedVariantSlug.value = slug
-}
-
-const selectedVariant = computed<ProductVariant | undefined>(() => {
-  if (!product.value) return undefined
-  const match = product.value.variants.find((v) => v.slug === selectedVariantSlug.value)
-  return match ?? product.value.variants[0]
-})
+const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
 
 const { data: similarData } = await useAsyncData(
   `similar-sidebar-${slug.value}`,
@@ -300,15 +261,15 @@ const uiStore = useUiStore()
 
 function buildCartItem() {
   if (!product.value) return null
-  const variant = selectedVariant.value
+  const v = variant.value
 
   return {
-    id: variant?.id ?? product.value.id,
+    id: v?.id ?? product.value.id,
     productId: product.value.id,
-    productVariantId: variant?.id ?? product.value.id,
+    productVariantId: v?.id ?? product.value.id,
     name: product.value.name,
-    thumbnail: variant?.images[0] ?? '',
-    price: variant?.unit_price ?? product.value.unit_price,
+    thumbnail: v?.images[0] ?? '',
+    price: v?.unit_price ?? product.value.unit_price,
     slug: product.value.slug,
   }
 }

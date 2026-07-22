@@ -13,7 +13,7 @@ export function useProductSeo(product: ProductDetail) {
   const siteUrl = runtimeConfig.public.siteUrl || SITE_URL
 
   const canonicalUrl = `${siteUrl}/products/${product.slug}`
-  const image = product.variants[0]?.images[0]
+  const image = product.variants?.images[0]
   const seoDescription = product.short_description || product.name
 
   useSeo({
@@ -34,37 +34,20 @@ export function useProductSeo(product: ProductDetail) {
     { name: product.name },
   ])
 
-  const prices = product.variants.length ? product.variants.map((v) => v.unit_price) : [product.unit_price]
-  const lowPrice = Math.min(...prices)
-  const highPrice = Math.max(...prices)
+  const price = product.variants?.unit_price ?? product.unit_price
 
-  const offers = lowPrice === highPrice
-    ? {
-        '@type': 'Offer',
-        priceCurrency: 'VND',
-        price: lowPrice,
-        availability: 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
-        url: canonicalUrl,
-        seller: {
-          '@type': 'Organization',
-          name: SITE_NAME,
-        },
-      }
-    : {
-        '@type': 'AggregateOffer',
-        priceCurrency: 'VND',
-        lowPrice,
-        highPrice,
-        offerCount: prices.length,
-        availability: 'https://schema.org/InStock',
-        itemCondition: 'https://schema.org/NewCondition',
-        url: canonicalUrl,
-        seller: {
-          '@type': 'Organization',
-          name: SITE_NAME,
-        },
-      }
+  const offers = {
+    '@type': 'Offer',
+    priceCurrency: 'VND',
+    price,
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+    url: canonicalUrl,
+    seller: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+    },
+  }
 
   const productSchema = {
     '@context': 'https://schema.org',

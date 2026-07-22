@@ -65,8 +65,8 @@
                     -{{ getDiscountPercent(item) }}%
                   </span>
                   <NuxtImg
-                    v-if="item.variants[0]?.images[0]"
-                    :src="item.variants[0].images[0]"
+                    v-if="item.variants?.images[0]"
+                    :src="item.variants.images[0]"
                     :alt="item.name"
                     width="300"
                     height="300"
@@ -209,12 +209,14 @@ function getDiscountPercent(item: ProductCatalogItem) {
 }
 
 function handleAddToCart(item: ProductCatalogItem) {
+  console.log(item);
+  
   cartStore.addItem({
     id: item.id,
     productId: item.id,
-    productVariantId: item.variants[0]?.id ?? item.id,
+    productVariantId: item.variants?.id ?? item.id,
     name: item.name,
-    thumbnail: item.variants[0]?.images[0] ?? '',
+    thumbnail: item.variants?.images[0] ?? '',
     price: item.unit_price,
     originalPrice: item.compare_price ?? undefined,
     discount: getDiscountPercent(item) || undefined,

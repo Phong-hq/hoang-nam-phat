@@ -80,6 +80,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
         phone: form.phone,
         address: fullAddress,
       })
+        console.log('Submitting order with payload:', items.value)
 
       const payload: OrderCreateRequest = {
         carts: items.value.map((item) => ({

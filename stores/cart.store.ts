@@ -13,6 +13,7 @@ export const useCartStore = defineStore('cart', () => {
 
   function addItem(item: Omit<CartItem, 'quantity'>, quantity = 1) {
     const existing = items.value.find((i) => i.id === item.id)
+    console.log(item)
     if (existing) {
       existing.quantity += quantity
     } else {

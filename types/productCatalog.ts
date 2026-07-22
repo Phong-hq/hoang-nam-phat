@@ -53,7 +53,7 @@ export interface ProductCatalogItem {
   brand: ProductBrand
   category: ProductCategorySummary
   product_options: ProductOption[]
-  variants: ProductVariant[]
+  variants: ProductVariant
 }
 
 export interface ProductDetail extends ProductCatalogItem {

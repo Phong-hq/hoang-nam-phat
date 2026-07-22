@@ -80,7 +80,7 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
   const hasDiscount = item.compare_price != null && item.compare_price > item.unit_price
   return {
     id: item.id,
-    variantId: item.variants[0]?.id ?? item.id,
+    variantId: item.variants?.id ?? item.id,
     slug: item.slug,
     name: item.name,
     brand: item.brand.name,
@@ -89,7 +89,7 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
     discount: hasDiscount ? Math.round(((item.compare_price! - item.unit_price) / item.compare_price!) * 100) : undefined,
     rating: 0,
     ratingCount: 0,
-    image: item.variants[0]?.images[0],
+    image: item.variants?.images[0],
   }
 }
 
