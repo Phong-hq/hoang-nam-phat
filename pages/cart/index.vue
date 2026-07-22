@@ -68,7 +68,13 @@
 </template>
 
 <script setup lang="ts">
-const { isSuccess } = useCheckout()
+import { onBeforeRouteLeave } from 'vue-router'
+
+const { isSuccess, resetOrder } = useCheckout()
+
+onBeforeRouteLeave(() => {
+  if (isSuccess.value) resetOrder()
+})
 
 useSeo({
   title: 'Giỏ hàng',

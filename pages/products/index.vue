@@ -55,6 +55,7 @@
                 :key="item.id"
                 :to="`/products/${item.slug}`"
                 class="card bg-white border border-base-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-xl overflow-hidden"
+                @click="productStore.setSelectedProduct(item)"
               >
                 <figure class="relative aspect-square overflow-hidden bg-base-200">
                   <span
@@ -211,6 +212,7 @@ function handleAddToCart(item: ProductCatalogItem) {
   cartStore.addItem({
     id: item.id,
     productId: item.id,
+    productVariantId: item.variants[0]?.id ?? item.id,
     name: item.name,
     thumbnail: item.variants[0]?.images[0] ?? '',
     price: item.unit_price,

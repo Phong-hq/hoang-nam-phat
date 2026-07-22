@@ -45,7 +45,7 @@ export function useBusinessSeo() {
         email: info.email,
         telephone: info.phone[0],
         address: info.address,
-      })
+      }, 'jsonld-business')
     },
     { immediate: true },
   )

@@ -125,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-const { form, errors, touch } = useCheckout()
+const { form, errors, touch, loadCustomerInfo } = useCheckout()
 const { provinces, wards, loadingProvinces, loadingWards, fetchProvinces, fetchWards } = useVietnamAddress()
 
 const provinceOptions = computed(() =>
@@ -135,9 +135,22 @@ const wardOptions = computed(() =>
   wards.value.map((w) => ({ value: String(w.code), label: w.name })),
 )
 
-onMounted(fetchProvinces)
+let restoringCustomerInfo = false
+
+onMounted(async () => {
+  restoringCustomerInfo = true
+  loadCustomerInfo()
+  await fetchProvinces()
+
+  if (form.province) {
+    form.provinceName = provinceOptions.value.find((p) => p.value === form.province)?.label ?? form.provinceName
+    await fetchWards(form.province)
+  }
+  restoringCustomerInfo = false
+})
 
 watch(() => form.province, (code) => {
+  if (restoringCustomerInfo) return
   form.ward = ''
   form.wardName = ''
   form.provinceName = provinceOptions.value.find((p) => p.value === code)?.label ?? ''
@@ -145,6 +158,7 @@ watch(() => form.province, (code) => {
 })
 
 watch(() => form.ward, (code) => {
+  if (restoringCustomerInfo) return
   form.wardName = wardOptions.value.find((w) => w.value === code)?.label ?? ''
 })
 </script>

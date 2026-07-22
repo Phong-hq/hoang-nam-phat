@@ -3,10 +3,11 @@
 
 import type { JsonLdProduct, JsonLdBreadcrumb } from '~/types'
 
-export function useJsonLd(schema: JsonLdProduct | JsonLdBreadcrumb | Record<string, unknown>) {
+export function useJsonLd(schema: JsonLdProduct | JsonLdBreadcrumb | Record<string, unknown>, key?: string) {
   useHead({
     script: [
       {
+        key,
         type: 'application/ld+json',
         innerHTML: JSON.stringify(schema),
       },

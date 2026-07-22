@@ -13,6 +13,7 @@
         :key="item.id"
         :to="`/products/${item.slug}`"
         class="card bg-white border border-base-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-xl overflow-hidden"
+        @click="productStore.setSelectedProduct(item)"
       >
         <figure class="aspect-square overflow-hidden bg-base-200">
           <NuxtImg
@@ -44,12 +45,15 @@
 import { computed } from 'vue'
 import { formatCurrency } from '~/utils'
 import { productCatalogService } from '~/services/productCatalog.service'
+import { useProductStore } from '~/stores/product.store'
 import type { ProductCatalogItem } from '~/types'
 
 const props = defineProps<{
   currentSlug: string
   categorySlug: string
 }>()
+
+const productStore = useProductStore()
 
 const { data } = await useAsyncData(
   `similar-${props.currentSlug}`,

@@ -3,6 +3,13 @@ import { validateCheckout, isCheckoutValid } from '~/validators/checkout.validat
 import { useCartStore } from '~/stores/cart.store'
 import type { CheckoutFormData, CheckoutErrors, CheckoutStatus, OrderResult, OrderCreateRequest } from '~/types'
 
+const CUSTOMER_INFO_KEY = 'checkout_customer_info'
+
+type SavedCustomerInfo = Pick<
+  CheckoutFormData,
+  'gender' | 'fullName' | 'email' | 'phone' | 'province' | 'provinceName' | 'ward' | 'wardName' | 'address'
+>
+
 export const useCheckoutStore = defineStore('checkout', () => {
   const cartStore = useCartStore()
   const form = reactive<CheckoutFormData>({
@@ -64,7 +71,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   async function submit() {
     if (!validateAll() || !items.value.length) return
-console.log(form);
 
     status.value = 'submitting'
     try {
@@ -78,7 +84,7 @@ console.log(form);
       const payload: OrderCreateRequest = {
         carts: items.value.map((item) => ({
           product_id: item.productId,
-          product_variant_id: item.id,
+          product_variant_id: item.productVariantId,
           quantity: item.quantity,
           unit_price: item.price,
         })),
@@ -97,6 +103,7 @@ console.log(form);
         message: 'Đặt hàng thành công',
       }
       status.value = 'success'
+      saveCustomerInfo()
       cartStore.clearCart()
     } catch {
       status.value = 'error'
@@ -104,6 +111,55 @@ console.log(form);
   }
 
   function retryAfterError() {
+    status.value = 'idle'
+  }
+
+  function saveCustomerInfo() {
+    const info: SavedCustomerInfo = {
+      gender: form.gender,
+      fullName: form.fullName,
+      email: form.email,
+      phone: form.phone,
+      province: form.province,
+      provinceName: form.provinceName,
+      ward: form.ward,
+      wardName: form.wardName,
+      address: form.address,
+    }
+    localStorage.setItem(CUSTOMER_INFO_KEY, JSON.stringify(info))
+  }
+
+  function loadCustomerInfo() {
+    const raw = localStorage.getItem(CUSTOMER_INFO_KEY)
+    if (!raw) return
+
+    try {
+      const info = JSON.parse(raw) as SavedCustomerInfo
+      Object.assign(form, info)
+    } catch {
+      localStorage.removeItem(CUSTOMER_INFO_KEY)
+    }
+  }
+
+  function resetOrder() {
+    form.gender = 'mr'
+    form.fullName = ''
+    form.email = ''
+    form.phone = ''
+    form.province = ''
+    form.provinceName = ''
+    form.ward = ''
+    form.wardName = ''
+    form.address = ''
+    form.notes = ''
+    form.invoiceRequested = false
+    form.companyName = ''
+    form.taxCode = ''
+    form.companyAddress = ''
+
+    Object.keys(touchedFields).forEach((key) => delete touchedFields[key])
+    showAllErrors.value = false
+    orderResult.value = null
     status.value = 'idle'
   }
 
@@ -124,5 +180,8 @@ console.log(form);
     removeItem,
     submit,
     retryAfterError,
+    resetOrder,
+    saveCustomerInfo,
+    loadCustomerInfo,
   }
 })

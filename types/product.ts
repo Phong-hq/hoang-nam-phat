@@ -31,6 +31,7 @@ export interface Product {
 
 export interface HomeProduct {
   id: number
+  variantId?: number
   slug?: string
   name: string
   brand: string

@@ -25,5 +25,7 @@ export function useCheckout() {
     updateQuantity: store.updateQuantity,
     removeItem: store.removeItem,
     retryAfterError: store.retryAfterError,
+    resetOrder: store.resetOrder,
+    loadCustomerInfo: store.loadCustomerInfo,
   }
 }

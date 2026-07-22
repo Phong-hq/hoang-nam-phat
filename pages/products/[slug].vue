@@ -63,28 +63,23 @@
                 {{ product.short_description }}
               </p>
 
-              <!-- Options -->
-              <div v-for="option in product.product_options" :key="option.key" class="space-y-2">
-                <div class="text-sm font-medium text-base-content">{{ option.name }}</div>
+              <!-- Variants -->
+              <div v-if="product.variants.length > 1" class="space-y-2">
+                <div class="text-sm font-medium text-base-content">Phiên bản</div>
                 <div class="flex flex-wrap gap-2">
                   <button
-                    v-for="value in option.values"
-                    :key="value.slug"
+                    v-for="variant in product.variants"
+                    :key="variant.slug"
                     type="button"
-                    class="px-3 py-1.5 rounded-lg border text-sm transition-colors flex items-center gap-2"
+                    class="px-3 py-1.5 rounded-lg border text-sm transition-colors"
                     :class="
-                      selectedOptions[option.key] === value.slug
+                      selectedVariantSlug === variant.slug
                         ? 'border-primary text-primary bg-primary/5 font-semibold'
                         : 'border-base-200 text-base-content/70 hover:border-primary/40'
                     "
-                    @click="selectOption(option.key, value.slug)"
+                    @click="selectVariant(variant.slug)"
                   >
-                    <span
-                      v-if="value.additional_data"
-                      class="w-3.5 h-3.5 rounded-full border border-base-300"
-                      :style="{ backgroundColor: value.additional_data }"
-                    />
-                    {{ value.value }}
+                    {{ variant.name }}
                   </button>
                 </div>
               </div>
@@ -142,6 +137,7 @@
               :key="item.id"
               :to="`/products/${item.slug}`"
               class="flex gap-3 bg-white border border-base-200 rounded-xl p-2.5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group"
+              @click="productStore.setSelectedProduct(item)"
             >
               <div class="w-16 h-16 flex-shrink-0 bg-base-100 rounded-lg overflow-hidden">
                 <NuxtImg
@@ -201,9 +197,26 @@ const slug = computed(() => route.params.slug as string)
 const { fetchProductDetail } = useProductCatalog()
 const productStore = useProductStore()
 
+let servedFromCache = false
+
 const { data: product, pending, error } = await useAsyncData(
   `product-${slug.value}`,
   async () => {
+    // If the user navigated here from a product card, the full item is
+    // already sitting in the store — skip the API call entirely.
+    const cached = productStore.consumeSelectedProduct(slug.value)
+    if (cached) {
+      servedFromCache = true
+      return {
+        ...cached,
+        description: '',
+        specifications: '',
+        short_description: '',
+        warranty_description: '',
+      }
+    }
+
+    servedFromCache = false
     const detail = await fetchProductDetail(slug.value).catch(() => null)
     if (!detail) return null
 
@@ -227,34 +240,47 @@ const { data: product, pending, error } = await useAsyncData(
 if (error.value || !product.value) {
   throw createError({ statusCode: 404, statusMessage: 'Sản phẩm không tìm thấy' })
 }
+useProductSeo(product.value)
 
-if (product.value) {
-  useProductSeo(product.value)
+// The cached card only carries list-level fields (no description/specs/SEO
+// copy). Fetch the full detail in the background -- this never blocks the
+// already-rendered page -- and refresh the SEO tags once it lands, so meta
+// description/JSON-LD never stay stuck on the empty stub.
+if (servedFromCache) {
+  const cachedSlug = slug.value
+  fetchProductDetail(cachedSlug)
+    .then((detail) => {
+      if (!detail || !product.value || product.value.slug !== cachedSlug) return
+
+      product.value = {
+        ...product.value,
+        description: detail.description,
+        specifications: detail.specifications,
+        short_description: detail.short_description,
+        warranty_description: detail.warranty_description,
+      }
+      useProductSeo(product.value)
+    })
+    .catch(() => {})
 }
 
-const selectedOptions = ref<Record<string, string>>({})
+const selectedVariantSlug = ref<string | undefined>()
 
 watch(
   product,
   (p) => {
-    const initial: Record<string, string> = {}
-    p?.variants[0]?.meta_field.forEach((m) => {
-      initial[m.key] = m.slug
-    })
-    selectedOptions.value = initial
+    selectedVariantSlug.value = p?.variants[0]?.slug
   },
   { immediate: true },
 )
 
-function selectOption(key: string, valueSlug: string) {
-  selectedOptions.value = { ...selectedOptions.value, [key]: valueSlug }
+function selectVariant(slug: string) {
+  selectedVariantSlug.value = slug
 }
 
 const selectedVariant = computed<ProductVariant | undefined>(() => {
   if (!product.value) return undefined
-  const match = product.value.variants.find((v) =>
-    v.meta_field.every((m) => selectedOptions.value[m.key] === m.slug),
-  )
+  const match = product.value.variants.find((v) => v.slug === selectedVariantSlug.value)
   return match ?? product.value.variants[0]
 })
 
@@ -279,6 +305,7 @@ function buildCartItem() {
   return {
     id: variant?.id ?? product.value.id,
     productId: product.value.id,
+    productVariantId: variant?.id ?? product.value.id,
     name: product.value.name,
     thumbnail: variant?.images[0] ?? '',
     price: variant?.unit_price ?? product.value.unit_price,

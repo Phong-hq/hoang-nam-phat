@@ -130,6 +130,7 @@ function handleAddToCart() {
   cartStore.addItem({
     id: props.product.id,
     productId: props.product.id,
+    productVariantId: props.product.variantId ?? props.product.id,
     name: props.product.name,
     thumbnail: props.product.image ?? '',
     price: props.product.price,

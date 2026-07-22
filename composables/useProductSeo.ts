@@ -82,5 +82,5 @@ export function useProductSeo(product: ProductDetail) {
     offers,
   }
 
-  useJsonLd(productSchema)
+  useJsonLd(productSchema, 'jsonld-product')
 }

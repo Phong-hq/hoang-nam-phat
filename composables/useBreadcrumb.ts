@@ -20,7 +20,7 @@ export function useBreadcrumb(items: BreadcrumbItem[]) {
     })),
   }
 
-  useJsonLd(breadcrumbJsonLd)
+  useJsonLd(breadcrumbJsonLd, 'jsonld-breadcrumb')
 
   return { breadcrumbJsonLd, items }
 }

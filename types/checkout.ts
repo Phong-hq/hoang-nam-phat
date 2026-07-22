@@ -18,6 +18,7 @@ export interface CheckoutFormData {
 export interface CartItem {
   id: number
   productId: number
+  productVariantId: number
   name: string
   thumbnail: string
   price: number

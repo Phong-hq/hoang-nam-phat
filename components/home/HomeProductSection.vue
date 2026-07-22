@@ -80,6 +80,7 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
   const hasDiscount = item.compare_price != null && item.compare_price > item.unit_price
   return {
     id: item.id,
+    variantId: item.variants[0]?.id ?? item.id,
     slug: item.slug,
     name: item.name,
     brand: item.brand.name,
