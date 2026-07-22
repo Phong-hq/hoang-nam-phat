@@ -99,6 +99,9 @@
                   </svg>
                   Thêm vào giỏ hàng
                 </BaseButton>
+                <BaseButton variant="secondary" size="lg" class="flex-1" @click="handleBuyNow">
+                  Mua ngay
+                </BaseButton>
                 <BaseButton variant="outline" size="lg">
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -182,6 +185,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
@@ -191,6 +195,7 @@ import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
 
 const route = useRoute()
+const router = useRouter()
 const slug = computed(() => route.params.slug as string)
 
 const { fetchProductDetail } = useProductCatalog()
@@ -267,19 +272,33 @@ const sidebarProducts = computed<ProductCatalogItem[]>(() => {
 const cartStore = useCartStore()
 const uiStore = useUiStore()
 
-function handleAddToCart() {
-  if (!product.value) return
+function buildCartItem() {
+  if (!product.value) return null
   const variant = selectedVariant.value
 
-  cartStore.addItem({
+  return {
     id: variant?.id ?? product.value.id,
     productId: product.value.id,
     name: product.value.name,
     thumbnail: variant?.images[0] ?? '',
     price: variant?.unit_price ?? product.value.unit_price,
     slug: product.value.slug,
-  })
+  }
+}
 
+function handleAddToCart() {
+  const item = buildCartItem()
+  if (!item) return
+
+  cartStore.addItem(item)
   uiStore.addToast({ type: 'success', message: 'Đã thêm sản phẩm vào giỏ hàng' })
+}
+
+function handleBuyNow() {
+  const item = buildCartItem()
+  if (!item) return
+
+  cartStore.addItem(item)
+  router.push('/cart')
 }
 </script>
