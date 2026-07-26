@@ -1,61 +1,55 @@
-# please yarn before build - this is note (not remove)
+# FROM node:lts-alpine as builder
 
-FROM node:lts-alpine AS builder
+# ENV APP_ROOT /src
 
-WORKDIR /src
+# RUN mkdir ${APP_ROOT}
+# WORKDIR ${APP_ROOT}
+# ADD . ${APP_ROOT}
 
-COPY .npmrc ./
-COPY package.json yarn.lock ./
+# COPY package*.json ./
 
-RUN yarn install --frozen-lockfile --production=false
+# RUN yarn install
+# RUN yarn run build
 
-COPY . .
+# ENV HOST 0.0.0.0
 
-ENV DISABLE_VUE_TSC=1
-RUN yarn build
+# ENTRYPOINT ["node", ".output/server/index.mjs"]
 
-# ========================
-# Stage 2: Final runtime
-# ========================
-FROM node:lts-alpine AS final
+FROM node:lts-alpine as builder
 
-WORKDIR /src
+ENV DEFAULT_API_DOMAIN ''
+ENV APP_ROOT /src
+RUN mkdir ${APP_ROOT}
+WORKDIR ${APP_ROOT}
+ADD . ${APP_ROOT}
 
-COPY --from=builder /src/.output ./.output
+COPY package*.json ./
 
-RUN apk --no-cache add redis && \
-    npm install -g concurrently
+RUN yarn install
+RUN yarn run build
 
-ENV NODE_ENV=production \
-    REDIS_HOST=srv-captain--web-booking-redis \
-    REDIS_PORT=6379 \
-    REDIS_USERNAME=default \
-    REDIS_PASSWORD=123456 \
-    SECURE_PHONE_SUSPICION=^\(242\) \
-    SECURE_NAME_SUSPICION= \
-    SECURE_EMAIL_SUSPICION= \
-    NUXT_PUBLIC_GIFTCARD_URL=https://egift-booking.gci-app.dtsmart.dev \
-    NUXT_PUBLIC_API_DOMAIN=https://web-booking.gbk01.dtsmart.dev \
-    DB_HOST=db-web-booking-nyc1-17341-do-user-4549052-0.j.db.ondigitalocean.com \
-    DB_USER=doadmin \
-    DB_PORT=25060 \
-    DB_PASSWORD=AVNS_tW4kSqWIHL56BXohyXV \
-    DB_NAME=booking \
-    IP_API_BASE_URL=https://pro.ip-api.com/json \
-    IP_API_KEY=OrZQ35BeESq3ik1 \
-    IP_API_FIELDS=21221375 \
-    NUXT_PUBLIC_CLOUDFLARE_TURNSTILE_SECRET=0x4AAAAAABnnT7QV71b8yqrhg7EVKVQysgs \
-    PROXY_API=https://ip2proxy-service.gci-app.dtsmart.dev \
-    NUXT_PUBLIC_DESKTOP_WINDOW_MS=3600000 \
-    NUXT_PUBLIC_DESKTOP_MAX_REQUESTS=2 \
-    NUXT_PUBLIC_MOBILE_WINDOW_MS=600000 \
-    NUXT_PUBLIC_MOBILE_MAX_REQUESTS=3 \
-    NUXT_PUBLIC_MAX_APPOINTMENTS_PER_DAY=5 \
-    HOST=0.0.0.0 
+
+FROM node:lts-alpine as final
+COPY --from=builder /src/.output /src/.output
+
+RUN apk --update add redis && \
+    npm install -g concurrently  
+
+# EXPOSE 6379
+ENV APP_ROOT /src
+WORKDIR ${APP_ROOT}
+
+ENV REDIS_HOST 'localhost'
+ENV REDIS_PORT 6379
+ENV REDIS_USERNAME 'default'
+ENV REDIS_PASSWORD '123456abcA'
+# ENV DEFAULT_API_DOMAIN 'https://web-booking.gci-app.dtsmart.dev'
+
+
+
+ENV HOST 0.0.0.0
 
 EXPOSE 3000
 EXPOSE 6379
 
-CMD concurrently \
-  "/usr/bin/redis-server --bind 0.0.0.0 --requirepass ${REDIS_PASSWORD}" \
-  "sleep 5s && node .output/server/index.mjs"
+CMD concurrently "/usr/bin/redis-server --bind '0.0.0.0' --requirepass '${REDIS_PASSWORD}'" "sleep 5s; node /src/.output/server/index.mjs" 
