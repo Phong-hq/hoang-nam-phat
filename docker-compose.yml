@@ -1,0 +1,9 @@
+version: "3"
+services:
+  smart-digitech-2:
+    container_name: smart-digitech-new
+    build:
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - "3000:3000"

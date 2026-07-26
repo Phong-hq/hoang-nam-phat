@@ -3,9 +3,8 @@
 // response interceptor unwraps it so callers work with `data` directly.
 
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import { useRuntimeConfig } from '#imports'
 import type { ApiResponse } from '~/types'
-
-const ERP_API_BASE_URL = 'http://localhost:9001/'
 
 interface HttpClient extends Omit<AxiosInstance, 'get' | 'post' | 'put' | 'patch' | 'delete'> {
   get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T>
@@ -16,10 +15,16 @@ interface HttpClient extends Omit<AxiosInstance, 'get' | 'post' | 'put' | 'patch
 }
 
 const instance = axios.create({
-  baseURL: ERP_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+})
+
+// baseURL is resolved per-request (not at module load) so it always reads
+// the runtime config from the active Nuxt/Nitro context.
+instance.interceptors.request.use((config) => {
+  config.baseURL = useRuntimeConfig().public.erpApiBaseUrl
+  return config
 })
 
 instance.interceptors.response.use(
