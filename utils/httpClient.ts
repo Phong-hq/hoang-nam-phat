@@ -3,7 +3,6 @@
 // response interceptor unwraps it so callers work with `data` directly.
 
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { useRuntimeConfig } from '#imports'
 import type { ApiResponse } from '~/types'
 
 interface HttpClient extends Omit<AxiosInstance, 'get' | 'post' | 'put' | 'patch' | 'delete'> {
