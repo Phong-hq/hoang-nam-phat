@@ -23,6 +23,8 @@ const instance = axios.create({
 // the runtime config from the active Nuxt/Nitro context.
 instance.interceptors.request.use((config) => {
   config.baseURL = useRuntimeConfig().public.erpApiBaseUrl
+  console.log(useRuntimeConfig());
+  
   return config
 })
 
