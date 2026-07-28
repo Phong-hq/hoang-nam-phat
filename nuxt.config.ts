@@ -100,7 +100,7 @@ export default defineNuxtConfig({
     apiSecret: '',
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
-      erpApiBaseUrl: process.env.NUXT_PUBLIC_ERP_API_BASE_URL || 'https://api-erp-hoang-nam-phat.thanhtoan24on7.xyz/',
+      erpApiBaseUrl: process.env.NUXT_PUBLIC_ERP_API_BASE_URL || 'https://api-erp-hoang-nam.thanhtoan24on7.xyz/',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://hoangnamphat.vn',
       siteName: 'Hoang Nam Phat',
     },

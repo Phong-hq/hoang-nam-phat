@@ -10,4 +10,6 @@ export interface SocialApiRecord {
   instagram: string | null
   created_at: string
   updated_at: string
+  moit_verification_url: string
+  messenger: string
 }
