@@ -3,6 +3,7 @@ const categoryStore = useCategoryStore()
 const brandStore = useBrandStore()
 const businessStore = useBusinessStore()
 const socialStore = useSocialStore()
+const bannerStore = useBannerStore()
 const isReady = ref(false)
 
 useBusinessSeo()
@@ -12,6 +13,7 @@ onMounted(async () => {
   await Promise.all([
     categoryStore.fetchCategories(),
     businessStore.fetchBusinessInfo(),
+    bannerStore.fetchBanner(),
   ])
   isReady.value = true
 })
@@ -20,6 +22,7 @@ onMounted(async () => {
 <template>
   <div>
     <div id="fb-root" />
+    <NuxtLoadingIndicator color="#e52020" />
     <LayoutAppSplash v-if="!isReady" />
     <NuxtLayout v-else>
       <NuxtPage />

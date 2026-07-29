@@ -1,14 +1,5 @@
-// Best selling product domain types
-// Defines the data structure returned by the CMS "best_selling_product" record API
-
-export interface BestSellingProductDetail {
-  id: number
-  name: string
-  slug: string
-  unit_price: number
-  meta_field: unknown[]
-  images: string[]
-}
+// Banner domain types
+// Defines the data structure returned by the CMS "banner" record API
 
 export interface BannerApiRecord {
   id: number

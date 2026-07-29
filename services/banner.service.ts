@@ -1,4 +1,4 @@
-// Best selling product service
+// Banner service
 // Calls the ERP API directly via httpClient -- no repository layer
 // Flow: Composable -> Service -> API
 
@@ -7,7 +7,7 @@ import type { ApiListResponse, BannerApiRecord } from '~/types'
 
 const BANNER_API_URL = '/api/v1/frontend/cms/record/banner'
 
-export const bestSellingService = {
+export const bannerService = {
   async getList(): Promise<BannerApiRecord[]> {
     const res = await httpClient.get<ApiListResponse<BannerApiRecord>>(BANNER_API_URL)
     return res.items

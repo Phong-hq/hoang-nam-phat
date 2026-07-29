@@ -17,8 +17,8 @@
       >
         <div class="w-12 h-12 flex-shrink-0 rounded-md bg-gray-100 overflow-hidden flex items-center justify-center">
           <img
-            v-if="item.variants?.images[0] && !brokenImages.has(item.id)"
-            :src="item.variants.images[0]"
+            v-if="getProductThumbnail(item) && !brokenImages.has(item.id)"
+            :src="getProductThumbnail(item)"
             :alt="item.name"
             class="w-full h-full object-contain"
             @error="brokenImages.add(item.id)"
@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { formatCurrency } from '~/utils'
+import { formatCurrency, getProductThumbnail } from '~/utils'
 import type { ProductCatalogItem } from '~/types'
 
 defineProps<{

@@ -54,6 +54,7 @@ export interface ProductCatalogItem {
   category: ProductCategorySummary
   product_options: ProductOption[]
   variants: ProductVariant
+  images: string[]
 }
 
 export interface ProductAdditionalDataItem {

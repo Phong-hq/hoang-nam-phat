@@ -25,18 +25,38 @@
             <!-- Gallery -->
             <div class="product-images">
               <NuxtImg
-                v-if="variant?.images[0]"
-                :src="variant.images[0]"
+                v-if="galleryImages[activeImageIndex]"
+                :src="galleryImages[activeImageIndex]"
                 :alt="`${product.brand.name} ${product.name}`"
                 width="600"
                 height="600"
                 loading="eager"
                 decoding="async"
                 sizes="(max-width: 768px) 100vw, 600px"
-                class="rounded-xl w-full object-cover"
+                class="rounded-xl w-full object-cover aspect-square"
               />
               <div v-else class="aspect-square bg-base-200 rounded-xl flex items-center justify-center">
                 <span class="text-base-content/40">Chưa có ảnh</span>
+              </div>
+
+              <div v-if="galleryImages.length > 1" class="flex gap-2 mt-3 overflow-x-auto">
+                <button
+                  v-for="(img, index) in galleryImages"
+                  :key="index"
+                  type="button"
+                  class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors"
+                  :class="index === activeImageIndex ? 'border-primary' : 'border-transparent'"
+                  @click="activeImageIndex = index"
+                >
+                  <NuxtImg
+                    :src="img"
+                    :alt="`${product.name} ${index + 1}`"
+                    width="64"
+                    height="64"
+                    loading="lazy"
+                    class="w-full h-full object-cover"
+                  />
+                </button>
               </div>
             </div>
 
@@ -126,8 +146,8 @@
             >
               <div class="w-16 h-16 flex-shrink-0 bg-base-100 rounded-lg overflow-hidden">
                 <NuxtImg
-                  v-if="item.variants?.images[0]"
-                  :src="item.variants.images[0]"
+                  v-if="getProductThumbnail(item)"
+                  :src="getProductThumbnail(item)"
                   :alt="item.name"
                   width="64"
                   height="64"
@@ -165,9 +185,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { formatCurrency } from '~/utils'
+import { formatCurrency, getProductImages, getProductThumbnail } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
@@ -251,6 +271,14 @@ if (servedFromCache) {
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
 
+const activeImageIndex = ref(0)
+
+const galleryImages = computed<string[]>(() => (product.value ? getProductImages(product.value) : []))
+
+watch(galleryImages, () => {
+  activeImageIndex.value = 0
+})
+
 const { data: similarData } = await useAsyncData(
   `similar-sidebar-${slug.value}`,
   () => (product.value ? productCatalogService.getList({ category_slug: product.value.category.slug }) : []),
@@ -274,7 +302,7 @@ function buildCartItem() {
     productId: product.value.id,
     productVariantId: v?.id ?? product.value.id,
     name: product.value.name,
-    thumbnail: v?.images[0] ?? '',
+    thumbnail: getProductThumbnail(product.value) ?? '',
     price: v?.unit_price ?? product.value.unit_price,
     slug: product.value.slug,
   }

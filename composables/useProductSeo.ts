@@ -4,6 +4,7 @@
 
 import type { ProductDetail } from '~/types'
 import { SITE_URL, SITE_NAME } from '~/constants'
+import { getProductThumbnail } from '~/utils'
 import { useSeo } from './useSeo'
 import { useBreadcrumb } from './useBreadcrumb'
 import { useJsonLd } from './useJsonLd'
@@ -13,7 +14,7 @@ export function useProductSeo(product: ProductDetail) {
   const siteUrl = runtimeConfig.public.siteUrl || SITE_URL
 
   const canonicalUrl = `${siteUrl}/products/${product.slug}`
-  const image = product.variants?.images[0]
+  const image = getProductThumbnail(product)
   const seoDescription = product.short_description || product.name
 
   useSeo({

@@ -65,8 +65,8 @@
                     -{{ getDiscountPercent(item) }}%
                   </span>
                   <NuxtImg
-                    v-if="item.variants?.images[0]"
-                    :src="item.variants.images[0]"
+                    v-if="getProductThumbnail(item)"
+                    :src="getProductThumbnail(item)"
                     :alt="item.name"
                     width="300"
                     height="300"
@@ -127,7 +127,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { formatCurrency } from '~/utils'
+import { formatCurrency, getProductThumbnail } from '~/utils'
 import { useCategoryStore } from '~/stores/category.store'
 import { useBrandStore } from '~/stores/brand.store'
 import { useProductStore } from '~/stores/product.store'
@@ -216,7 +216,7 @@ function handleAddToCart(item: ProductCatalogItem) {
     productId: item.id,
     productVariantId: item.variants?.id ?? item.id,
     name: item.name,
-    thumbnail: item.variants?.images[0] ?? '',
+    thumbnail: getProductThumbnail(item) ?? '',
     price: item.unit_price,
     originalPrice: item.compare_price ?? undefined,
     discount: getDiscountPercent(item) || undefined,

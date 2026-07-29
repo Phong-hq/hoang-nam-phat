@@ -7,7 +7,7 @@ export interface Brand {
   type: string | null
   code: string
   description: string
-  icon: unknown
+  icon: string[] | null
   images: unknown
   color: string | null
   priority: number

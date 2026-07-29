@@ -54,6 +54,7 @@ import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { HomeProduct, ProductCatalogItem, SessionBrand } from '~/types'
 import { useProductCatalog } from '~/composables/useProductCatalog'
+import { getProductThumbnail } from '~/utils'
 
 const props = defineProps<{
   label: string
@@ -89,7 +90,7 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
     discount: hasDiscount ? Math.round(((item.compare_price! - item.unit_price) / item.compare_price!) * 100) : undefined,
     rating: 0,
     ratingCount: 0,
-    image: item.variants?.images[0],
+    image: getProductThumbnail(item),
   }
 }
 

@@ -17,8 +17,8 @@
       >
         <figure class="aspect-square overflow-hidden bg-base-200">
           <NuxtImg
-            v-if="item.variants?.images[0]"
-            :src="item.variants.images[0]"
+            v-if="getProductThumbnail(item)"
+            :src="getProductThumbnail(item)"
             :alt="item.name"
             width="300"
             height="300"
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formatCurrency } from '~/utils'
+import { formatCurrency, getProductThumbnail } from '~/utils'
 import { productCatalogService } from '~/services/productCatalog.service'
 import { useProductStore } from '~/stores/product.store'
 import type { ProductCatalogItem } from '~/types'
