@@ -56,11 +56,17 @@ export interface ProductCatalogItem {
   variants: ProductVariant
 }
 
+export interface ProductAdditionalDataItem {
+  name: string
+  value: string
+}
+
 export interface ProductDetail extends ProductCatalogItem {
   specifications: string
   description: string
   short_description: string
   warranty_description: string
+  additional_data: ProductAdditionalDataItem[]
 }
 
 export interface ProductQueryParams {

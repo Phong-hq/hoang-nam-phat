@@ -63,6 +63,12 @@
                 {{ product.short_description }}
               </p>
 
+              <div
+                v-if="product.description"
+                class="prose prose-sm max-w-none text-base-content/80"
+                v-html="product.description"
+              />
+
               <div class="divider my-2" />
 
               <!-- CTAs -->
@@ -73,7 +79,7 @@
                   </svg>
                   Thêm vào giỏ hàng
                 </BaseButton>
-                <BaseButton variant="secondary" size="lg" class="flex-1" @click="handleBuyNow">
+                <BaseButton variant="accent" size="lg" class="flex-1" @click="handleBuyNow">
                   Mua ngay
                 </BaseButton>
                 <BaseButton variant="outline" size="lg">

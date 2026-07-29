@@ -48,9 +48,8 @@ export const useCheckoutStore = defineStore('checkout', () => {
   const subtotal = computed(() =>
     items.value.reduce((sum, item) => sum + item.price * item.quantity, 0),
   )
-  const shippingFee = computed(() => (subtotal.value >= 10000000 ? 0 : 30000))
   const discount = computed(() => 0)
-  const total = computed(() => subtotal.value + shippingFee.value - discount.value)
+  const total = computed(() => subtotal.value - discount.value)
 
   function touch(field: string) {
     touchedFields[field] = true
@@ -172,7 +171,6 @@ export const useCheckoutStore = defineStore('checkout', () => {
     status,
     orderResult,
     subtotal,
-    shippingFee,
     discount,
     total,
     touch,

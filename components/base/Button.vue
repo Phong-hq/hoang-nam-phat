@@ -31,6 +31,21 @@ const props = withDefaults(defineProps<Props>(), {
   block: false,
   type: 'button',
 })
-const variantClass = computed(() => `btn-${props.variant}`)
-const sizeClass = computed(() => (props.size !== 'md' ? `btn-${props.size}` : ''))
+const variantClasses: Record<NonNullable<Props['variant']>, string> = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  accent: 'btn-accent',
+  ghost: 'btn-ghost',
+  outline: 'btn-outline',
+  error: 'btn-error',
+  success: 'btn-success',
+}
+const sizeClasses: Record<NonNullable<Props['size']>, string> = {
+  xs: 'btn-xs',
+  sm: 'btn-sm',
+  md: '',
+  lg: 'btn-lg',
+}
+const variantClass = computed(() => variantClasses[props.variant])
+const sizeClass = computed(() => sizeClasses[props.size])
 </script>

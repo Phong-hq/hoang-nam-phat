@@ -14,12 +14,8 @@
       <!-- Shipping -->
       <div class="flex items-center justify-between text-sm">
         <span class="text-base-content/60">Phí vận chuyển</span>
-        <span v-if="shippingFee === 0" class="font-medium text-success">Miễn phí</span>
-        <span v-else class="font-medium">{{ formatCurrency(shippingFee) }}</span>
+        <span class="font-medium">Thỏa thuận</span>
       </div>
-      <p v-if="shippingFee > 0" class="text-xs text-base-content/40 -mt-1.5">
-        Miễn phí ship cho đơn từ {{ formatCurrency(10000000) }}
-      </p>
 
       <!-- Discount -->
       <div v-if="discount > 0" class="flex items-center justify-between text-sm">
@@ -83,5 +79,5 @@
 <script setup lang="ts">
 import { formatCurrency } from '~/utils'
 
-const { subtotal, shippingFee, discount, total, isSubmitting, isError, hasItems, submit, retryAfterError } = useCheckout()
+const { subtotal, discount, total, isSubmitting, isError, hasItems, submit, retryAfterError } = useCheckout()
 </script>

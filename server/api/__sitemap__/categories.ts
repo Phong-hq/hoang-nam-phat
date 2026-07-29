@@ -1,18 +1,15 @@
 ﻿// Sitemap source for categories
+// Fetches category sitemap entries from the ERP API (base URL from NUXT_PUBLIC_ERP_API_BASE_URL)
 
+import { sitemapService } from '~/services/sitemap.service'
 import type { SitemapEntry } from '~/types'
 
-export default defineEventHandler((): SitemapEntry[] => {
-  const categories = [
-    { slug: 'dien-thoai', updatedAt: '2026-06-27' },
-    { slug: 'laptop', updatedAt: '2026-06-27' },
-    { slug: 'tablet', updatedAt: '2026-06-27' },
-    { slug: 'phu-kien', updatedAt: '2026-06-27' },
-  ]
+export default defineEventHandler(async (): Promise<SitemapEntry[]> => {
 
+  const categories = await sitemapService.getCategories()
   return categories.map((c) => ({
-    loc: `/categories/${c.slug}`,
-    lastmod: c.updatedAt,
+    loc: c.loc,
+    lastmod: c.lastmod,
     changefreq: 'weekly' as const,
     priority: 0.7,
   }))

@@ -56,7 +56,8 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import type { HomeProduct } from '~/components/home/HomeProductCard.vue'
+import type { BestSellingRecordWithPricing, HomeProduct } from '~/types'
+import { useBestSelling } from '~/composables/useBestSelling'
 
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
@@ -71,14 +72,28 @@ const breakpoints = {
 }
 const autoplay = { delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }
 
-const products: HomeProduct[] = [
-  { id: 1, name: 'Mikrotik RouterBOARD hEX S RB760iGS', brand: 'MikroTik', price: 1850000, originalPrice: 2200000, discount: 16, rating: 4.8, ratingCount: 234, image: 'https://placehold.co/300x300/EEF2FF/1E40AF?text=hEX+S' },
-  { id: 2, name: 'TP-Link EAP670 AX3000 WiFi 6 Access Point', brand: 'TP-Link', price: 2490000, originalPrice: 2990000, discount: 17, rating: 4.7, ratingCount: 189, image: 'https://placehold.co/300x300/ECFEFF/0891B2?text=EAP670' },
-  { id: 3, name: 'Hikvision DS-2CD2143G2-I 4MP AcuSense', brand: 'Hikvision', price: 1390000, originalPrice: 1650000, discount: 16, rating: 4.9, ratingCount: 312, image: 'https://placehold.co/300x300/FFF7ED/EA580C?text=DS-2CD' },
-  { id: 4, name: 'Dell Latitude 3540 Core i5-1345U 8GB 256GB', brand: 'Dell', price: 14500000, originalPrice: 17000000, discount: 15, rating: 4.6, ratingCount: 87, image: 'https://placehold.co/300x300/F8FAFC/475569?text=Latitude' },
-  { id: 5, name: 'Cisco SG350-28P 28-Port PoE Managed Switch', brand: 'Cisco', price: 12900000, originalPrice: 15500000, discount: 17, rating: 4.8, ratingCount: 156, image: 'https://placehold.co/300x300/EEF2FF/4338CA?text=SG350' },
-  { id: 6, name: 'Synology DiskStation DS223+ 2-Bay NAS', brand: 'Synology', price: 8900000, originalPrice: 10500000, discount: 15, rating: 4.7, ratingCount: 93, image: 'https://placehold.co/300x300/F5F3FF/7C3AED?text=DS223+' },
-  { id: 7, name: 'Ubiquiti UniFi AP AC Pro UAP-AC-PRO', brand: 'Ubiquiti', price: 3290000, originalPrice: 3990000, discount: 18, rating: 4.8, ratingCount: 271, image: 'https://placehold.co/300x300/ECFEFF/0E7490?text=AC+Pro' },
-  { id: 8, name: 'HP ProBook 440 G10 Core i7-1355U 16GB 512GB', brand: 'HP', price: 22500000, originalPrice: 26000000, discount: 13, rating: 4.7, ratingCount: 64, image: 'https://placehold.co/300x300/F0FDF4/16A34A?text=ProBook' },
-]
+function toHomeProduct(record: BestSellingRecordWithPricing): HomeProduct {
+  const { product, unitPrice, comparePrice, brand } = record
+  const hasDiscount = comparePrice != null && comparePrice > unitPrice
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    brand,
+    price: unitPrice,
+    originalPrice: hasDiscount ? comparePrice : undefined,
+    discount: hasDiscount ? Math.round(((comparePrice - unitPrice) / comparePrice) * 100) : undefined,
+    rating: 0,
+    ratingCount: 0,
+    image: product.images[0],
+  }
+}
+
+const { fetchBestSellingProducts } = useBestSelling()
+const bestSellingRecords = ref<BestSellingRecordWithPricing[]>([])
+const products = computed(() => bestSellingRecords.value.map(toHomeProduct))
+
+onMounted(async () => {
+  bestSellingRecords.value = await fetchBestSellingProducts()
+})
 </script>

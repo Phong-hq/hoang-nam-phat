@@ -75,3 +75,9 @@ export interface AlternateLink {
   hreflang: string
   href: string
 }
+
+// Raw item shape returned by the ERP frontend sitemap APIs
+export interface SitemapApiItem {
+  loc: string
+  lastmod: string
+}

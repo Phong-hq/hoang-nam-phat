@@ -42,7 +42,7 @@ export default {
         'page-bg': '#f8fafc',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Roboto', 'system-ui', 'sans-serif'],
       },
       screens: {
         xs: '320px',

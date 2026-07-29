@@ -9,6 +9,14 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  // Bind the dev server to IPv4 -- on Windows `localhost` can resolve to the
+  // IPv6 loopback (::1), and nuxt-site-config's origin detection doesn't
+  // handle bracketed IPv6 hosts, which corrupts sitemap <loc> URLs
+  // (e.g. `http://[:3000/products/...`).
+  devServer: {
+    host: process.env.NUXT_HOST || '127.0.0.1',
+  },
+
   ssr: true,
 
   app: {
@@ -30,6 +38,12 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap',
+        },
       ],
       script: [
         {
@@ -52,6 +66,10 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
   ],
 
+  site: {
+    url: process.env.NUXT_PUBLIC_SITE_URL || 'https://hoangnamphat.vn',
+  },
+
   robots: {
     groups: [
       {
@@ -66,9 +84,6 @@ export default defineNuxtConfig({
     sitemaps: {
       products: {
         sources: ['/api/__sitemap__/products'],
-      },
-      pages: {
-        sources: ['/api/__sitemap__/pages'],
       },
       categories: {
         sources: ['/api/__sitemap__/categories'],

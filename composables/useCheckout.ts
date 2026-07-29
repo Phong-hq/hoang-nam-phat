@@ -13,7 +13,6 @@ export function useCheckout() {
     status: computed(() => store.status),
     orderResult: computed(() => store.orderResult),
     subtotal: computed(() => store.subtotal),
-    shippingFee: computed(() => store.shippingFee),
     discount: computed(() => store.discount),
     total: computed(() => store.total),
     isSubmitting,

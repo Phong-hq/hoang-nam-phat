@@ -100,7 +100,7 @@
               </div>
 
               <!-- Facebook embed -->
-              <div class="fb-page block h-[200px] overflow-hidden rounded-lg"
+              <div class="fb-page block h-auto overflow-hidden rounded-lg"
               v-if="facebookHref"
                 :data-href="facebookHref"
                 data-tabs=""

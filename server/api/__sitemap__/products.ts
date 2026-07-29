@@ -1,20 +1,24 @@
-﻿// Sitemap source for products
-// Returns all product slugs and update dates for sitemap generation
-// Replace the data source here when connecting a real database
+// Sitemap source for products
+// Fetches product sitemap entries from the ERP API (base URL from NUXT_PUBLIC_ERP_API_BASE_URL)
 
+import { sitemapService } from '~/services/sitemap.service'
 import type { SitemapEntry } from '~/types'
 
 export default defineEventHandler(async (): Promise<SitemapEntry[]> => {
-  const products = [
-    { slug: 'iphone-16-pro-max', updatedAt: '2026-06-27' },
-    { slug: 'samsung-galaxy-s25-ultra', updatedAt: '2026-06-27' },
-    { slug: 'macbook-pro-m4', updatedAt: '2026-06-27' },
-  ]
+  try{
+     console.log(`[sitemap:products] fetching from ERP at ${new Date().toISOString()}`)
 
-  return products.map((p) => ({
-    loc: `/products/${p.slug}`,
-    lastmod: p.updatedAt,
-    changefreq: 'weekly' as const,
-    priority: 0.8,
-  }))
+    const products = await sitemapService.getProducts()
+    console.log(`[sitemap:products] received ${products} entries`)
+
+    return products.map((p) => ({
+      loc: p.loc,
+      lastmod: p.lastmod,
+      changefreq: 'weekly' as const,
+      priority: 0.8,
+    }))
+  } catch (e) {
+    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',e);
+    return []
+  }
 })
