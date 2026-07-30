@@ -7,13 +7,11 @@
           <h2 class="text-base font-bold text-[#0F172A]">Thương hiệu chính hãng</h2>
         </div>
       </div>
-
       <ClientOnly>
         <Swiper
           v-if="brands.length"
           :modules="swiperModules"
           :slides-per-view="'auto'"
-          :space-between="12"
           :autoplay="autoplay"
           :speed="4000"
           :loop="true"
@@ -25,14 +23,15 @@
           <SwiperSlide v-for="brand in brands" :key="brand.id" style="width: 140px;">
             <NuxtLink
               :to="`/products?brand=${brand.id}`"
-              class="flex flex-col items-center gap-2 p-4 rounded-xl border border-base-200 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
+              class="w-full h-full flex flex-col items-center justify-center my-auto gap-2 rounded-xl border border-base-200 bg-white hover:border-primary/30 hover:shadow-md transition-all group"
+              :class="{'': !brand.icon?.length}"
             >
-              <div class="w-16 h-10 flex items-center justify-center">
+              <div class="w-full h-[74px] flex items-center justify-center">
                 <img
                   v-if="brand.icon?.length"
                   :src="brand.icon[0]"
                   :alt="brand.name"
-                  class="max-w-full max-h-full object-contain"
+                  class="w-full h-auto max-h-full  object-contain"
                   loading="lazy"
                 />
                 <span
@@ -52,7 +51,8 @@
               v-for="brand in brands"
               :key="brand.id"
               :to="`/products?brand=${brand.id}`"
-              class="flex-shrink-0 w-[140px] flex flex-col items-center gap-2 p-4 rounded-xl border border-base-200 bg-white"
+              class="flex-shrink-0 w-[140px] flex flex-col items-center gap-2 rounded-xl border border-base-200 bg-white"
+              :class="{'p-4': !brand.icon?.length}"
             >
               <div class="w-16 h-10 flex items-center justify-center">
                 <img
