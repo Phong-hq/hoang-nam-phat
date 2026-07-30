@@ -125,58 +125,14 @@
         </div>
 
         <!-- Right sidebar: similar products (desktop only) -->
-        <aside class="hidden lg:flex flex-col gap-3 w-64 flex-shrink-0 sticky top-[var(--header-height)] z-10">
-          <div class="flex items-center justify-between mb-1">
-            <h3 class="font-bold text-sm text-base-content">Có thể bạn quan tâm</h3>
-            <NuxtLink
-              :to="`/products?category=${product.category.slug}`"
-              class="text-xs text-primary hover:underline"
-            >
-              Xem thêm
-            </NuxtLink>
-          </div>
-
-          <template v-if="sidebarProducts.length">
-            <NuxtLink
-              v-for="item in sidebarProducts"
-              :key="item.id"
-              :to="`/products/${item.slug}`"
-              class="flex gap-3 bg-white border border-base-200 rounded-xl p-2.5 shadow-sm hover:shadow-md hover:border-primary/30 transition-all group"
-              @click="productStore.setSelectedProduct(item)"
-            >
-              <div class="w-16 h-16 flex-shrink-0 bg-base-100 rounded-lg overflow-hidden">
-                <NuxtImg
-                  v-if="getProductThumbnail(item)"
-                  :src="getProductThumbnail(item)"
-                  :alt="item.name"
-                  width="64"
-                  height="64"
-                  loading="lazy"
-                  class="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-300"
-                />
-                <div v-else class="w-full h-full flex items-center justify-center">
-                  <svg class="w-6 h-6 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-xs font-medium text-base-content line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-                  {{ item.name }}
-                </p>
-                <div class="mt-1.5">
-                  <span class="text-sm font-bold text-primary leading-tight">
-                    {{ formatCurrency(item.unit_price) }}
-                  </span>
-                </div>
-              </div>
-            </NuxtLink>
-          </template>
-
-          <p v-else class="text-xs text-base-content/40 text-center py-4">
-            Không có sản phẩm liên quan
-          </p>
-        </aside>
+        <ProductSidebarList
+          title="Có thể bạn quan tâm"
+          subtitle="Cùng danh mục sản phẩm"
+          :view-more-link="`/products?category=${product.category.slug}`"
+          :items="sidebarItems"
+          empty-text="Không có sản phẩm liên quan"
+          @select="(item: unknown) => productStore.setSelectedProduct(item as ProductCatalogItem)"
+        />
       </div>
     </div>
 
@@ -194,6 +150,7 @@ import { useUiStore } from '~/stores/ui.store'
 import { useProductStore } from '~/stores/product.store'
 import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
+import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -289,6 +246,18 @@ const sidebarProducts = computed<ProductCatalogItem[]>(() => {
   if (!similarData.value || !product.value) return []
   return similarData.value.filter((p) => p.slug !== product.value!.slug).slice(0, 6)
 })
+
+const sidebarItems = computed<SidebarProductItem[]>(() =>
+  sidebarProducts.value.map((item) => ({
+    id: item.id,
+    slug: item.slug,
+    name: item.name,
+    image: getProductThumbnail(item),
+    price: item.unit_price,
+    comparePrice: item.compare_price,
+    raw: item,
+  })),
+)
 
 const cartStore = useCartStore()
 const uiStore = useUiStore()

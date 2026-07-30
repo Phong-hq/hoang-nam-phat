@@ -1,5 +1,6 @@
 // Global styles -- imported once in nuxt.config.ts via css[]
 @use 'variables' as *;
+@use 'cms-content';
 
 *,
 *::before,
