@@ -10,6 +10,7 @@ export function useBusinessSeo() {
   const siteUrl = runtimeConfig.public.siteUrl || SITE_URL
 
   const siteName = computed(() => businessStore.businessInfo?.name || SITE_NAME)
+  const defaultOgImage = `${siteUrl}${DEFAULT_OG_IMAGE}`
   const logo = computed(() => {
     const raw = businessStore.businessInfo?.logo
     if (!raw) return null
@@ -22,8 +23,8 @@ export function useBusinessSeo() {
 
   useSeoMeta({
     ogSiteName: () => siteName.value,
-    ogImage: () => logo.value ?? DEFAULT_OG_IMAGE,
-    twitterImage: () => logo.value ?? DEFAULT_OG_IMAGE,
+    ogImage: () => logo.value ?? defaultOgImage,
+    twitterImage: () => logo.value ?? defaultOgImage,
     description: () => description.value,
   })
 
@@ -40,8 +41,8 @@ export function useBusinessSeo() {
         '@type': 'Organization',
         name: info.name,
         url: siteUrl,
-        logo: logo.value,
-        image: logo.value,
+        logo: logo.value ?? defaultOgImage,
+        image: logo.value ?? defaultOgImage,
         email: info.email,
         telephone: info.phone[0],
         address: info.address,

@@ -1,5 +1,7 @@
 ﻿// Nuxt 3 Enterprise Configuration
 // Centralizes all module, SSR, SEO, performance, and build settings
+import { SITE_URL, DEFAULT_OG_IMAGE } from './constants'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
 
@@ -32,7 +34,7 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#ffffff' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'Hoang Nam Phat' },
-        { property: 'og:image', content: '/images/og-default.jpg' },
+        { property: 'og:image', content: `${SITE_URL}${DEFAULT_OG_IMAGE}` },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:site', content: '@hoangnamphat' },
       ],
