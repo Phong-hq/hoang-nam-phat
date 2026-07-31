@@ -23,7 +23,7 @@
     <!-- Tab content -->
     <div class="p-6 lg:p-8">
       <template v-for="tab in tabs" :key="tab.id">
-        <div v-if="activeTab === tab.id" class="cms-content" v-html="tab.value" />
+        <div v-if="activeTab === tab.id" class="cms-content" v-html="resolveOembedTags(tab.value)" />
       </template>
     </div>
   </div>
@@ -31,6 +31,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { resolveOembedTags } from '~/utils'
 import type { ProductDetail } from '~/types'
 
 const props = defineProps<{ product: ProductDetail }>()

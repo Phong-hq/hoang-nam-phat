@@ -1,5 +1,5 @@
 <template>
-  <section class="py-14 bg-red-50">
+  <section class="py-14 bg-red-50" v-if="flashSaleRecords.length">
     <div class="container mx-auto px-4 max-w-screen-xl">
       <!-- Header with countdown -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

@@ -22,7 +22,7 @@
         <!-- Main content -->
         <div class="flex-1 min-w-0">
           <div v-if="introduceInfo?.info" class="bg-white rounded-2xl border border-gray-200 shadow p-5 sm:p-8">
-            <div class="cms-content" v-html="introduceInfo.info" />
+            <div class="cms-content" v-html="introduceInfoHtml" />
           </div>
         </div>
 
@@ -59,6 +59,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useIntroducePageStore } from '~/stores/introducePage'
+import { resolveOembedTags } from '~/utils'
 import { useBestSelling } from '~/composables/useBestSelling'
 import type { BestSellingRecordWithPricing } from '~/types'
 import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
@@ -71,6 +72,7 @@ useSeo({
 
 const introducePageStore = useIntroducePageStore()
 const { introduceInfo } = storeToRefs(introducePageStore)
+const introduceInfoHtml = computed(() => (introduceInfo.value?.info ? resolveOembedTags(introduceInfo.value.info) : ''))
 
 const { fetchBestSellingProducts } = useBestSelling()
 const bestSellingProducts = ref<BestSellingRecordWithPricing[]>([])

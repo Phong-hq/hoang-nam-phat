@@ -31,6 +31,17 @@ a {
   transition: color $transition-base;
 }
 
+// daisyUI's .btn defaults to flex-wrap: wrap with no white-space rule, so icon+label
+// buttons (e.g. "Thêm vào giỏ") wrap onto a second line on narrow mobile widths.
+// Force a single line and ellipsize instead, since some cards are too narrow to
+// fit the full label even after removing the wrap.
+.btn {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .heading-1 {
   color: #111827;
   font-size: 2.25rem;

@@ -24,19 +24,67 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Gallery -->
             <div class="product-images">
-              <NuxtImg
-                v-if="galleryImages[activeImageIndex]"
-                :src="galleryImages[activeImageIndex]"
-                :alt="`${product.brand.name} ${product.name}`"
-                width="600"
-                height="600"
-                loading="eager"
-                decoding="async"
-                sizes="(max-width: 768px) 100vw, 600px"
-                class="rounded-xl w-full object-cover aspect-square"
-              />
-              <div v-else class="aspect-square bg-base-200 rounded-xl flex items-center justify-center">
-                <span class="text-base-content/40">Chưa có ảnh</span>
+              <div class="relative">
+                <ClientOnly>
+                  <Swiper
+                    class="rounded-xl aspect-square"
+                    @swiper="onGallerySwiper"
+                    @slide-change="onGallerySlideChange"
+                  >
+                    <SwiperSlide v-for="(img, index) in galleryImages" :key="index">
+                      <NuxtImg
+                        :src="img"
+                        :alt="`${product.brand.name} ${product.name}`"
+                        width="600"
+                        height="600"
+                        :loading="index === 0 ? 'eager' : 'lazy'"
+                        decoding="async"
+                        sizes="(max-width: 768px) 100vw, 600px"
+                        class="rounded-xl w-full h-full object-cover aspect-square"
+                      />
+                    </SwiperSlide>
+                  </Swiper>
+
+                  <template v-if="galleryImages.length > 1">
+                    <button
+                      type="button"
+                      aria-label="Ảnh trước"
+                      class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/90 border border-base-200 rounded-full flex items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors"
+                      @click="gallerySwiper?.slidePrev()"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Ảnh tiếp theo"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white/90 border border-base-200 rounded-full flex items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors"
+                      @click="gallerySwiper?.slideNext()"
+                    >
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </template>
+
+                  <template #fallback>
+                    <NuxtImg
+                      v-if="galleryImages[activeImageIndex]"
+                      :src="galleryImages[activeImageIndex]"
+                      :alt="`${product.brand.name} ${product.name}`"
+                      width="600"
+                      height="600"
+                      loading="eager"
+                      decoding="async"
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      class="rounded-xl w-full object-cover aspect-square"
+                    />
+                    <div v-else class="aspect-square bg-base-200 rounded-xl flex items-center justify-center">
+                      <span class="text-base-content/40">Chưa có ảnh</span>
+                    </div>
+                  </template>
+                </ClientOnly>
               </div>
 
               <div v-if="galleryImages.length > 1" class="flex gap-2 mt-3 overflow-x-auto">
@@ -46,7 +94,7 @@
                   type="button"
                   class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors"
                   :class="index === activeImageIndex ? 'border-primary' : 'border-transparent'"
-                  @click="activeImageIndex = index"
+                  @click="goToGallerySlide(index)"
                 >
                   <NuxtImg
                     :src="img"
@@ -86,7 +134,7 @@
               <div
                 v-if="product.description"
                 class="prose prose-sm max-w-none text-base-content/80"
-                v-html="product.description"
+                v-html="resolveOembedTags(product.description)"
               />
 
               <div class="divider my-2" />
@@ -143,7 +191,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { formatCurrency, getProductImages, getProductThumbnail } from '~/utils'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import type { Swiper as SwiperType } from 'swiper'
+import { formatCurrency, getProductImages, getProductThumbnail, resolveOembedTags } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
@@ -235,6 +285,14 @@ const galleryImages = computed<string[]>(() => (product.value ? getProductImages
 watch(galleryImages, () => {
   activeImageIndex.value = 0
 })
+
+const gallerySwiper = ref<SwiperType | null>(null)
+const onGallerySwiper = (s: SwiperType) => { gallerySwiper.value = s }
+const onGallerySlideChange = (s: SwiperType) => { activeImageIndex.value = s.activeIndex }
+const goToGallerySlide = (index: number) => {
+  activeImageIndex.value = index
+  gallerySwiper.value?.slideTo(index)
+}
 
 const { data: similarData } = await useAsyncData(
   `similar-sidebar-${slug.value}`,
