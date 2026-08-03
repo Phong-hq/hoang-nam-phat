@@ -153,7 +153,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['~/assets/scss/main.scss', 'swiper/css', 'swiper/css/navigation'],
+  css: ['~/assets/scss/main.scss', 'swiper/css', 'swiper/css/navigation', 'swiper/css/pagination'],
 
   build: {
     transpile: ['swiper'],

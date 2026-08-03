@@ -1,7 +1,7 @@
 <template>
   <section class="bg-[#0F172A] py-4">
     <div class="container mx-auto px-4 max-w-screen-xl">
-      <div class="flex gap-3 lg:h-[440px]">
+      <div class="flex gap-3">
 
         <!-- Category menu with flyout -->
         <div
@@ -98,39 +98,72 @@
         </div>
 
         <!-- Banner grid -->
-        <div class="flex-1 min-w-0 grid grid-cols-3 gap-2.5" v-if="banner">
+        <div class="flex-1 min-w-0" v-if="banner">
 
-          <!-- Main left column: 1 large + 2 small -->
-          <div class="col-span-2 flex flex-col gap-2.5">
-
-            <!-- Large hero banner -->
+          <!-- Mobile / tablet layout: main banner + all banners shown statically (no swiper) -->
+          <div class="flex flex-col gap-2.5 lg:hidden">
             <NuxtLink
               to="/products"
-              class="flex-1 relative rounded-xl overflow-hidden group min-h-[200px]"
+              class="relative rounded-xl overflow-hidden aspect-[1.52]"
               :style="mainBannerStyle"
             />
-
-            <!-- Two small banners -->
-            <div class="flex gap-2.5 h-[120px] flex-shrink-0">
+            <div class="grid grid-cols-2 gap-2.5">
               <NuxtLink
-                v-for="b in leftBanners"
+                v-for="b in sideBanners"
                 :key="b.href"
                 :to="b.href"
-                class="flex-1 relative rounded-xl overflow-hidden group"
+                class="relative rounded-xl overflow-hidden aspect-[3.21]"
                 :style="b.style"
               />
             </div>
           </div>
 
-          <!-- Right column: 4 stacked banners -->
-          <div class="flex flex-col gap-2.5">
+          <!-- Desktop layout (lg+): main banner left, vertical banner list right -->
+          <div class="hidden lg:grid grid-cols-3 gap-2.5">
+
+            <!-- Large hero banner -->
             <NuxtLink
-              v-for="b in sideBanners"
-              :key="b.href"
-              :to="b.href"
-              class="flex-1 relative rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
-              :style="b.style"
+              to="/products"
+              class="col-span-2 relative rounded-xl overflow-hidden group aspect-[1.52]"
+              :style="mainBannerStyle"
             />
+
+            <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
+            <div class="relative h-0 pb-[133.33%]">
+              <ClientOnly>
+                <Swiper
+                  :modules="heroSwiperModules"
+                  direction="vertical"
+                  :slides-per-view="4"
+                  :space-between="10"
+                  :observer="true"
+                  :observe-parents="true"
+                  :autoplay="heroAutoplay"
+                  :rewind="sideBanners.length > 4"
+                  class="h-full w-full"
+                  style="position: absolute; inset: 0;"
+                >
+                  <SwiperSlide v-for="b in sideBanners" :key="b.href">
+                    <NuxtLink
+                      :to="b.href"
+                      class="block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
+                      :style="b.style"
+                    />
+                  </SwiperSlide>
+                </Swiper>
+                <template #fallback>
+                  <div class="absolute inset-0 flex flex-col gap-2.5">
+                    <NuxtLink
+                      v-for="b in sideBanners.slice(0, 4)"
+                      :key="b.href"
+                      :to="b.href"
+                      class="flex-1 relative rounded-xl overflow-hidden"
+                      :style="b.style"
+                    />
+                  </div>
+                </template>
+              </ClientOnly>
+            </div>
           </div>
         </div>
       </div>
@@ -140,10 +173,15 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay } from 'swiper/modules'
 import { useCategoryStore } from '~/stores/category.store'
 import { useBannerStore } from '~/stores/banner.store'
 import { formatCurrency } from '~/utils'
 import type { ProductCategoryMenuItem } from '~/types'
+
+const heroSwiperModules = [Autoplay]
+const heroAutoplay = { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
 
 const categoryStore = useCategoryStore()
 const bannerStore = useBannerStore()
@@ -154,7 +192,7 @@ const banner = computed(() => bannerStore.banner)
 
 function toBgStyle(image: string | undefined, fallbackGradient: string) {
   return image
-    ? `background: url('${image}') center / cover no-repeat;`
+    ? `background: url('${image}') center / 100% 100% no-repeat;`
     : `background: ${fallbackGradient};`
 }
 
@@ -180,23 +218,19 @@ const mainBannerStyle = computed(() =>
   toBgStyle(banner.value?.main, 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%)'),
 )
 
-const leftBannersMeta = [
-  { href: '/products?category=camera', gradient: 'linear-gradient(135deg, #7C3AED, #5B21B6)' },
-  { href: '/products?category=router', gradient: 'linear-gradient(135deg, #0891B2, #0E7490)' },
-]
-
-const leftBanners = computed(() =>
-  leftBannersMeta.map((m, i) => ({ ...m, style: toBgStyle(banner.value?.left[i], m.gradient) })),
-)
-
-const sideBannersMeta = [
-  { href: '/products?category=switch', gradient: 'linear-gradient(135deg, #1D4ED8, #1E40AF)' },
-  { href: '/products?category=nas', gradient: 'linear-gradient(135deg, #7C3AED, #6D28D9)' },
-  { href: '/products?category=laptop', gradient: 'linear-gradient(135deg, #334155, #1E293B)' },
-  { href: '/products?category=accessories', gradient: 'linear-gradient(135deg, #D97706, #B45309)' },
-]
+const rightBannersMeta = [
+  { href: '/products?category=camera', gradient: 'linear-gradient(135deg, #7C3AED, #5B21B6)', field: 'left', index: 0 },
+  { href: '/products?category=router', gradient: 'linear-gradient(135deg, #0891B2, #0E7490)', field: 'left', index: 1 },
+  { href: '/products?category=switch', gradient: 'linear-gradient(135deg, #1D4ED8, #1E40AF)', field: 'right', index: 0 },
+  { href: '/products?category=nas', gradient: 'linear-gradient(135deg, #7C3AED, #6D28D9)', field: 'right', index: 1 },
+  { href: '/products?category=laptop', gradient: 'linear-gradient(135deg, #334155, #1E293B)', field: 'right', index: 2 },
+  { href: '/products?category=accessories', gradient: 'linear-gradient(135deg, #D97706, #B45309)', field: 'right', index: 3 },
+] as const
 
 const sideBanners = computed(() =>
-  sideBannersMeta.map((m, i) => ({ ...m, style: toBgStyle(banner.value?.right[i], m.gradient) })),
+  rightBannersMeta.map((m) => ({
+    href: m.href,
+    style: toBgStyle(banner.value?.[m.field]?.[m.index], m.gradient),
+  })),
 )
 </script>
