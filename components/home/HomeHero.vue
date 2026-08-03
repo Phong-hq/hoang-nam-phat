@@ -134,16 +134,16 @@
                 <Swiper
                   :modules="heroSwiperModules"
                   direction="vertical"
-                  :slides-per-view="4"
+                  :slides-per-view="HERO_SWIPER_SLIDES_PER_VIEW"
                   :space-between="10"
                   :observer="true"
                   :observe-parents="true"
                   :autoplay="heroAutoplay"
-                  :rewind="sideBanners.length > 4"
+                  :loop="sideBanners.length > HERO_SWIPER_SLIDES_PER_VIEW"
                   class="h-full w-full"
                   style="position: absolute; inset: 0;"
                 >
-                  <SwiperSlide v-for="b in sideBanners" :key="b.href">
+                  <SwiperSlide v-for="b in loopSideBanners" :key="b.key">
                     <NuxtLink
                       :to="b.href"
                       class="block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
@@ -233,4 +233,20 @@ const sideBanners = computed(() =>
     style: toBgStyle(banner.value?.[m.field]?.[m.index], m.gradient),
   })),
 )
+
+const HERO_SWIPER_SLIDES_PER_VIEW = 4
+
+// Swiper's loop mode needs at least slidesPerView * 2 slides to loop smoothly,
+// so repeat the banner list until there's enough buffer for a seamless infinite loop.
+const loopSideBanners = computed(() => {
+  const banners = sideBanners.value
+  if (!banners.length) return []
+  const minSlides = HERO_SWIPER_SLIDES_PER_VIEW * 3
+  const repeated = []
+  for (let i = 0; repeated.length < minSlides; i++) {
+    const b = banners[i % banners.length]
+    repeated.push({ ...b, key: `${b.href}-${i}` })
+  }
+  return repeated
+})
 </script>
