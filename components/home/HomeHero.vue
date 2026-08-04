@@ -107,7 +107,7 @@
               class="relative rounded-xl overflow-hidden aspect-[1.52]"
               :style="mainBannerStyle"
             />
-            <div class="grid grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-1 gap-2.5">
               <NuxtLink
                 v-for="b in sideBanners"
                 :key="b.href"

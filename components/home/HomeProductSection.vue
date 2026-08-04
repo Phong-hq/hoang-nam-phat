@@ -118,8 +118,7 @@ const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
 const swiperModules = [Autoplay]
 const breakpoints = {
-  320: { slidesPerView: 1.5, spaceBetween: 12 },
-  480: { slidesPerView: 2.3, spaceBetween: 12 },
+  320: { slidesPerView: 1, spaceBetween: 12 },
   640: { slidesPerView: 3, spaceBetween: 16 },
   1024: { slidesPerView: 4, spaceBetween: 16 },
   1280: { slidesPerView: 5, spaceBetween: 16 },
