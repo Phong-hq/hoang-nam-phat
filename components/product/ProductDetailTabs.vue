@@ -21,7 +21,7 @@
     </div>
 
     <!-- Tab content -->
-    <div class="p-6 lg:p-8">
+    <div class="overflow-x-auto p-6 lg:p-8">
       <template v-for="tab in tabs" :key="tab.id">
         <div v-if="activeTab === tab.id" class="cms-content" v-html="resolveOembedTags(tab.value)" />
       </template>

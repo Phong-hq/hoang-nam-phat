@@ -99,3 +99,12 @@
   width: 40% !important;
   font-weight: 500;
 }
+
+// Fallback cho <table> không được CMS bọc trong figure.table — vẫn cần cuộn ngang
+// trên mobile thay vì bị cha (overflow-hidden) cắt mất nội dung.
+.cms-content table:not(figure.table table) {
+  display: block;
+  margin: 1rem 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
