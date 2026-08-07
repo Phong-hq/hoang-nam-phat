@@ -100,6 +100,52 @@
         />
       </CheckoutFormRow>
 
+      <div class="divider my-0" />
+
+      <!-- Delivery Method -->
+      <CheckoutFormRow label="Cách thức nhận hàng" required>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <CheckoutOptionCard
+            v-model="form.deliveryMethod"
+            name="deliveryMethod"
+            value="delivery"
+            title="Giao hàng tận nơi"
+            description="Nhận hàng tại địa chỉ đã điền"
+          />
+          <CheckoutOptionCard
+            v-model="form.deliveryMethod"
+            name="deliveryMethod"
+            value="pickup"
+            title="Nhận tại cửa hàng"
+            description="Ghé cửa hàng lấy hàng"
+          />
+        </div>
+      </CheckoutFormRow>
+
+      <!-- Payment Method -->
+      <CheckoutFormRow label="Hình thức thanh toán" required>
+        <div class="flex flex-col gap-3 sm:pt-2">
+          <BaseRadio
+            v-model="form.paymentMethod"
+            value="cash"
+            label="Tiền mặt"
+            name="paymentMethod"
+          />
+          <BaseRadio
+            v-model="form.paymentMethod"
+            value="bank_transfer"
+            label="Chuyển khoản"
+            name="paymentMethod"
+          />
+          <BaseRadio
+            v-model="form.paymentMethod"
+            value="cod"
+            label="Thanh toán khi nhận hàng (COD)"
+            name="paymentMethod"
+          />
+        </div>
+      </CheckoutFormRow>
+
       <!-- Divider -->
       <div class="divider my-1" />
 

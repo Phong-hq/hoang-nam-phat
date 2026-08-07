@@ -13,7 +13,7 @@
             :loop="true"
             @swiper="onSwiper"
           >
-            <SwiperSlide v-for="product in products" :key="product.id" class="!h-auto pb-1">
+            <SwiperSlide v-for="product in products" :key="product.id" class="pb-1">
               <HomeProductCard :product="product" />
             </SwiperSlide>
           </Swiper>

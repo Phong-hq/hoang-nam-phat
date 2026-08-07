@@ -23,6 +23,8 @@ export const useCheckoutStore = defineStore('checkout', () => {
     wardName: '',
     address: '',
     notes: '',
+    deliveryMethod: 'delivery',
+    paymentMethod: 'cash',
     invoiceRequested: false,
     companyName: '',
     taxCode: '',
@@ -152,6 +154,8 @@ export const useCheckoutStore = defineStore('checkout', () => {
     form.wardName = ''
     form.address = ''
     form.notes = ''
+    form.deliveryMethod = 'delivery'
+    form.paymentMethod = 'cash'
     form.invoiceRequested = false
     form.companyName = ''
     form.taxCode = ''

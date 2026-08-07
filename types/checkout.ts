@@ -9,6 +9,8 @@ export interface CheckoutFormData {
   wardName: string
   address: string
   notes: string
+  deliveryMethod: 'delivery' | 'pickup'
+  paymentMethod: 'cash' | 'bank_transfer' | 'cod'
   invoiceRequested: boolean
   companyName: string
   taxCode: string

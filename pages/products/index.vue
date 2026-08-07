@@ -54,13 +54,13 @@
                 v-for="item in products"
                 :key="item.id"
                 :to="`/products/${item.slug}`"
-                class="card bg-white border border-base-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-xl overflow-hidden"
+                class="group card h-full bg-white border border-base-200 shadow-md hover:shadow-xl hover:border-primary/20 transition-all duration-300 rounded-xl overflow-hidden flex flex-col"
                 @click="productStore.setSelectedProduct(item)"
               >
                 <figure class="relative aspect-square overflow-hidden bg-base-200">
                   <span
                     v-if="getDiscountPercent(item)"
-                    class="absolute top-2 left-2 z-10 bg-primary text-white text-xs font-extrabold px-2 py-0.5 rounded shadow-md"
+                    class="absolute top-2 left-2 z-10 bg-primary text-white text-sm font-extrabold px-2.5 py-1 rounded shadow-md"
                   >
                     -{{ getDiscountPercent(item) }}%
                   </span>
@@ -73,18 +73,22 @@
                     loading="lazy"
                     decoding="async"
                     sizes="(max-width: 640px) 50vw, 300px"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1 group-hover:drop-shadow-xl"
                   />
                 </figure>
-                <div class="card-body p-4">
+                <div class="card-body p-4 flex flex-col flex-1">
                   <span class="badge badge-ghost badge-sm">{{ item.brand.name }}</span>
-                  <h2 class="card-title text-sm line-clamp-2">{{ item.name }}</h2>
-                  <div class="mt-1">
-                    <div v-if="item.compare_price && item.compare_price > item.unit_price" class="text-xs text-base-content/40 line-through leading-none mb-0.5">
-                      {{ formatCurrency(item.compare_price) }}
+                  <h2 class="card-title text-sm line-clamp-2 h-9">{{ item.name }}</h2>
+                  <div class="mt-1 min-h-[34px]">
+                    <div
+                      class="text-xs text-base-content/40 line-through leading-none mb-0.5"
+                      :class="{ invisible: !(item.compare_price && item.compare_price > item.unit_price) }"
+                    >
+                      {{ formatCurrency(item.compare_price ?? 0) }}
                     </div>
                     <p class="text-primary font-bold">{{ formatCurrency(item.unit_price) }}</p>
                   </div>
+                  <div class="flex-1" />
                   <button
                     class="btn btn-primary btn-sm w-full mt-3 text-white font-semibold gap-1.5"
                     @click.stop.prevent="handleAddToCart(item)"

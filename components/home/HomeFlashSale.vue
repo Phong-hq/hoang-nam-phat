@@ -46,7 +46,7 @@
             :loop="true"
             @swiper="onSwiper"
           >
-            <SwiperSlide v-for="product in products" :key="product.id" class="!h-auto pb-1">
+            <SwiperSlide v-for="product in products" :key="product.id" class="pb-1">
               <HomeFlashSaleCard :product="product" />
             </SwiperSlide>
           </Swiper>

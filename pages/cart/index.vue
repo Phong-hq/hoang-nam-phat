@@ -38,8 +38,13 @@
             <h2 class="text-2xl font-extrabold text-base-content mb-2">Đặt hàng thành công!</h2>
             <p class="text-base-content/60 text-sm mb-4">Cảm ơn bạn đã tin tưởng Hoàng Nam Phát.</p>
 
-            <p class="text-sm text-base-content/60 mb-6 leading-relaxed">
+            <p class="text-sm text-base-content/60 mb-2 leading-relaxed">
               Chúng tôi sẽ liên hệ với bạn sớm nhất để xác nhận đơn hàng.
+            </p>
+
+            <p class="text-sm text-base-content/60 mb-6 leading-relaxed">
+              Cần hỗ trợ ngay? Gọi hotline
+              <a :href="phoneHref" class="font-semibold text-primary hover:underline">{{ phoneDisplay }}</a>
             </p>
 
             <div class="flex flex-col sm:flex-row gap-3">
@@ -75,6 +80,16 @@ const { isSuccess, resetOrder } = useCheckout()
 onBeforeRouteLeave(() => {
   if (isSuccess.value) resetOrder()
 })
+
+const businessStore = useBusinessStore()
+const { businessInfo } = storeToRefs(businessStore)
+
+onMounted(() => {
+  businessStore.fetchBusinessInfo()
+})
+
+const phoneDisplay = computed(() => businessInfo.value?.phone?.[0] ?? '0937.813.788')
+const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937813788').replace(/\D/g, '')}`)
 
 useSeo({
   title: 'Giỏ hàng',

@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="product.slug ? `/products/${product.slug}` : ''"
-    class="group relative bg-white rounded-xl border border-base-200 overflow-hidden hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col"
+    class="group relative h-full bg-white rounded-xl border border-base-200 overflow-hidden hover:shadow-lg hover:border-primary/20 transition-all duration-300 flex flex-col"
   >
     <!-- Image area -->
     <div class="relative bg-base-100 overflow-hidden aspect-square">
@@ -48,7 +48,7 @@
         width="300"
         height="300"
         loading="lazy"
-        class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+        class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1 group-hover:drop-shadow-xl"
       />
       <div v-else class="w-full h-full flex items-center justify-center">
         <svg class="w-16 h-16 text-base-content/10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,14 +67,17 @@
       <span class="text-[10px] font-bold uppercase tracking-widest text-base-content/40">
         {{ product.brand }}
       </span>
-      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug flex-1 min-h-[36px]">
+      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-9">
         {{ product.name }}
       </h3>
 
       <!-- Price -->
-      <div class="mt-2">
-        <div v-if="product.originalPrice" class="text-[11px] text-base-content/40 line-through leading-none mb-0.5">
-          {{ formatCurrency(product.originalPrice) }}
+      <div class="mt-2 min-h-[38px]">
+        <div
+          class="text-[11px] text-base-content/40 line-through leading-none mb-0.5"
+          :class="{ invisible: !product.originalPrice }"
+        >
+          {{ formatCurrency(product.originalPrice ?? 0) }}
         </div>
         <div class="text-base font-extrabold text-primary leading-tight">
           {{ formatCurrency(product.price) }}
@@ -91,6 +94,8 @@
           {{ product.inStock !== false ? 'Còn hàng' : 'Hết hàng' }}
         </span>
       </div>
+
+      <div class="flex-1" />
 
       <!-- CTA -->
       <button
