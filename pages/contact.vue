@@ -25,8 +25,8 @@
 
           <!-- Phone -->
           <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
-            <div class="bg-green-100 rounded-xl p-3 flex-shrink-0">
-              <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+            <div class="bg-primary/10 rounded-xl p-3 flex-shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
               </svg>
             </div>
@@ -60,8 +60,8 @@
 
           <!-- Email -->
           <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
-            <div class="bg-red-100 rounded-xl p-3 flex-shrink-0">
-              <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <div class="bg-primary/10 rounded-xl p-3 flex-shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
@@ -76,8 +76,8 @@
 
           <!-- Address -->
           <div class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6 flex items-start gap-4">
-            <div class="bg-yellow-100 rounded-xl p-3 flex-shrink-0">
-              <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <div class="bg-primary/10 rounded-xl p-3 flex-shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>

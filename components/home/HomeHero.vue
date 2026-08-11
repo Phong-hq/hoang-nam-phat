@@ -5,7 +5,7 @@
 
         <!-- Category menu with flyout -->
         <div
-          class="w-[230px] flex-shrink-0 hidden lg:flex flex-col relative z-30"
+          class="w-[230px] flex-shrink-0 hidden lg:flex flex-col relative z-30 max-h-[460px]"
           @mouseleave="hoveredCat = null"
         >
           <div class="bg-white rounded-xl overflow-hidden flex flex-col h-full shadow-lg">
@@ -15,9 +15,22 @@
               </svg>
               Danh mục sản phẩm
             </div>
-            <ul class="flex-1 py-1 overflow-hidden">
+            <div v-if="isCategorySearchable" class="px-2.5 pt-2 flex-shrink-0">
+              <div class="relative">
+                <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  v-model="categorySearch"
+                  type="text"
+                  placeholder="Tìm danh mục..."
+                  class="w-full text-xs border border-gray-200 rounded-lg pl-7 pr-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
+                />
+              </div>
+            </div>
+            <ul class="flex-1 py-1 overflow-y-auto">
               <li
-                v-for="cat in categoryStore.categories"
+                v-for="cat in filteredCategories"
                 :key="cat.id"
                 @mouseenter="onCatHover(cat, $event)"
               >
@@ -46,6 +59,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </NuxtLink>
+              </li>
+              <li v-if="isCategorySearchable && !filteredCategories.length" class="px-3.5 py-3 text-xs text-gray-400 text-center">
+                Không tìm thấy danh mục
               </li>
             </ul>
           </div>
@@ -183,12 +199,23 @@ import type { ProductCategoryMenuItem } from '~/types'
 const heroSwiperModules = [Autoplay]
 const heroAutoplay = { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
 
+const CATEGORY_SEARCH_THRESHOLD = 8
+
 const categoryStore = useCategoryStore()
 const bannerStore = useBannerStore()
 const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 const hoveredTop = ref(0)
+const categorySearch = ref('')
 
 const banner = computed(() => bannerStore.banner)
+
+const isCategorySearchable = computed(() => categoryStore.categories.length > CATEGORY_SEARCH_THRESHOLD)
+
+const filteredCategories = computed(() => {
+  if (!isCategorySearchable.value || !categorySearch.value.trim()) return categoryStore.categories
+  const q = categorySearch.value.trim().toLowerCase()
+  return categoryStore.categories.filter((cat) => cat.name.toLowerCase().includes(q))
+})
 
 function toBgStyle(image: string | undefined, fallbackGradient: string) {
   return image
