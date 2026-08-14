@@ -5,6 +5,7 @@
 
         <!-- Category menu with flyout -->
         <div
+          ref="categoryMenuRef"
           class="w-[230px] flex-shrink-0 hidden lg:flex flex-col relative z-30 max-h-[460px]"
           @mouseleave="hoveredCat = null"
         >
@@ -205,6 +206,7 @@ const categoryStore = useCategoryStore()
 const bannerStore = useBannerStore()
 const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 const hoveredTop = ref(0)
+const categoryMenuRef = ref<HTMLElement | null>(null)
 const categorySearch = ref('')
 
 const banner = computed(() => bannerStore.banner)
@@ -229,7 +231,9 @@ function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
     return
   }
   hoveredCat.value = cat
-  hoveredTop.value = (event.currentTarget as HTMLElement).offsetTop
+  const li = event.currentTarget as HTMLElement
+  const container = categoryMenuRef.value
+  hoveredTop.value = container ? li.getBoundingClientRect().top - container.getBoundingClientRect().top : li.offsetTop
 }
 
 const defaultCategoryIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">

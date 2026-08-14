@@ -55,7 +55,7 @@ const productSections = computed<SectionConfig[]>(() =>
   sortedSessions.value.map((s) => ({
     id: String(s.id),
     props: {
-      label: s.sub_title.trim(),
+      label: s.sub_title?.trim(),
       title: s.title,
       to: `/products?category=${s.category.slug}`,
       autoplayDelay: 4000,

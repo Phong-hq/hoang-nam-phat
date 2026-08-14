@@ -12,6 +12,7 @@
           v-if="brands.length"
           :modules="swiperModules"
           :slides-per-view="'auto'"
+          :space-between="16"
           :autoplay="autoplay"
           :speed="4000"
           :loop="true"
@@ -46,7 +47,7 @@
         </Swiper>
 
         <template #fallback>
-          <div class="flex gap-3 overflow-x-auto pb-2">
+          <div class="flex gap-4 overflow-x-auto pb-2">
             <NuxtLink
               v-for="brand in brands"
               :key="brand.id"

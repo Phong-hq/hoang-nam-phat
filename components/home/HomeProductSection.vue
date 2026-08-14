@@ -95,15 +95,11 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
 }
 
 async function loadProducts() {
-  if (!activeBrand.value) {
-    rawProducts.value = []
-    return
-  }
   isLoading.value = true
   try {
     rawProducts.value = await fetchProducts({
       category_id: String(props.categoryId),
-      brand_id: String(activeBrand.value.id),
+      ...(activeBrand.value ? { brand_id: String(activeBrand.value.id) } : {}),
     })
   } finally {
     isLoading.value = false
