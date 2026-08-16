@@ -2,7 +2,7 @@
   <footer>
 
     <!-- Floating contact buttons -->
-    <div class="fixed bottom-6 right-5 z-50 flex flex-col gap-3">
+    <div class="fixed bottom-10 right-6 z-50 flex flex-col gap-3">
       <a
         :href="zaloHref"
         target="_blank"
