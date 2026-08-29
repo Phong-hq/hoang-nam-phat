@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 max-w-screen-xl">
       <BaseSectionHeader :label="label" :title="title" :subtitle="subtitle" :to="to" />
 
-      <div class="flex gap-2 overflow-x-auto scrollbar-none -mt-4 mb-6">
+      <div v-if="brands.length" class="flex gap-2 overflow-x-auto scrollbar-none -mt-4 mb-6">
         <button v-for="brand in brands" :key="brand.id" @click="activeBrand = brand"
           class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors flex-shrink-0 border"
           :class="activeBrand?.id === brand.id
@@ -48,12 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import type { HomeProduct, ProductCatalogItem, SessionBrand } from '~/types'
+import type { CategoryBrand, HomeProduct, ProductCatalogItem } from '~/types'
 import { useProductCatalog } from '~/composables/useProductCatalog'
+import { useCategoryStore } from '~/stores/category.store'
 import { getProductThumbnail } from '~/utils'
 
 const props = defineProps<{
@@ -62,17 +63,33 @@ const props = defineProps<{
   subtitle?: string
   to: string
   categoryId: number
-  brands: SessionBrand[]
   autoplayDelay?: number
 }>()
 
 const { fetchProducts } = useProductCatalog()
+const categoryStore = useCategoryStore()
 
-const brands = computed(() => props.brands)
-const activeBrand = ref<SessionBrand | null>(brands.value[0] ?? null)
+onMounted(() => {
+  if (!categoryStore.categories.length) categoryStore.fetchCategories()
+})
+
+// Brand tabs come from the category itself, not from the CMS session record --
+// the category endpoint already carries the brands attached to that category,
+// so the tabs can never drift from the catalog.
+const brands = computed<CategoryBrand[]>(
+  () => categoryStore.categories.find((c) => c.id === props.categoryId)?.brands ?? [],
+)
+const activeBrand = ref<CategoryBrand | null>(null)
 watch(brands, (newBrands) => {
   if (!newBrands.some((b) => b.id === activeBrand.value?.id)) activeBrand.value = newBrands[0] ?? null
-})
+}, { immediate: true })
+
+// Products are only fetched once the category list has settled -- otherwise the
+// first fetch fires before `activeBrand` is known and is immediately redone.
+// A failed category fetch counts as settled so the section still renders.
+const categoriesSettled = computed(
+  () => categoryStore.categories.length > 0 || categoryStore.error !== null,
+)
 
 const rawProducts = ref<ProductCatalogItem[]>([])
 const isLoading = ref(false)
@@ -106,7 +123,13 @@ async function loadProducts() {
   }
 }
 
-watch([activeBrand, () => props.categoryId], loadProducts, { immediate: true })
+watch(
+  [activeBrand, () => props.categoryId, categoriesSettled],
+  () => {
+    if (categoriesSettled.value) loadProducts()
+  },
+  { immediate: true },
+)
 
 const activeProducts = computed(() => rawProducts.value.map(toHomeProduct))
 

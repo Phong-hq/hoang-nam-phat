@@ -17,7 +17,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import type { SessionBrand } from '~/types'
 import { useSessionStore } from '~/stores/session.store'
 
 useSeo({
@@ -42,7 +41,6 @@ interface SectionConfig {
     subtitle?: string
     to: string
     categoryId: number
-    brands: SessionBrand[]
     autoplayDelay?: number
   }
 }
@@ -60,7 +58,6 @@ const productSections = computed<SectionConfig[]>(() =>
       to: `/products?category=${s.category.slug}`,
       autoplayDelay: 4000,
       categoryId: s.category.id,
-      brands: s.brand,
     },
   })),
 )

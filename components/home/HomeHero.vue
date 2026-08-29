@@ -1,9 +1,9 @@
 <template>
-  <section class="bg-[#0F172A] py-4">
-    <div v-if="banner" class="container mx-auto px-4 max-w-screen-xl">
+  <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_40px)]">
+    <div v-if="banner" class="container mx-auto px-4 h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
       <!-- Mobile / tablet layout: main banner + all banners shown statically (no swiper) -->
-      <div class="flex flex-col gap-2.5 lg:hidden">
+      <div class="flex flex-col gap-2.5 lg:hidden h-full">
         <NuxtLink
           to="/products"
           class="relative rounded-xl overflow-hidden aspect-[1.52]"
@@ -21,50 +21,58 @@
       </div>
 
       <!-- Desktop layout (lg+): main banner left, vertical banner list right -->
-      <div class="hidden lg:grid grid-cols-3 gap-2.5">
+      <div class="hidden lg:flex gap-2.5 h-full pt-4">
 
-        <!-- Large hero banner -->
-        <NuxtLink
-          to="/products"
-          class="col-span-2 relative rounded-xl overflow-hidden group aspect-[1.52]"
-          :style="mainBannerStyle"
-        />
+        <!-- Reserved space, same width as the header's category dropdown (w-72), so opening
+             it from the nav above lands into this gap instead of covering the banner image -->
+        <div class="w-72 flex-shrink-0" />
 
-        <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
-        <div class="relative h-0 pb-[133.33%]">
-          <ClientOnly>
-            <Swiper
-              :modules="heroSwiperModules"
-              direction="vertical"
-              :slides-per-view="HERO_SWIPER_SLIDES_PER_VIEW"
-              :space-between="10"
-              :observer="true"
-              :observe-parents="true"
-              :autoplay="heroAutoplay"
-              :loop="sideBanners.length > HERO_SWIPER_SLIDES_PER_VIEW"
-              class="h-full w-full"
-              style="position: absolute; inset: 0;"
-            >
-              <SwiperSlide v-for="b in loopSideBanners" :key="b.key">
-                <NuxtLink
-                  :to="b.href"
-                  class="block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
-                  :style="b.style"
-                />
-              </SwiperSlide>
-            </Swiper>
-            <template #fallback>
-              <div class="absolute inset-0 flex flex-col gap-2.5">
-                <NuxtLink
-                  v-for="b in sideBanners.slice(0, 4)"
-                  :key="b.href"
-                  :to="b.href"
-                  class="flex-1 relative rounded-xl overflow-hidden"
-                  :style="b.style"
-                />
-              </div>
-            </template>
-          </ClientOnly>
+        <div class="flex-1 min-w-0 grid grid-cols-3 gap-2.5">
+
+          <!-- Large hero banner: height matches the header's category dropdown, so it fills
+               the same vertical space the reserved gap on its left occupies -->
+          <NuxtLink
+            to="/products"
+            class="col-span-2 relative rounded-xl overflow-hidden group h-full"
+            :style="mainBannerStyle"
+          />
+
+          <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
+          <div class="relative h-full">
+            <ClientOnly>
+              <Swiper
+                :modules="heroSwiperModules"
+                direction="vertical"
+                :slides-per-view="HERO_SWIPER_SLIDES_PER_VIEW"
+                :space-between="10"
+                :observer="true"
+                :observe-parents="true"
+                :autoplay="heroAutoplay"
+                :loop="sideBanners.length > HERO_SWIPER_SLIDES_PER_VIEW"
+                class="h-full w-full"
+                style="position: absolute; inset: 0;"
+              >
+                <SwiperSlide v-for="b in loopSideBanners" :key="b.key">
+                  <NuxtLink
+                    :to="b.href"
+                    class="block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
+                    :style="b.style"
+                  />
+                </SwiperSlide>
+              </Swiper>
+              <template #fallback>
+                <div class="absolute inset-0 flex flex-col gap-2.5">
+                  <NuxtLink
+                    v-for="b in sideBanners.slice(0, 4)"
+                    :key="b.href"
+                    :to="b.href"
+                    class="flex-1 relative rounded-xl overflow-hidden"
+                    :style="b.style"
+                  />
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
         </div>
       </div>
     </div>

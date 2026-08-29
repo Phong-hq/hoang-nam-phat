@@ -118,6 +118,18 @@
               </div>
             </NuxtLink>
 
+            <!-- Menu trigger, mobile only -- sits right of the cart -->
+            <button
+              type="button"
+              class="md:hidden flex-shrink-0 p-1 text-gray-700"
+              aria-label="Mở menu"
+              @click="isMenuOpen = true"
+            >
+              <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
             <!-- Hotline -->
             <a :href="phoneHref" class="hidden xl:flex items-center gap-2.5">
               <div class="bg-primary/10 rounded-full p-2">
@@ -134,20 +146,9 @@
           </div>
         </div>
 
-        <!-- Utility row: menu button + search share one row, mobile only -->
-        <div class="flex items-center gap-2 mt-2 md:hidden">
-          <button
-            type="button"
-            class="flex-shrink-0 p-1.5 -ml-1.5 text-gray-700"
-            aria-label="Mở menu"
-            @click="isMenuOpen = true"
-          >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
-          <div class="relative flex-1 min-w-0">
+        <!-- Utility row: search, mobile only -->
+        <div class="mt-2 md:hidden">
+          <div class="relative">
             <div class="flex rounded-lg overflow-hidden border border-gray-300 focus-within:border-primary transition-colors">
               <input
                 v-model="searchQuery"
@@ -187,21 +188,18 @@
 
     <!-- Main site navigation -->
     <nav class="bg-primary hidden md:block" aria-label="Điều hướng chính">
-      <div class="container mx-auto px-4">
-        <div class="flex items-center justify-center">
+      <div class="container mx-auto px-4 max-w-screen-xl">
+        <div class="flex items-center">
 
           <!-- Category menu with flyout: kept outside the nav-items list below so its
-               dropdown/flyout never get clipped by that list's horizontal scroll overflow -->
-          <div
-            ref="categoryMenuRef"
-            class="relative flex-shrink-0"
-            @mouseleave="closeCategoryMenu"
-          >
+               dropdown/flyout never get clipped by that list's horizontal scroll overflow.
+               Click-only (no hover) -- toggle open/close on the button, close on nav-away. -->
+          <div class="relative flex-shrink-0">
             <button
               type="button"
               class="flex items-center gap-2 text-white/85 hover:text-white hover:bg-white/15 px-5 py-2.5 text-base font-medium whitespace-nowrap transition-colors"
               :class="{ 'text-white bg-white/20 font-bold': isCategoryMenuOpen }"
-              @mouseenter="isCategoryMenuOpen = true"
+              @click="isCategoryMenuOpen = !isCategoryMenuOpen"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
@@ -220,126 +218,30 @@
               leave-from-class="opacity-100"
               leave-to-class="opacity-0"
             >
-              <div
+              <CommonCategoryMenu
                 v-if="isCategoryMenuOpen"
-                class="absolute left-0 top-full z-50 w-72 bg-white rounded-b-xl overflow-hidden flex flex-col shadow-2xl max-h-[28rem]"
-                @mouseenter="isCategoryMenuOpen = true"
-              >
-                <div v-if="isCategorySearchable" class="px-2.5 pt-2.5 flex-shrink-0">
-                  <div class="relative">
-                    <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <input
-                      v-model="categorySearch"
-                      type="text"
-                      placeholder="Tìm danh mục..."
-                      class="w-full text-xs border border-gray-200 rounded-lg pl-7 pr-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
-                    />
-                  </div>
-                </div>
-                <ul class="flex-1 py-1 overflow-y-auto">
-                  <li
-                    v-for="cat in filteredCategories"
-                    :key="cat.id"
-                    @mouseenter="onCatHover(cat, $event)"
-                  >
-                    <NuxtLink
-                      :to="`/products?category=${cat.slug}`"
-                      :class="[
-                        'flex items-center justify-between px-3.5 py-[9px] text-sm transition-colors',
-                        hoveredCat?.id === cat.id
-                          ? 'bg-primary text-white'
-                          : 'text-gray-700 hover:bg-gray-50',
-                      ]"
-                      @click="isCategoryMenuOpen = false"
-                    >
-                      <span class="flex items-center gap-2 min-w-0">
-                        <span
-                          class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary"
-                          v-html="defaultCategoryIcon"
-                        />
-                        <span class="truncate font-medium">{{ cat.name }}</span>
-                      </span>
-                      <svg
-                        v-if="cat.latest_products.length"
-                        class="w-3.5 h-3.5 flex-shrink-0"
-                        :class="hoveredCat?.id === cat.id ? 'opacity-80' : 'opacity-25'"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </NuxtLink>
-                  </li>
-                  <li v-if="isCategorySearchable && !filteredCategories.length" class="px-3.5 py-3 text-xs text-gray-400 text-center">
-                    Không tìm thấy danh mục
-                  </li>
-                </ul>
-              </div>
-            </Transition>
-
-            <!-- Flyout -->
-            <Transition
-              enter-active-class="transition-all duration-150"
-              enter-from-class="opacity-0 translate-x-1"
-              enter-to-class="opacity-100 translate-x-0"
-              leave-active-class="transition-all duration-100"
-              leave-from-class="opacity-100"
-              leave-to-class="opacity-0"
-            >
-              <div
-                v-if="isCategoryMenuOpen && hoveredCat"
-                class="absolute left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
-                :style="{ top: hoveredTop + 'px' }"
-                @mouseenter="isCategoryMenuOpen = true"
-              >
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <span
-                    class="w-4 h-4 flex items-center justify-center text-primary"
-                    v-html="defaultCategoryIcon"
-                  />
-                  {{ hoveredCat.name }}
-                </p>
-                <div class="grid grid-cols-1 gap-0.5">
-                  <NuxtLink
-                    v-for="item in hoveredCat.latest_products"
-                    :key="item.id"
-                    :to="`/products/${item.slug}`"
-                    class="flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-                    @click="isCategoryMenuOpen = false"
-                  >
-                    <span class="text-sm text-gray-700 truncate">{{ item.name }}</span>
-                    <span class="text-xs font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.unit_price) }}</span>
-                  </NuxtLink>
-                </div>
-                <div class="border-t border-gray-100 mt-3 pt-3">
-                  <NuxtLink
-                    :to="`/products?category=${hoveredCat.slug}`"
-                    class="text-xs text-primary hover:underline font-semibold flex items-center gap-1"
-                    @click="isCategoryMenuOpen = false"
-                  >
-                    Xem tất cả {{ hoveredCat.name }}
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </NuxtLink>
-                </div>
-              </div>
+                :ref="onCategoryMenuRef"
+                class="absolute left-0 top-full z-50 w-72"
+                panel-class="rounded-b-xl shadow-2xl"
+                @navigate="isCategoryMenuOpen = false"
+              />
             </Transition>
           </div>
 
-          <ul class="flex items-center overflow-x-auto">
-            <li v-for="item in navItems" :key="item.label" class="relative">
-              <NuxtLink
-                :to="item.href"
-                class="text-white/85 hover:text-white hover:bg-white/15 px-5 py-2.5 text-base font-medium whitespace-nowrap block transition-colors"
-                :exact-active-class="item.exact ? 'text-white bg-white/20 font-bold' : ''"
-                active-class="text-white bg-white/20 font-bold"
-              >
-                {{ item.label }}
-              </NuxtLink>
-            </li>
-          </ul>
+          <div class="flex-1 flex justify-center min-w-0">
+            <ul class="flex items-center overflow-x-auto">
+              <li v-for="item in navItems" :key="item.label" class="relative">
+                <NuxtLink
+                  :to="item.href"
+                  class="text-white/85 hover:text-white hover:bg-white/15 px-5 py-2.5 text-base font-medium whitespace-nowrap block transition-colors"
+                  :exact-active-class="item.exact ? 'text-white bg-white/20 font-bold' : ''"
+                  active-class="text-white bg-white/20 font-bold"
+                >
+                  {{ item.label }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </nav>
@@ -390,10 +292,10 @@
               <ul v-if="isCategorySectionOpen" class="pb-2">
                 <li v-for="cat in categoryStore.categories" :key="cat.id">
                   <button
-                    v-if="cat.latest_products.length"
+                    v-if="cat.brands.length"
                     type="button"
                     class="w-full flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-gray-700 active:bg-gray-100"
-                    :aria-label="expandedCategoryId === cat.id ? `Thu gọn ${cat.name}` : `Xem sản phẩm trong ${cat.name}`"
+                    :aria-label="expandedCategoryId === cat.id ? `Thu gọn ${cat.name}` : `Xem thương hiệu trong ${cat.name}`"
                     @click="toggleCategory(cat)"
                   >
                     <span class="truncate">{{ cat.name }}</span>
@@ -413,15 +315,20 @@
                   >
                     {{ cat.name }}
                   </NuxtLink>
-                  <ul v-if="cat.latest_products.length && expandedCategoryId === cat.id" class="bg-gray-50/70 pb-1">
-                    <li v-for="item in cat.latest_products" :key="item.id">
+                  <ul v-if="cat.brands.length && expandedCategoryId === cat.id" class="bg-gray-50/70 pb-1">
+                    <li v-for="brand in cat.brands" :key="brand.id">
                       <NuxtLink
-                        :to="`/products/${item.slug}`"
-                        class="flex items-center justify-between gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
+                        :to="`/products?category=${cat.slug}&brand=${brand.id}`"
+                        class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
                         @click="isMenuOpen = false"
                       >
-                        <span class="truncate">{{ item.name }}</span>
-                        <span class="font-bold text-primary whitespace-nowrap">{{ formatCurrency(item.unit_price) }}</span>
+                        <img
+                          v-if="brand.icon"
+                          :src="brand.icon"
+                          :alt="brand.name"
+                          class="w-4 h-4 flex-shrink-0 object-contain"
+                        />
+                        <span class="truncate">{{ brand.name }}</span>
                       </NuxtLink>
                     </li>
                     <li>
@@ -483,38 +390,36 @@ import type { ProductCatalogItem, ProductCategoryMenuItem } from '~/types'
 
 const { totalQuantity, subtotal } = storeToRefs(useCartStore())
 
-// Category menu -- dropdown + flyout in the main nav, shared with the mobile drawer list below
-const CATEGORY_SEARCH_THRESHOLD = 8
-
+// Category menu -- dropdown content lives in CommonCategoryMenu; this component owns the
+// click-to-toggle trigger and the mobile drawer's flat/tree list below. Auto-opens on the
+// home page and auto-closes when navigating elsewhere, so it doesn't stay stuck open --
+// manual click-toggling still works independently in between navigations.
 const categoryStore = useCategoryStore()
 const isCategoryMenuOpen = ref(false)
-const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
-const hoveredTop = ref(0)
-const categoryMenuRef = ref<HTMLElement | null>(null)
-const categorySearch = ref('')
+const route = useRoute()
 
-const isCategorySearchable = computed(() => categoryStore.categories.length > CATEGORY_SEARCH_THRESHOLD)
+watch(() => route.path, (path) => {
+  isCategoryMenuOpen.value = path === '/'
+}, { immediate: true })
 
-const filteredCategories = computed(() => {
-  if (!isCategorySearchable.value || !categorySearch.value.trim()) return categoryStore.categories
-  const q = categorySearch.value.trim().toLowerCase()
-  return categoryStore.categories.filter((cat) => cat.name.toLowerCase().includes(q))
-})
+// Measures the open dropdown's real rendered height into --category-menu-height so
+// HomeHero can grow its section background just tall enough to fully contain the list
+// (it auto-opens there) instead of the list spilling past the banner onto the next section.
+let categoryMenuResizeObserver: ResizeObserver | null = null
 
-function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
-  if (!cat.latest_products.length) {
-    hoveredCat.value = null
-    return
+function onCategoryMenuRef(instance: { $el?: HTMLElement } | null) {
+  categoryMenuResizeObserver?.disconnect()
+  categoryMenuResizeObserver = null
+  const el = instance?.$el
+  if (!el) return
+
+  const updateCategoryMenuHeight = () => {
+    document.documentElement.style.setProperty('--category-menu-height', `${el.offsetHeight}px`)
   }
-  hoveredCat.value = cat
-  const li = event.currentTarget as HTMLElement
-  const container = categoryMenuRef.value
-  hoveredTop.value = container ? li.getBoundingClientRect().top - container.getBoundingClientRect().top : li.offsetTop
-}
 
-function closeCategoryMenu() {
-  isCategoryMenuOpen.value = false
-  hoveredCat.value = null
+  updateCategoryMenuHeight()
+  categoryMenuResizeObserver = new ResizeObserver(updateCategoryMenuHeight)
+  categoryMenuResizeObserver.observe(el)
 }
 
 // Mobile drawer's category tree -- collapsed by default, one category expanded at a time
@@ -524,10 +429,6 @@ const expandedCategoryId = ref<number | null>(null)
 function toggleCategory(cat: ProductCategoryMenuItem) {
   expandedCategoryId.value = expandedCategoryId.value === cat.id ? null : cat.id
 }
-
-const defaultCategoryIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
-</svg>`
 
 onMounted(() => {
   if (!categoryStore.categories.length) categoryStore.fetchCategories()
@@ -587,6 +488,7 @@ const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
+  categoryMenuResizeObserver?.disconnect()
   if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
   if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout)
   if (cartBumpTimeout) clearTimeout(cartBumpTimeout)

@@ -4,14 +4,8 @@
 export interface CategoryBrand {
   id: number
   name: string
-  type: string
-  code: string
-  description: string
-  icon: unknown
-  images: unknown
-  color: string | null
-  priority: number
-  parent_id: number | null
+  icon: string | false
+  slug: string
 }
 
 export interface ProductCategory {
@@ -26,22 +20,6 @@ export interface ProductCategory {
   slug: string
 }
 
-export interface ProductCategoryMenuLatestProduct {
-  id: number
-  name: string
-  slug: string
-  unit_price: number
-  category_id: number
-}
-
-export interface ProductCategoryMenuItem {
-  id: number
-  name: string
-  code: string
-  created_at: string
-  updated_at: string
-  brands: CategoryBrand[]
-  status: number
-  slug: string
-  latest_products: ProductCategoryMenuLatestProduct[]
-}
+// The category menu renders the same payload as the list endpoint -- alias kept
+// so menu consumers stay decoupled from the plain list type.
+export type ProductCategoryMenuItem = ProductCategory

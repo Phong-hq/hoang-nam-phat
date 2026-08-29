@@ -5,16 +5,18 @@
 import { httpClient } from '~/utils/httpClient'
 import type { ApiListResponse, ProductCategory, ProductCategoryMenuItem } from '~/types'
 
-const CATEGORY_API_URL = '/api/v1/frontend/product/category/'
+const CATEGORY_API_URL = '/api/v1/frontend/product/category'
 
 export const categoryService = {
   async getList(): Promise<ProductCategory[]> {
     const res = await httpClient.get<ApiListResponse<ProductCategory>>(CATEGORY_API_URL)
-    console.log('categoryService.getList() response:', res)
     return res.items
   },
 
+  // The menu is built from the same category list endpoint -- categories carry
+  // their `brands`, which is what the menu flyout renders.
   async getMenu(): Promise<ProductCategoryMenuItem[]> {
-    return httpClient.get<ProductCategoryMenuItem[]>(`${CATEGORY_API_URL}menu`)
+    const res = await httpClient.get<ApiListResponse<ProductCategoryMenuItem>>(CATEGORY_API_URL)
+    return res.items
   },
 }
