@@ -86,7 +86,7 @@ import { Autoplay } from 'swiper/modules'
 import { useBannerStore } from '~/stores/banner.store'
 
 const heroSwiperModules = [Autoplay]
-const heroAutoplay = { delay: 5000, disableOnInteraction: false, pauseOnMouseEnter: true }
+const heroAutoplay = { delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true }
 
 const bannerStore = useBannerStore()
 

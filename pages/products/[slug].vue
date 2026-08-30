@@ -162,9 +162,32 @@
                 </BaseButton>
               </div>
 
-              <div v-if="variant" class="text-xs text-base-content/40 pt-1">
-                Phiên bản: {{ variant.name }}
+              <!-- Ưu đãi dịch vụ: khung viền đứt, nhãn tiêu đề đè lên cạnh trên -->
+               <div class="pt-6">
+ <div class="relative rounded-2xl border-2 border-dashed border-primary px-4 pb-4 pt-7">
+                <p class="absolute -top-4 left-4 flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm">
+                  <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zM5 12h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                  Quà tặng / Khuyến mãi
+                </p>
+                <div class="rounded-xl bg-emerald-50/60 p-4">
+                  <p class="flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
+                    <svg class="w-5 h-5 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1m0 0a2 2 0 104 0m-4 0a2 2 0 114 0M7 17a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    </svg>
+                    Ưu đãi dịch vụ Hoàng Nam Phát
+                  </p>
+                  <ul class="mt-3 space-y-2 pl-7 text-sm leading-relaxed text-base-content/80">
+                    <li>Giao hàng trực tiếp &amp; hướng dẫn sử dụng tại TP.HCM.</li>
+                    <li>Cài đặt miễn phí cho đơn hàng trên <strong>5 triệu</strong> (nội thành HCM).</li>
+                    <li>Hỗ trợ hướng dẫn &amp; cài đặt từ xa cho khách hàng ở xa.</li>
+                    <li><strong class="text-primary">Freeship toàn quốc</strong> – nhanh, an toàn, đúng hẹn.</li>
+                  </ul>
+                </div>
               </div>
+               </div>
+             
             </div>
           </div>
 
