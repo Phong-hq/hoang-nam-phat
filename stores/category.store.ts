@@ -15,7 +15,9 @@ export const useCategoryStore = defineStore('category', () => {
     isLoading.value = true
     error.value = null
     try {
-      categories.value = await categoryService.getMenu()
+      // API tra ve thu tu nguoc voi thu tu hien thi -- dao ngay khi luu,
+      // moi noi dung store da co dung thu tu, khong can sort lai
+      categories.value = (await categoryService.getMenu()).reverse()
     } catch {
       error.value = 'Không thể tải danh mục'
     } finally {

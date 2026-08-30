@@ -422,8 +422,8 @@ function onCategoryMenuRef(instance: { $el?: HTMLElement } | null) {
   categoryMenuResizeObserver.observe(el)
 }
 
-// Menu shows the API order reversed -- copy first, the store array is shared
-const orderedCategories = computed(() => [...categoryStore.categories].reverse())
+// Store already holds the display order -- no re-sorting here
+const orderedCategories = computed(() => categoryStore.categories)
 
 // Mobile drawer's category tree -- collapsed by default, one category expanded at a time
 const isCategorySectionOpen = ref(false)

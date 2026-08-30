@@ -9,10 +9,10 @@
           <span>/</span>
           <span class="text-gray-600">Giới thiệu</span>
         </nav>
-        <h1 class="heading-1 mb-2">Giới thiệu Hoàng Nam Phát</h1>
+        <!-- <h1 class="heading-1 mb-2">Giới thiệu Hoàng Nam Phát</h1>
         <p class="heading-2 max-w-2xl">
           Công ty TNHH Công Nghệ Hoàng Nam Phát – đơn vị phân phối thiết bị mạng, camera quan sát và laptop chính hãng uy tín tại Cần Thơ.
-        </p>
+        </p> -->
       </div>
     </div>
 

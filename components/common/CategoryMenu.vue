@@ -85,7 +85,7 @@
             v-for="brand in hoveredCat.brands"
             :key="brand.id"
             :to="`/products?category=${hoveredCat.slug}&brand=${brand.id}`"
-            class="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            class="group flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-primary transition-colors"
             @click="$emit('navigate')"
           >
             <img
@@ -94,7 +94,7 @@
               :alt="brand.name"
               class="w-5 h-5 flex-shrink-0 object-contain"
             />
-            <span class="text-sm text-gray-700 truncate">{{ brand.name }}</span>
+            <span class="text-sm text-gray-700 group-hover:text-white truncate">{{ brand.name }}</span>
           </NuxtLink>
         </div>
         <div class="border-t border-gray-100 mt-3 pt-3">
@@ -135,8 +135,8 @@ const categorySearch = ref('')
 
 const isCategorySearchable = computed(() => categoryStore.categories.length > CATEGORY_SEARCH_THRESHOLD)
 
-// Menu shows the API order reversed -- copy first, the store array is shared
-const orderedCategories = computed(() => [...categoryStore.categories].reverse())
+// Store already holds the display order -- no re-sorting here
+const orderedCategories = computed(() => categoryStore.categories)
 
 const filteredCategories = computed(() => {
   if (!isCategorySearchable.value || !categorySearch.value.trim()) return orderedCategories.value
