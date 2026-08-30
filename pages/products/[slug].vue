@@ -115,13 +115,13 @@
                 <span class="badge badge-ghost">{{ product.category.name }}</span>
               </div>
 
-              <h1 class="text-2xl lg:text-3xl font-bold leading-snug">{{ product.name }}</h1>
+              <h1 class="text-lg lg:text-xl font-bold leading-snug">{{ product.name }}</h1>
 
               <div class="flex items-baseline gap-3">
-                <span class="text-3xl font-bold text-primary">{{ formatPrice(variant?.unit_price ?? product.unit_price) }}</span>
+                <span class="text-xl font-bold text-primary">{{ formatPrice(variant?.unit_price ?? product.unit_price) }}</span>
                 <span
                   v-if="product.compare_price && product.compare_price > (variant?.unit_price ?? product.unit_price)"
-                  class="text-lg text-base-content/40 line-through"
+                  class="text-sm text-base-content/40 line-through"
                 >
                   {{ formatCurrency(product.compare_price) }}
                 </span>
