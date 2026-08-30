@@ -34,7 +34,7 @@
                     <SwiperSlide v-for="(img, index) in galleryImages" :key="index">
                       <NuxtImg
                         :src="img"
-                        :alt="`${product.brand.name} ${product.name}`"
+                        :alt="productImageAlt"
                         width="600"
                         height="600"
                         :loading="index === 0 ? 'eager' : 'lazy'"
@@ -72,7 +72,7 @@
                     <NuxtImg
                       v-if="galleryImages[activeImageIndex]"
                       :src="galleryImages[activeImageIndex]"
-                      :alt="`${product.brand.name} ${product.name}`"
+                      :alt="productImageAlt"
                       width="600"
                       height="600"
                       loading="eager"
@@ -111,14 +111,14 @@
             <!-- Product info -->
             <div class="product-info space-y-4">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="badge badge-primary">{{ product.brand.name }}</span>
+                <span v-if="product.brand" class="badge badge-primary">{{ product.brand.name }}</span>
                 <span class="badge badge-ghost">{{ product.category.name }}</span>
               </div>
 
               <h1 class="text-2xl lg:text-3xl font-bold leading-snug">{{ product.name }}</h1>
 
               <div class="flex items-baseline gap-3">
-                <span class="text-3xl font-bold text-primary">{{ formatCurrency(variant?.unit_price ?? product.unit_price) }}</span>
+                <span class="text-3xl font-bold text-primary">{{ formatPrice(variant?.unit_price ?? product.unit_price) }}</span>
                 <span
                   v-if="product.compare_price && product.compare_price > (variant?.unit_price ?? product.unit_price)"
                   class="text-lg text-base-content/40 line-through"
@@ -198,7 +198,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import type { Swiper as SwiperType } from 'swiper'
-import { formatCurrency, getProductImages, getProductThumbnail, resolveOembedTags } from '~/utils'
+import { formatCurrency, formatPrice, getProductImages, getProductThumbnail, resolveOembedTags } from '~/utils'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
@@ -282,6 +282,11 @@ if (servedFromCache) {
 }
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
+
+// Brand can be null in the catalog API -- fall back to the product name alone
+const productImageAlt = computed(() =>
+  product.value?.brand ? `${product.value.brand.name} ${product.value.name}` : (product.value?.name ?? ''),
+)
 
 const activeImageIndex = ref(0)
 

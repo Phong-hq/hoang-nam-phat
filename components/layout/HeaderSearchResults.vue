@@ -33,14 +33,14 @@
           </svg>
         </div>
         <div class="min-w-0 flex-1">
-          <p class="text-xs text-gray-400">{{ item.brand.name }}</p>
+          <p v-if="item.brand" class="text-xs text-gray-400">{{ item.brand.name }}</p>
           <p class="text-sm text-gray-800 truncate">{{ item.name }}</p>
         </div>
         <div class="text-right whitespace-nowrap">
           <p v-if="item.compare_price && item.compare_price > item.unit_price" class="text-xs text-gray-400 line-through">
             {{ formatCurrency(item.compare_price) }}
           </p>
-          <p class="text-sm font-bold text-primary">{{ formatCurrency(item.unit_price) }}</p>
+          <p class="text-sm font-bold text-primary">{{ formatPrice(item.unit_price) }}</p>
         </div>
       </NuxtLink>
     </template>
@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { formatCurrency, getProductThumbnail } from '~/utils'
+import { formatCurrency, formatPrice, getProductThumbnail } from '~/utils'
 import type { ProductCatalogItem } from '~/types'
 
 defineProps<{

@@ -290,7 +290,7 @@
                 </svg>
               </button>
               <ul v-if="isCategorySectionOpen" class="pb-2">
-                <li v-for="cat in categoryStore.categories" :key="cat.id">
+                <li v-for="cat in orderedCategories" :key="cat.id">
                   <button
                     v-if="cat.brands.length"
                     type="button"
@@ -421,6 +421,9 @@ function onCategoryMenuRef(instance: { $el?: HTMLElement } | null) {
   categoryMenuResizeObserver = new ResizeObserver(updateCategoryMenuHeight)
   categoryMenuResizeObserver.observe(el)
 }
+
+// Menu shows the API order reversed -- copy first, the store array is shared
+const orderedCategories = computed(() => [...categoryStore.categories].reverse())
 
 // Mobile drawer's category tree -- collapsed by default, one category expanded at a time
 const isCategorySectionOpen = ref(false)

@@ -77,8 +77,8 @@
                   />
                 </figure>
                 <div class="card-body p-4 flex flex-col flex-1">
-                  <span class="badge badge-ghost badge-sm">{{ item.brand.name }}</span>
-                  <h2 class="card-title text-sm line-clamp-2 h-9">{{ item.name }}</h2>
+                  <span v-if="item.brand" class="badge badge-ghost badge-sm">{{ item.brand.name }}</span>
+                  <h2 class="card-title text-sm leading-snug line-clamp-2 h-11">{{ item.name }}</h2>
                   <div class="mt-1 min-h-[34px]">
                     <div
                       class="text-xs text-base-content/40 line-through leading-none mb-0.5"
@@ -86,7 +86,7 @@
                     >
                       {{ formatCurrency(item.compare_price ?? 0) }}
                     </div>
-                    <p class="text-primary font-bold">{{ formatCurrency(item.unit_price) }}</p>
+                    <p class="text-primary font-bold">{{ formatPrice(item.unit_price) }}</p>
                   </div>
                   <div class="flex-1" />
                   <button
@@ -131,7 +131,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { formatCurrency, getProductThumbnail } from '~/utils'
+import { formatCurrency, formatPrice, getProductThumbnail } from '~/utils'
 import { useCategoryStore } from '~/stores/category.store'
 import { useBrandStore } from '~/stores/brand.store'
 import { useProductStore } from '~/stores/product.store'

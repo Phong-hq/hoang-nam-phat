@@ -59,10 +59,7 @@ export function useProductSeo(product: ProductDetail) {
     url: canonicalUrl,
     category: product.category.name,
     // image: product?.variants?.flatMap((v) => v.images),
-    brand: {
-      '@type': 'Brand',
-      name: product.brand.name,
-    },
+    ...(product.brand ? { brand: { '@type': 'Brand', name: product.brand.name } } : {}),
     offers,
   }
 

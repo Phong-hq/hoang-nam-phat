@@ -80,7 +80,7 @@
           {{ formatCurrency(product.originalPrice ?? 0) }}
         </div>
         <div class="text-base font-extrabold text-primary leading-tight">
-          {{ formatCurrency(product.price) }}
+          {{ formatPrice(product.price) }}
         </div>
       </div>
 
@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatCurrency } from '~/utils'
+import { formatCurrency, formatPrice } from '~/utils'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
 import type { HomeProduct } from '~/types'

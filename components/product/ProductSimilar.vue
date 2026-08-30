@@ -29,12 +29,12 @@
           />
         </figure>
         <div class="card-body p-3">
-          <span class="badge badge-ghost badge-sm">{{ item.brand.name }}</span>
+          <span v-if="item.brand" class="badge badge-ghost badge-sm">{{ item.brand.name }}</span>
           <h3 class="card-title text-sm line-clamp-2">{{ item.name }}</h3>
           <p v-if="item.compare_price && item.compare_price > item.unit_price" class="text-xs text-base-content/40 line-through">
             {{ formatCurrency(item.compare_price) }}
           </p>
-          <p class="text-primary font-bold">{{ formatCurrency(item.unit_price) }}</p>
+          <p class="text-primary font-bold">{{ formatPrice(item.unit_price) }}</p>
         </div>
       </NuxtLink>
     </div>
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formatCurrency, getProductThumbnail } from '~/utils'
+import { formatCurrency, formatPrice, getProductThumbnail } from '~/utils'
 import { productCatalogService } from '~/services/productCatalog.service'
 import { useProductStore } from '~/stores/product.store'
 import type { ProductCatalogItem } from '~/types'

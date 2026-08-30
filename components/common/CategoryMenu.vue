@@ -133,10 +133,13 @@ const categorySearch = ref('')
 
 const isCategorySearchable = computed(() => categoryStore.categories.length > CATEGORY_SEARCH_THRESHOLD)
 
+// Menu shows the API order reversed -- copy first, the store array is shared
+const orderedCategories = computed(() => [...categoryStore.categories].reverse())
+
 const filteredCategories = computed(() => {
-  if (!isCategorySearchable.value || !categorySearch.value.trim()) return categoryStore.categories
+  if (!isCategorySearchable.value || !categorySearch.value.trim()) return orderedCategories.value
   const q = categorySearch.value.trim().toLowerCase()
-  return categoryStore.categories.filter((cat) => cat.name.toLowerCase().includes(q))
+  return orderedCategories.value.filter((cat) => cat.name.toLowerCase().includes(q))
 })
 
 function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {

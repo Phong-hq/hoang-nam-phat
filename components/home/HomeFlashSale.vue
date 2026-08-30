@@ -68,7 +68,7 @@
             <div class="flex gap-4 overflow-x-auto pb-2 snap-x">
               <div v-for="p in products" :key="p.id" class="flex-shrink-0 w-[220px] snap-start bg-white rounded-xl p-3">
                 <div class="text-sm font-medium">{{ p.name }}</div>
-                <div class="text-primary font-extrabold mt-1">{{ formatCurrency(p.price) }}</div>
+                <div class="text-primary font-extrabold mt-1">{{ formatPrice(p.price) }}</div>
               </div>
             </div>
           </template>
@@ -82,7 +82,7 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import { formatCurrency } from '~/utils'
+import { formatPrice } from '~/utils'
 import type { FlashSaleProduct, FlashSaleRecordWithPricing } from '~/types'
 import { useFlashSale } from '~/composables/useFlashSale'
 

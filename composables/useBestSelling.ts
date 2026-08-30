@@ -22,7 +22,7 @@ export function useBestSelling() {
         ...record,
         unitPrice: product?.unit_price ?? record.product.unit_price,
         comparePrice: product?.compare_price ?? null,
-        brand: product?.brand.name ?? '',
+        brand: product?.brand?.name ?? '',
       }
     })
   }

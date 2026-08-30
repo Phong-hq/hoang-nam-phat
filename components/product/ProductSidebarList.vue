@@ -86,7 +86,7 @@
                 {{ item.name }}
               </p>
               <div class="mt-1.5 flex flex-wrap items-baseline gap-1.5">
-                <span class="text-sm font-bold text-primary leading-tight">{{ formatCurrency(item.price) }}</span>
+                <span class="text-sm font-bold text-primary leading-tight">{{ formatPrice(item.price) }}</span>
                 <span
                   v-if="item.comparePrice && item.comparePrice > item.price"
                   class="text-[11px] text-base-content/40 line-through leading-tight"
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatCurrency } from '~/utils'
+import { formatCurrency, formatPrice } from '~/utils'
 
 export interface SidebarProductItem {
   id: number

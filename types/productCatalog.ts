@@ -50,7 +50,7 @@ export interface ProductCatalogItem {
   slug: string
   unit_price: number
   compare_price: number | null
-  brand: ProductBrand
+  brand: ProductBrand | null
   category: ProductCategorySummary
   product_options: ProductOption[]
   variants: ProductVariant

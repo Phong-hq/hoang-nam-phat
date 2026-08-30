@@ -101,7 +101,7 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
     variantId: item.variants?.id ?? item.id,
     slug: item.slug,
     name: item.name,
-    brand: item.brand.name,
+    brand: item.brand?.name ?? '',
     price: item.unit_price,
     originalPrice: hasDiscount ? item.compare_price! : undefined,
     discount: hasDiscount ? Math.round(((item.compare_price! - item.unit_price) / item.compare_price!) * 100) : undefined,

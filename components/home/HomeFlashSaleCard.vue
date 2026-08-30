@@ -1,5 +1,8 @@
 <template>
-  <div class="group h-full bg-white rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 flex flex-col border-2 border-transparent hover:border-primary/20">
+  <NuxtLink
+    :to="product.slug ? `/products/${product.slug}` : ''"
+    class="group h-full bg-white rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 flex flex-col border-2 border-transparent hover:border-primary/20"
+  >
     <div class="relative bg-base-100 aspect-square overflow-hidden">
       <span
         v-if="product.discount"
@@ -34,22 +37,24 @@
         >
           {{ formatCurrency(product.originalPrice ?? 0) }}
         </div>
-        <div class="text-base font-extrabold text-primary">{{ formatCurrency(product.price) }}</div>
+        <div class="text-base font-extrabold text-primary">{{ formatPrice(product.price) }}</div>
       </div>
       <div class="flex items-center justify-between mt-1.5 text-[10px] text-base-content/40">
         <span>Đã bán {{ product.soldPercent }}%</span>
         <span class="text-warning font-semibold">Còn {{ 100 - product.soldPercent }}%</span>
       </div>
       <div class="flex-1" />
-      <NuxtLink :to="`/products/${product.slug}`" class="btn btn-primary btn-sm w-full mt-3 text-white font-semibold">
+      <!-- Plain span, not a link: the whole card already navigates to the product page
+           and nesting an <a> inside an <a> is invalid markup. -->
+      <span class="btn btn-primary btn-sm w-full mt-3 text-white font-semibold">
         Mua ngay
-      </NuxtLink>
+      </span>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
-import { formatCurrency } from '~/utils'
+import { formatCurrency, formatPrice } from '~/utils'
 import type { FlashSaleProduct } from '~/types'
 
 defineProps<{ product: FlashSaleProduct }>()
