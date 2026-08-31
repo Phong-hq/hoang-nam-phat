@@ -322,12 +322,6 @@
                         class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
                         @click="isMenuOpen = false"
                       >
-                        <img
-                          v-if="brand.icon"
-                          :src="brand.icon"
-                          :alt="brand.name"
-                          class="w-4 h-4 flex-shrink-0 object-contain"
-                        />
                         <span class="truncate">{{ brand.name }}</span>
                       </NuxtLink>
                     </li>

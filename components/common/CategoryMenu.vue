@@ -88,12 +88,6 @@
             class="group flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-primary transition-colors"
             @click="$emit('navigate')"
           >
-            <img
-              v-if="brand.icon"
-              :src="brand.icon"
-              :alt="brand.name"
-              class="w-5 h-5 flex-shrink-0 object-contain"
-            />
             <span class="text-sm text-gray-700 group-hover:text-white truncate">{{ brand.name }}</span>
           </NuxtLink>
         </div>
