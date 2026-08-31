@@ -36,7 +36,7 @@
     </div>
 
     <!-- Main header: logo + search + cart + phone -->
-    <header class="bg-white border-b border-gray-200">
+    <header class="relative z-30 bg-white border-b border-gray-200">
       <div class="container mx-auto px-3 sm:px-4 py-2 md:py-1.5  max-w-screen-xl">
 
         <!-- Brand row: logo is the visual anchor, cart alongside it -->
@@ -187,7 +187,7 @@
     </header>
 
     <!-- Main site navigation -->
-    <nav class="bg-primary hidden md:block" aria-label="Điều hướng chính">
+    <nav class="relative z-20 bg-primary hidden md:block" aria-label="Điều hướng chính">
       <div class="container mx-auto px-4 max-w-screen-xl">
         <div class="flex items-center">
 

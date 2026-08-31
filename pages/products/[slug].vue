@@ -178,7 +178,13 @@
                     </svg>
                     Ưu đãi dịch vụ Hoàng Nam Phát
                   </p>
-                  <ul class="mt-3 space-y-2 pl-7 text-sm leading-relaxed text-base-content/80">
+                  <!-- Nội dung CMS (product_promo); nếu API chưa có content thì dùng danh sách mặc định -->
+                  <div
+                    v-if="productPromoHtml"
+                    class="promo-content mt-3 pl-7 text-sm leading-relaxed text-base-content/80"
+                    v-html="productPromoHtml"
+                  />
+                  <ul v-else class="mt-3 space-y-2 pl-7 text-sm leading-relaxed text-base-content/80">
                     <li>Giao hàng trực tiếp &amp; hướng dẫn sử dụng tại TP.HCM.</li>
                     <li>Cài đặt miễn phí cho đơn hàng trên <strong>5 triệu</strong> (nội thành HCM).</li>
                     <li>Hỗ trợ hướng dẫn &amp; cài đặt từ xa cho khách hàng ở xa.</li>
@@ -217,8 +223,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import type { Swiper as SwiperType } from 'swiper'
 import { formatCurrency, formatPrice, getProductImages, getProductThumbnail, resolveOembedTags } from '~/utils'
@@ -226,6 +233,7 @@ import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
 import { useProductStore } from '~/stores/product.store'
+import { useProductPromoStore } from '~/stores/productPromo.store'
 import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
 import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
@@ -303,6 +311,15 @@ if (servedFromCache) {
     })
     .catch(() => {})
 }
+
+// Ưu đãi dịch vụ -- nội dung HTML lấy từ CMS record "product_promo"
+const productPromoStore = useProductPromoStore()
+const { productPromo } = storeToRefs(productPromoStore)
+const productPromoHtml = computed(() => productPromo.value?.content?.trim() || '')
+
+onMounted(() => {
+  productPromoStore.fetchProductPromo()
+})
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
 
@@ -384,3 +401,30 @@ function handleBuyNow() {
   router.push('/cart')
 }
 </script>
+
+<style scoped>
+/* Nội dung CMS (v-html) không dùng @tailwindcss/typography, và Tailwind preflight
+   xoá bullet + padding của <ul>, nên cần style trực tiếp để khớp danh sách mặc định. */
+.promo-content :deep(ul),
+.promo-content :deep(ol) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.promo-content :deep(p) {
+  margin: 0 0 0.5rem;
+}
+
+.promo-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.promo-content :deep(a) {
+  color: hsl(var(--p));
+  text-decoration: underline;
+}
+</style>
