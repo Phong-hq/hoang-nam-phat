@@ -34,8 +34,8 @@
             </div>
           </div>
 
-          <div v-if="isLoading" class="grid grid-cols-2 lg:grid-cols-3 gap-6">
-            <BaseSkeleton v-for="i in 6" :key="i" class="h-64" />
+          <div v-if="isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-6">
+            <BaseSkeleton v-for="i in 8" :key="i" class="h-64" />
           </div>
 
           <template v-else>
@@ -49,7 +49,7 @@
               </button>
             </div>
 
-            <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-6">
               <NuxtLink
                 v-for="item in products"
                 :key="item.id"
@@ -104,6 +104,10 @@
                   </button>
                 </div>
               </NuxtLink>
+            </div>
+
+            <div v-if="totalPages > 1" class="flex justify-center mt-8">
+              <BasePagination :current-page="currentPage" :total-pages="totalPages" @change="handlePageChange" />
             </div>
           </template>
         </div>
@@ -167,6 +171,9 @@ const initialCategoryQuery = route.query.category ?? route.query.category_slug
 const selectedCategorySlugs = ref<string[]>(parseList(initialCategoryQuery))
 const selectedBrandIds = ref<number[]>(parseList(route.query.brand).map(Number).filter((n) => !Number.isNaN(n)))
 
+const PER_PAGE = 20
+const currentPage = ref(Number(route.query.page) || 1)
+
 const categories = computed(() =>
   categoryStore.categories.map((c) => ({ id: c.slug, label: c.name })),
 )
@@ -187,24 +194,57 @@ function syncQuery() {
   const query: Record<string, string> = {}
   if (selectedCategorySlugs.value.length) query.category = selectedCategorySlugs.value.join(',')
   if (selectedBrandIds.value.length) query.brand = selectedBrandIds.value.join(',')
+  if (currentPage.value > 1) query.page = String(currentPage.value)
   router.replace({ query })
 }
 
 function handleCategoryChange(slugs: (string | number)[]) {
   selectedCategorySlugs.value = slugs.map(String)
+  currentPage.value = 1
   syncQuery()
 }
 
 function handleBrandChange(ids: (string | number)[]) {
   selectedBrandIds.value = ids.map(Number)
+  currentPage.value = 1
   syncQuery()
 }
+
+// Category/brand links (header menu, breadcrumbs, home sections...) all point to this
+// same /products route with a different query. Vue Router keeps the component instance
+// alive across that navigation, so without this watcher the filters captured once at
+// mount would never notice the new query and clicking a link while already on this page
+// would do nothing.
+function syncFiltersFromRoute() {
+  const nextCategorySlugs = parseList(route.query.category ?? route.query.category_slug)
+  const nextBrandIds = parseList(route.query.brand).map(Number).filter((n) => !Number.isNaN(n))
+  const nextPage = Number(route.query.page) || 1
+
+  if (nextCategorySlugs.join(',') !== selectedCategorySlugs.value.join(',')) {
+    selectedCategorySlugs.value = nextCategorySlugs
+  }
+  if (nextBrandIds.join(',') !== selectedBrandIds.value.join(',')) {
+    selectedBrandIds.value = nextBrandIds
+  }
+  if (nextPage !== currentPage.value) {
+    currentPage.value = nextPage
+  }
+}
+
+watch(() => route.fullPath, syncFiltersFromRoute)
 
 function clearAllFilters() {
   selectedCategorySlugs.value = []
   selectedBrandIds.value = []
+  currentPage.value = 1
   mobileFilterOpen.value = false
   syncQuery()
+}
+
+function handlePageChange(page: number) {
+  currentPage.value = page
+  syncQuery()
+  loadProducts()
 }
 
 function getDiscountPercent(item: ProductCatalogItem) {
@@ -235,12 +275,18 @@ async function loadProducts() {
     type: 'new',
     category_id: selectedCategoryIds.value.join(',') || undefined,
     brand_id: selectedBrandIds.value.join(',') || undefined,
+    page: currentPage.value,
+    'per-page': PER_PAGE,
   })
 }
 
 onMounted(loadProducts)
-watch([selectedCategoryIds, selectedBrandIds], loadProducts)
+watch([selectedCategoryIds, selectedBrandIds], () => {
+  currentPage.value = 1
+  loadProducts()
+})
 
 const products = computed(() => productStore.products)
 const isLoading = computed(() => productStore.isLoading)
+const totalPages = computed(() => productStore.meta?.pageCount ?? 1)
 </script>

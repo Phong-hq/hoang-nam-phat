@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useSessionStore } from '~/stores/session.store'
+import { useCategoryStore } from '~/stores/category.store'
 
 useSeo({
   title: 'Trang chủ',
@@ -25,10 +25,12 @@ useSeo({
     'Mua thiết bị mạng, camera quan sát, laptop chính hãng tại Hoàng Nam Phát. Router Mikrotik, Camera Hikvision, Switch Cisco, WiFi TP-Link – Giá tốt, bảo hành chính hãng, giao hàng toàn quốc.',
 })
 
-const sessionStore = useSessionStore()
+const categoryStore = useCategoryStore()
 
 onMounted(() => {
-  sessionStore.fetchRecords()
+  if (!categoryStore.categories.length) categoryStore.fetchCategories()
+    console.log('c', categoryStore.categories)
+
 })
 
 const altBgs = ['bg-[#EEF2F7]', 'bg-white']
@@ -45,19 +47,18 @@ interface SectionConfig {
   }
 }
 
-const sortedSessions = computed(() =>
-  [...sessionStore.session].sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity)),
-)
-
+// Categories already come back in the correct display order (the store
+// reverses the API's order once, on fetch) -- no re-sorting needed here.
 const productSections = computed<SectionConfig[]>(() =>
-  sortedSessions.value.map((s) => ({
-    id: String(s.id),
+  categoryStore.categories.map((c) => ({
+    id: String(c.id),
     props: {
-      label: s.sub_title?.trim(),
-      title: s.title,
-      to: `/products?category=${s.category.slug}`,
+      label: c.description?.trim(),
+      title: c.name,
+      subtitle: c.description,
+      to: `/products?category=${c.slug}`,
       autoplayDelay: 4000,
-      categoryId: s.category.id,
+      categoryId: c.id,
     },
   })),
 )

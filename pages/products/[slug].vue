@@ -85,6 +85,24 @@
                     </div>
                   </template>
                 </ClientOnly>
+
+                <!-- Hotline tab on the photo -- only rendered when there is an
+                     actual photo underneath it. -->
+                <a
+                  v-if="galleryImages.length"
+                  :href="phoneHref"
+                  class="shop-plate absolute bottom-3 right-3 z-10 flex items-center gap-2.5 rounded-xl px-3 py-2 sm:gap-3 sm:px-3.5 sm:py-2.5"
+                >
+                  <span class="shop-plate-dial" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h2.6a1 1 0 01.98.8l.7 3.4a1 1 0 01-.55 1.1l-1.6.8a12 12 0 006 6l.8-1.6a1 1 0 011.1-.55l3.4.7a1 1 0 01.8.98V19a2 2 0 01-2 2h-.5C9.6 21 3 14.4 3 6.5V5z" />
+                    </svg>
+                  </span>
+                  <span class="leading-none">
+                    <span class="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/75 sm:text-[10px]">Gọi đặt hàng</span>
+                    <span class="shop-plate-number mt-1 block text-[15px] font-extrabold tabular-nums text-white sm:text-[18px]">{{ phoneDisplay }}</span>
+                  </span>
+                </a>
               </div>
 
               <div v-if="galleryImages.length > 1" class="flex gap-2 mt-3 overflow-x-auto">
@@ -197,10 +215,8 @@
             </div>
           </div>
 
-          <!-- Detail tabs section -->
-          <div class="mt-10 lg:mt-12">
-            <ProductDetailTabs :product="product" />
-          </div>
+          <!-- Detail tabs section (self-hides when the product has no additional_data) -->
+          <ProductDetailTabs :product="product" class="mt-10 lg:mt-12" />
 
           <!-- Similar products -->
           <ProductSimilar :current-slug="product.slug" :category-slug="product.category.slug" />
@@ -209,7 +225,7 @@
         <!-- Right sidebar: similar products (desktop only) -->
         <ProductSidebarList
           title="Có thể bạn quan tâm"
-          subtitle="Cùng danh mục sản phẩm"
+          :subtitle="sidebarSubtitle"
           :view-more-link="`/products?category=${product.category.slug}`"
           :items="sidebarItems"
           empty-text="Không có sản phẩm liên quan"
@@ -234,6 +250,7 @@ import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
 import { useProductStore } from '~/stores/product.store'
 import { useProductPromoStore } from '~/stores/productPromo.store'
+import { useBusinessStore } from '~/stores/business.store'
 import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
 import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
@@ -317,8 +334,16 @@ const productPromoStore = useProductPromoStore()
 const { productPromo } = storeToRefs(productPromoStore)
 const productPromoHtml = computed(() => productPromo.value?.content?.trim() || '')
 
+// Shop hotline for the plate on the gallery -- same source and fallback the
+// header uses, so the number never disagrees between the two.
+const businessStore = useBusinessStore()
+const { businessInfo } = storeToRefs(businessStore)
+const phoneDisplay = computed(() => businessInfo.value?.phone?.[0] ?? '0937.813.788')
+const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937813788').replace(/\D/g, '')}`)
+
 onMounted(() => {
   productPromoStore.fetchProductPromo()
+  businessStore.fetchBusinessInfo()
 })
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
@@ -344,16 +369,34 @@ const goToGallerySlide = (index: number) => {
   gallerySwiper.value?.slideTo(index)
 }
 
+const SIDEBAR_LIMIT = 6
+
+// The sidebar lists products from the same category. Some categories only hold
+// the product being viewed, which would leave the sidebar empty -- fall back to
+// a plain product list so there is always something to show.
 const { data: similarData } = await useAsyncData(
   `similar-sidebar-${slug.value}`,
-  () => (product.value ? productCatalogService.getList({ category_slug: product.value.category.slug }) : []),
+  async (): Promise<{ items: ProductCatalogItem[]; fallback: boolean }> => {
+    if (!product.value) return { items: [], fallback: false }
+
+    const currentSlug = product.value.slug
+    const sameCategory = await productCatalogService
+      .getList({ category_slug: product.value.category.slug })
+      .catch(() => [] as ProductCatalogItem[])
+    const related = sameCategory.filter((p) => p.slug !== currentSlug)
+    if (related.length) return { items: related.slice(0, SIDEBAR_LIMIT), fallback: false }
+
+    const all = await productCatalogService.getList().catch(() => [] as ProductCatalogItem[])
+    return { items: all.filter((p) => p.slug !== currentSlug).slice(0, SIDEBAR_LIMIT), fallback: true }
+  },
   { watch: [slug] },
 )
 
-const sidebarProducts = computed<ProductCatalogItem[]>(() => {
-  if (!similarData.value || !product.value) return []
-  return similarData.value.filter((p) => p.slug !== product.value!.slug).slice(0, 6)
-})
+const sidebarProducts = computed<ProductCatalogItem[]>(() => similarData.value?.items ?? [])
+
+const sidebarSubtitle = computed(() =>
+  similarData.value?.fallback ? 'Sản phẩm khác' : 'Cùng danh mục sản phẩm',
+)
 
 const sidebarItems = computed<SidebarProductItem[]>(() =>
   sidebarProducts.value.map((item) => ({
@@ -403,6 +446,111 @@ function handleBuyNow() {
 </script>
 
 <style scoped>
+/* Hotline tab: the shop red itself -- theme primary (#e52020) at the top
+   edge falling to a deep brick, so it stays on-brand while still reading as
+   dark against the white cut-out product photos. */
+.shop-plate {
+  background: linear-gradient(135deg, oklch(var(--p) / 0.84) 0%, rgba(176, 27, 29, 0.87) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 8px 18px -8px rgba(103, 12, 14, 0.35);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.shop-plate:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 14px 26px -10px rgba(103, 12, 14, 0.6);
+}
+
+.shop-plate:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 4px rgba(103, 12, 14, 0.55);
+}
+
+/* Light sweeping across the tab -- the one ambient motion, slow enough to
+   catch the eye without turning into a blinking banner. */
+.shop-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.26) 50%, transparent 62%);
+  transform: translateX(-120%);
+  animation: shop-plate-sheen 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shop-plate-sheen {
+  0%,
+  62% {
+    transform: translateX(-120%);
+  }
+  88%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* Dial key: frosted glass punched into the red ground, pulsing once per
+   cycle so the tab reads as "call now" and not as a price sticker. */
+.shop-plate-dial {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.38),
+    0 0 0 0 rgba(255, 255, 255, 0.55);
+  animation: shop-plate-ring 2.6s ease-out infinite;
+}
+
+.shop-plate-dial svg {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes shop-plate-ring {
+  0% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.38),
+      0 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  70%,
+  100% {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.38),
+      0 0 0 12px rgba(255, 255, 255, 0);
+  }
+}
+
+.shop-plate-number {
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(103, 12, 14, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-plate::after,
+  .shop-plate-dial {
+    animation: none;
+  }
+
+  .shop-plate:hover {
+    transform: none;
+  }
+}
+
 /* Nội dung CMS (v-html) không dùng @tailwindcss/typography, và Tailwind preflight
    xoá bullet + padding của <ul>, nên cần style trực tiếp để khớp danh sách mặc định. */
 .promo-content :deep(ul),
@@ -424,7 +572,7 @@ function handleBuyNow() {
 }
 
 .promo-content :deep(a) {
-  color: hsl(var(--p));
+  color: oklch(var(--p));
   text-decoration: underline;
 }
 </style>

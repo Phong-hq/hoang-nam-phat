@@ -13,6 +13,7 @@ export interface ProductCategory {
   name: string
   code: string
   icon: string | false
+  description: string
   created_at: string
   updated_at: string
   brands: CategoryBrand[]

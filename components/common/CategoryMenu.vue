@@ -70,7 +70,7 @@
     >
       <div
         v-if="hoveredCat"
-        class="absolute left-full z-50 ml-1 w-72 bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
+        class="absolute left-full z-50 ml-1 w-max max-w-[36rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
         :style="{ top: hoveredTop + 'px' }"
       >
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -80,7 +80,7 @@
           />
           {{ hoveredCat.name }}
         </p>
-        <div class="grid grid-cols-1 gap-0.5">
+        <div class="grid grid-flow-col grid-rows-5 gap-x-3 gap-y-0.5">
           <NuxtLink
             v-for="brand in hoveredCat.brands"
             :key="brand.id"

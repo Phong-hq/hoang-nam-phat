@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-hidden rounded-xl border border-base-200 bg-white">
+  <div v-if="tabs.length" class="overflow-hidden rounded-xl border border-base-200 bg-white">
     <!-- Tab header -->
     <div class="flex gap-1 overflow-x-auto border-b border-base-200 bg-base-200/40 px-2 scrollbar-none sm:px-4">
       <button
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { resolveOembedTags } from '~/utils'
 import type { ProductDetail } from '~/types'
 
@@ -56,4 +56,11 @@ const tabs = computed(() =>
 )
 
 const activeTab = ref(tabs.value[0]?.id ?? '')
+
+// The detail payload (and with it additional_data) can land after the first
+// render -- when it does, point activeTab at the first available tab so the
+// box never shows up with an empty body.
+watch(tabs, (list) => {
+  if (!list.some((tab) => tab.id === activeTab.value)) activeTab.value = list[0]?.id ?? ''
+})
 </script>

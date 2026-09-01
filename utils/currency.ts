@@ -14,7 +14,7 @@ export function formatCurrency(amount: number, currency = CURRENCY): string {
 // isn't published yet -- show a label instead of "0 ₫". Use formatCurrency for
 // amounts where zero is a real value (cart subtotal, discount, order total).
 export function formatPrice(amount?: number | null, currency = CURRENCY): string {
-  if (amount == null || amount <= 0) return 'Giá thỏa thuận'
+  if (amount == null || amount <= 0) return 'Liên hệ báo giá'
   return formatCurrency(amount, currency)
 }
 

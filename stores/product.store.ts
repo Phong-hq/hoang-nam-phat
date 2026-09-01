@@ -4,10 +4,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { productCatalogService } from '~/services/productCatalog.service'
-import type { ProductCatalogItem, ProductQueryParams } from '~/types'
+import type { ApiListMeta, ProductCatalogItem, ProductQueryParams } from '~/types'
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<ProductCatalogItem[]>([])
+  const meta = ref<ApiListMeta | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
@@ -20,7 +21,9 @@ export const useProductStore = defineStore('product', () => {
     isLoading.value = true
     error.value = null
     try {
-      products.value = await productCatalogService.getList(params)
+      const res = await productCatalogService.getListWithMeta(params)
+      products.value = res.items
+      meta.value = res.meta
     } catch {
       error.value = 'Không thể tải sản phẩm'
     } finally {
@@ -44,6 +47,7 @@ export const useProductStore = defineStore('product', () => {
 
   return {
     products,
+    meta,
     isLoading,
     error,
     selectedProduct,

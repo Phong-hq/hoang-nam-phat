@@ -67,7 +67,7 @@
       <span class="text-[10px] font-bold uppercase tracking-widest text-base-content/40">
         {{ product.brand }}
       </span>
-      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-9">
+      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-10">
         {{ product.name }}
       </h3>
 

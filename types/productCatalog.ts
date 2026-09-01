@@ -81,5 +81,7 @@ export interface ProductQueryParams {
   min_price?: number
   max_price?: number
   tags?: string
+  page?: number
+  'per-page'?: number
   [key: string]: string | number | undefined
 }
