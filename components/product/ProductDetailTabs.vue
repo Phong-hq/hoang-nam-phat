@@ -1,5 +1,5 @@
 <template>
-  <div v-if="tabs.length" class="overflow-hidden rounded-xl border border-base-200 bg-white">
+  <div v-if="tabs.length" class="overflow-hidden rounded-xl border border-base-200 bg-white shadow-xl">
     <!-- Tab header -->
     <div class="flex gap-1 overflow-x-auto border-b border-base-200 bg-base-200/40 px-2 scrollbar-none sm:px-4">
       <button

@@ -24,7 +24,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Gallery -->
             <div class="product-images">
-              <div class="relative">
+              <div class="relative rounded-xl shadow-xl">
                 <ClientOnly>
                   <Swiper
                     class="rounded-xl aspect-square"
@@ -91,7 +91,7 @@
                 <a
                   v-if="galleryImages.length"
                   :href="phoneHref"
-                  class="shop-plate absolute bottom-3 right-3 z-10 flex items-center gap-2.5 rounded-xl px-3 py-2 sm:gap-3 sm:px-3.5 sm:py-2.5"
+                  class="shop-plate absolute bottom-2 right-3 z-10 flex items-center gap-2.5 rounded-xl px-3 py-2 sm:gap-3 sm:px-3.5 sm:py-2.5"
                 >
                   <span class="shop-plate-dial" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -99,7 +99,7 @@
                     </svg>
                   </span>
                   <span class="leading-none">
-                    <span class="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/75 sm:text-[10px]">Gọi đặt hàng</span>
+                    <span class="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/75 sm:text-[10px]">Hotline đặt hàng</span>
                     <span class="shop-plate-number mt-1 block text-[15px] font-extrabold tabular-nums text-white sm:text-[18px]">{{ phoneDisplay }}</span>
                   </span>
                 </a>
@@ -110,7 +110,7 @@
                   v-for="(img, index) in galleryImages"
                   :key="index"
                   type="button"
-                  class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-colors"
+                  class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 shadow-md transition-colors"
                   :class="index === activeImageIndex ? 'border-primary' : 'border-transparent'"
                   @click="goToGallerySlide(index)"
                 >
