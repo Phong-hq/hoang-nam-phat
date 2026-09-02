@@ -27,7 +27,7 @@
     </div>
     <div class="p-3 flex flex-col flex-1">
       <span class="text-[10px] font-bold uppercase tracking-widest text-base-content/40">{{ product.brand }}</span>
-      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-9">
+      <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-10">
         {{ product.name }}
       </h3>
       <div class="mt-2 min-h-[38px]">
@@ -39,9 +39,11 @@
         </div>
         <div class="text-base font-extrabold text-primary">{{ formatPrice(product.price) }}</div>
       </div>
-      <div class="flex items-center justify-between mt-1.5 text-[10px] text-base-content/40">
-        <span>Đã bán {{ product.soldPercent }}%</span>
-        <span class="text-warning font-semibold">Còn {{ 100 - product.soldPercent }}%</span>
+      <div v-if="product.quantity != null" class="flex items-center gap-1 mt-1.5 text-[10px] text-warning font-semibold">
+        <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M11.983 1.907a.75.75 0 00-1.292-.657L4.204 10.5H8.75a.75.75 0 01.671 1.086l-2.914 5.834a.75.75 0 001.292.657l6.487-9.25a.75.75 0 00-.671-1.077H9.117l2.866-5.843z" clip-rule="evenodd" />
+        </svg>
+        Còn {{ product.quantity }} sản phẩm
       </div>
       <div class="flex-1" />
       <!-- Plain span, not a link: the whole card already navigates to the product page

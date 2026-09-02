@@ -57,7 +57,7 @@
                 class="group card h-full bg-white border border-base-200 shadow-md hover:shadow-xl hover:border-primary/20 transition-all duration-300 rounded-xl overflow-hidden flex flex-col"
                 @click="productStore.setSelectedProduct(item)"
               >
-                <figure class="relative aspect-square overflow-hidden bg-base-200">
+                <figure class="relative aspect-square overflow-hidden bg-base-200 p-3">
                   <span
                     v-if="getDiscountPercent(item)"
                     class="absolute top-2 left-2 z-10 bg-primary text-white text-sm font-extrabold px-2.5 py-1 rounded shadow-md"
@@ -73,7 +73,7 @@
                     loading="lazy"
                     decoding="async"
                     sizes="(max-width: 640px) 50vw, 300px"
-                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1 group-hover:drop-shadow-xl"
+                    class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1 group-hover:drop-shadow-xl"
                   />
                 </figure>
                 <div class="card-body p-4 flex flex-col flex-1">
@@ -177,9 +177,39 @@ const currentPage = ref(Number(route.query.page) || 1)
 const categories = computed(() =>
   categoryStore.categories.map((c) => ({ id: c.slug, label: c.name })),
 )
-const brands = computed(() =>
-  brandStore.brands.map((b) => ({ id: b.id, label: b.name })),
-)
+
+// When one or more categories are selected, narrow the brand filter down to only the
+// brands that belong to those categories (merged across the selection) instead of the
+// full brand list -- picking a category that has no matching brand left is then a no-op
+// rather than showing stale, unrelated options.
+const categoryBrands = computed(() => {
+  if (!selectedCategorySlugs.value.length) return null
+  const merged = new Map<number, { id: number; name: string }>()
+  for (const slug of selectedCategorySlugs.value) {
+    const category = categoryStore.categories.find((c) => c.slug === slug)
+    for (const brand of category?.brands ?? []) {
+      merged.set(brand.id, brand)
+    }
+  }
+  return Array.from(merged.values())
+})
+
+const brands = computed(() => {
+  const source = categoryBrands.value ?? brandStore.brands
+  return source.map((b) => ({ id: b.id, label: b.name }))
+})
+
+// Selecting brands is done against the currently visible options, so once the category
+// selection narrows that list, drop any selected brand that fell out of it.
+watch(categoryBrands, (list) => {
+  if (!list) return
+  const validIds = new Set(list.map((b) => b.id))
+  const filtered = selectedBrandIds.value.filter((id) => validIds.has(id))
+  if (filtered.length !== selectedBrandIds.value.length) {
+    selectedBrandIds.value = filtered
+    syncQuery()
+  }
+})
 
 // The list API filters by category_id, not slug, so resolve the selected slugs to ids.
 const selectedCategoryIds = computed(() =>

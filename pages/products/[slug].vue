@@ -135,14 +135,33 @@
 
               <h1 class="text-lg lg:text-xl font-bold leading-snug">{{ product.name }}</h1>
 
-              <div class="flex items-baseline gap-3">
-                <span class="text-xl font-bold text-primary">{{ formatPrice(variant?.unit_price ?? product.unit_price) }}</span>
+              <div class="space-y-2">
                 <span
-                  v-if="product.compare_price && product.compare_price > (variant?.unit_price ?? product.unit_price)"
-                  class="text-sm text-base-content/40 line-through"
+                  v-if="isFlashSale"
+                  class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-orange-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-sm shadow-primary/30"
                 >
-                  {{ formatCurrency(product.compare_price) }}
+                  <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.983 1.907a.75.75 0 00-1.292-.657L4.204 10.5H8.75a.75.75 0 01.671 1.086l-2.914 5.834a.75.75 0 001.292.657l6.487-9.25a.75.75 0 00-.671-1.077H9.117l2.866-5.843z" clip-rule="evenodd" />
+                  </svg>
+                  Flash Sale
                 </span>
+
+                <div class="flex items-baseline gap-3">
+                  <span class="text-xl font-bold text-primary">{{ formatPrice(displayPrice) }}</span>
+                  <span
+                    v-if="(isFlashSale && regularPrice > 0) || (product.compare_price && product.compare_price > regularPrice)"
+                    class="text-sm text-base-content/40 line-through"
+                  >
+                    {{ formatCurrency(isFlashSale ? regularPrice : product.compare_price!) }}
+                  </span>
+                </div>
+
+                <div
+                  v-if="isFlashSale"
+                  class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary"
+                >
+                  Chỉ còn <span class="tabular-nums">{{ flashSaleRecord!.quantity }}</span>&nbsp;sản phẩm giá sốc
+                </div>
               </div>
 
               <p v-if="product.short_description" class="text-base-content/70 text-sm leading-relaxed line-clamp-3">
@@ -255,6 +274,7 @@ import { useUiStore } from '~/stores/ui.store'
 import { useProductStore } from '~/stores/product.store'
 import { useProductPromoStore } from '~/stores/productPromo.store'
 import { useBusinessStore } from '~/stores/business.store'
+import { useFlashSaleStore } from '~/stores/flashSale.store'
 import { productCatalogService } from '~/services/productCatalog.service'
 import type { ProductCatalogItem, ProductVariant } from '~/types'
 import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
@@ -345,12 +365,27 @@ const { businessInfo } = storeToRefs(businessStore)
 const phoneDisplay = computed(() => businessInfo.value?.phone?.[0] ?? '0937.813.788')
 const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937813788').replace(/\D/g, '')}`)
 
+// Flash sale -- shared store so the list is fetched once across the app; check
+// whether this product is one of the active flash sale entries and, if so,
+// swap the displayed/cart price to the flash sale's new_price.
+const flashSaleStore = useFlashSaleStore()
+
 onMounted(() => {
   productPromoStore.fetchProductPromo()
   businessStore.fetchBusinessInfo()
+  flashSaleStore.fetchFlashSaleProducts()
 })
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)
+
+// Matched by slug, not id -- the flash_sale record's product.id is actually a
+// variant id and can collide with unrelated catalog product ids.
+const flashSaleRecord = computed(() =>
+  product.value ? flashSaleStore.records.find((r) => r.product.slug === product.value!.slug) : undefined,
+)
+const isFlashSale = computed(() => !!flashSaleRecord.value)
+const regularPrice = computed(() => variant.value?.unit_price ?? product.value?.unit_price ?? 0)
+const displayPrice = computed(() => flashSaleRecord.value?.new_price ?? regularPrice.value)
 
 // Brand can be null in the catalog API -- fall back to the product name alone
 const productImageAlt = computed(() =>
@@ -427,7 +462,7 @@ function buildCartItem() {
     productVariantId: v?.id ?? product.value.id,
     name: product.value.name,
     thumbnail: getProductThumbnail(product.value) ?? '',
-    price: v?.unit_price ?? product.value.unit_price,
+    price: displayPrice.value,
     slug: product.value.slug,
   }
 }

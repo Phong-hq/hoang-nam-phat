@@ -84,7 +84,7 @@ import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import { formatPrice } from '~/utils'
 import type { FlashSaleProduct, FlashSaleRecordWithPricing } from '~/types'
-import { useFlashSale } from '~/composables/useFlashSale'
+import { useFlashSaleStore } from '~/stores/flashSale.store'
 
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
@@ -121,27 +121,30 @@ onMounted(() => {
 })
 onUnmounted(() => clearInterval(timer))
 
+// The flash sale's own new_price is the authoritative sale price -- the catalog's
+// unit_price becomes the struck-through "was" price instead of compare_price.
 function toFlashProduct(record: FlashSaleRecordWithPricing): FlashSaleProduct {
-  const { product, unitPrice, comparePrice } = record
-  const hasDiscount = comparePrice != null && comparePrice > unitPrice
+  const { product, unitPrice, new_price, quantity } = record
+  const hasDiscount = new_price < unitPrice
   return {
     id: product.id,
     slug: product.slug,
     name: product.name,
     brand: '',
-    price: unitPrice,
-    originalPrice: hasDiscount ? comparePrice : undefined,
-    discount: hasDiscount ? Math.round(((comparePrice - unitPrice) / comparePrice) * 100) : undefined,
+    price: new_price,
+    originalPrice: hasDiscount ? unitPrice : undefined,
+    discount: hasDiscount ? Math.round(((unitPrice - new_price) / unitPrice) * 100) : undefined,
     soldPercent: 0,
+    quantity,
     image: product.images[0],
   }
 }
 
-const { fetchFlashSaleProducts } = useFlashSale()
-const flashSaleRecords = ref<FlashSaleRecordWithPricing[]>([])
+const flashSaleStore = useFlashSaleStore()
+const flashSaleRecords = computed(() => flashSaleStore.records)
 const products = computed(() => flashSaleRecords.value.map(toFlashProduct))
 
-onMounted(async () => {
-  flashSaleRecords.value = await fetchFlashSaleProducts()
+onMounted(() => {
+  flashSaleStore.fetchFlashSaleProducts()
 })
 </script>

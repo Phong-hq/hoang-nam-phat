@@ -10,8 +10,8 @@
         Xóa lọc
       </button>
     </div>
-    <ul class="space-y-2.5">
-      <li v-for="item in items" :key="item.id">
+    <TransitionGroup tag="ul" name="filter-item" class="space-y-2.5">
+      <li v-for="(item, index) in items" :key="item.id" :style="{ transitionDelay: `${index * 30}ms` }">
         <label class="flex items-center gap-2.5 cursor-pointer group">
           <input
             type="checkbox"
@@ -25,7 +25,7 @@
           </span>
         </label>
       </li>
-    </ul>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -51,3 +51,21 @@ function handleChange(id: string | number, checked: boolean) {
   emit('update:modelValue', next)
 }
 </script>
+
+<style scoped>
+.filter-item-enter-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.filter-item-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  position: absolute;
+}
+.filter-item-enter-from,
+.filter-item-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+.filter-item-move {
+  transition: transform 0.25s ease;
+}
+</style>

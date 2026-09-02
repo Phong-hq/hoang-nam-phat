@@ -1,29 +1,20 @@
 // Flash sale composable
 // Thin layer that calls the service -- pages never call API directly
-// The flash_sale record only exposes the variant's unit_price, so the real
-// unit_price/compare_price is fetched from the product catalog and merged in.
+// The flash_sale record's nested `product.id` is actually a variant id (it can
+// collide with unrelated catalog product ids), so pricing is read straight off
+// the record's own product payload instead of cross-referencing the catalog by id.
 
 import type { FlashSaleRecordWithPricing } from '~/types'
 import { flashSaleService } from '~/services/flashSale.service'
-import { productCatalogService } from '~/services/productCatalog.service'
 
 export function useFlashSale() {
   async function fetchFlashSaleProducts(): Promise<FlashSaleRecordWithPricing[]> {
     const records = await flashSaleService.getList()
-    if (!records.length) return []
-
-    const ids = [...new Set(records.map((record) => record.product.id))].join(',')
-    const products = await productCatalogService.getList({ ids })
-    const productById = new Map(products.map((product) => [product.id, product]))
-
-    return records.map((record) => {
-      const product = productById.get(record.product.id)
-      return {
-        ...record,
-        unitPrice: product?.unit_price ?? record.product.unit_price,
-        comparePrice: product?.compare_price ?? null,
-      }
-    })
+    return records.map((record) => ({
+      ...record,
+      unitPrice: record.product.unit_price,
+      comparePrice: record.product.compare_price ?? null,
+    }))
   }
 
   return { fetchFlashSaleProducts }
