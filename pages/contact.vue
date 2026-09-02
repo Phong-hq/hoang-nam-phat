@@ -198,7 +198,13 @@
                   class="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary flex-shrink-0"
                 />
                 <span class="text-sm text-gray-600">
-                  Tôi đồng ý với <span class="font-medium text-gray-800">điều khoản</span> của Hoàng Nam Phát
+                  Tôi đồng ý với
+                  <button
+                    type="button"
+                    class="font-medium text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                    @click.stop="openTerms"
+                  >điều khoản</button>
+                  của Hoàng Nam Phát
                   <span class="text-red-500">*</span>
                 </span>
               </label>
@@ -287,14 +293,28 @@
       </div>
     </div>
 
+    <!-- Terms popup (CMS content) -->
+    <BaseModal v-model="showTerms" title="Điều khoản" max-width-class="max-w-4xl">
+      <div v-if="termsStore.isLoading" class="flex items-center justify-center py-12">
+        <svg class="w-6 h-6 animate-spin text-primary" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+      <p v-else-if="termsStore.error" class="text-sm text-red-600">{{ termsStore.error }}</p>
+      <div v-else class="cms-content max-h-[70vh] overflow-y-auto" v-html="termsInfoHtml" />
+    </BaseModal>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBusinessStore } from '~/stores/business.store'
 import { useSocialStore } from '~/stores/social.store'
+import { useTermsStore } from '~/stores/terms'
+import { resolveOembedTags } from '~/utils'
 
 useSeo({
   title: 'Liên hệ',
@@ -317,6 +337,17 @@ const { businessInfo } = storeToRefs(businessStore)
 
 const socialStore = useSocialStore()
 const { socialLinks: socialRecord } = storeToRefs(socialStore)
+
+const termsStore = useTermsStore()
+const showTerms = ref(false)
+const termsInfoHtml = computed(() =>
+  termsStore.termsInfo?.info ? resolveOembedTags(termsStore.termsInfo.info) : '',
+)
+
+function openTerms() {
+  showTerms.value = true
+  termsStore.fetchTermsInfo()
+}
 
 onMounted(() => {
   businessStore.fetchBusinessInfo()

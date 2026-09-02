@@ -36,6 +36,7 @@
           >
             <span class="flex items-center gap-2 min-w-0">
               <span
+                v-if="iconFor(cat)"
                 class="w-4 h-4 flex-shrink-0 flex items-center justify-center"
                 :class="hoveredCat?.id === cat.id ? 'text-white' : 'text-primary'"
                 v-html="iconFor(cat)"
@@ -75,6 +76,7 @@
       >
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
           <span
+            v-if="iconFor(hoveredCat)"
             class="w-4 h-4 flex items-center justify-center text-primary"
             v-html="iconFor(hoveredCat)"
           />
@@ -112,7 +114,7 @@
 import { computed, ref } from 'vue'
 import { useCategoryStore } from '~/stores/category.store'
 import type { ProductCategoryMenuItem } from '~/types'
-import { getCategoryIcon } from '~/constants/categoryIcons'
+import { CATEGORY_ICONS, getCategoryIconByKey } from '~/constants/categoryIcons'
 
 withDefaults(defineProps<{ panelClass?: string }>(), {
   panelClass: 'rounded-xl shadow-lg',
@@ -149,13 +151,9 @@ function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
   hoveredTop.value = container ? li.getBoundingClientRect().top - container.getBoundingClientRect().top : li.offsetTop
 }
 
-// Icons come from the fixed set, assigned by the category's position in the menu --
-// the API carries no icon of its own. Keyed by id so search filtering never reshuffles them.
-const categoryIcons = computed(
-  () => new Map(orderedCategories.value.map((cat, i) => [cat.id, getCategoryIcon(i)])),
-)
-
-function iconFor(cat: ProductCategoryMenuItem) {
-  return categoryIcons.value.get(cat.id) ?? getCategoryIcon(0)
+// cat.icon is the icon's key into CATEGORY_ICONS. No icon shows at all when
+// the category carries no recognized key -- no fallback icon.
+function iconFor(cat: ProductCategoryMenuItem): string {
+  return cat.icon && CATEGORY_ICONS[cat.icon] ? getCategoryIconByKey(cat.icon) : ''
 }
 </script>

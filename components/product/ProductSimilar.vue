@@ -51,13 +51,19 @@ import type { ProductCatalogItem } from '~/types'
 const props = defineProps<{
   currentSlug: string
   categorySlug: string
+  brandSlug?: string
 }>()
 
 const productStore = useProductStore()
 
 const { data } = await useAsyncData(
   `similar-${props.currentSlug}`,
-  () => productCatalogService.getList({ category_slug: props.categorySlug }),
+  () =>
+    productCatalogService.getList({
+      category_slug: props.categorySlug,
+      ...(props.brandSlug ? { brand_slug: props.brandSlug } : {}),
+    }),
+  { watch: [() => props.categorySlug, () => props.brandSlug] },
 )
 
 const similarProducts = computed<ProductCatalogItem[]>(() =>

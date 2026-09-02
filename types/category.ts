@@ -12,6 +12,7 @@ export interface ProductCategory {
   id: number
   name: string
   code: string
+  // The icon's key into CATEGORY_ICONS (see ~/constants/categoryIcons).
   icon: string | false
   description: string
   created_at: string

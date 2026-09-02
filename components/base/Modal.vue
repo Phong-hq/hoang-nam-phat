@@ -1,6 +1,6 @@
 <template>
   <dialog class="modal" :class="{ 'modal-open': modelValue }">
-    <div class="modal-box w-11/12 max-w-2xl">
+    <div class="modal-box w-11/12" :class="maxWidthClass">
       <button
         class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
         @click="$emit('update:modelValue', false)"
@@ -21,7 +21,8 @@
 interface Props {
   modelValue: boolean
   title?: string
+  maxWidthClass?: string
 }
-defineProps<Props>()
+withDefaults(defineProps<Props>(), { maxWidthClass: 'max-w-2xl' })
 defineEmits<{ 'update:modelValue': [value: boolean] }>()
 </script>

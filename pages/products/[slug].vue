@@ -27,7 +27,7 @@
               <div class="relative rounded-xl shadow-xl">
                 <ClientOnly>
                   <Swiper
-                    class="rounded-xl aspect-square"
+                    class="rounded-xl aspect-square bg-base-100"
                     @swiper="onGallerySwiper"
                     @slide-change="onGallerySlideChange"
                   >
@@ -40,7 +40,7 @@
                         :loading="index === 0 ? 'eager' : 'lazy'"
                         decoding="async"
                         sizes="(max-width: 768px) 100vw, 600px"
-                        class="rounded-xl w-full h-full object-cover aspect-square"
+                        class="rounded-xl w-full h-full object-contain aspect-square"
                       />
                     </SwiperSlide>
                   </Swiper>
@@ -78,7 +78,7 @@
                       loading="eager"
                       decoding="async"
                       sizes="(max-width: 768px) 100vw, 600px"
-                      class="rounded-xl w-full object-cover aspect-square"
+                      class="rounded-xl w-full aspect-square object-contain bg-base-100"
                     />
                     <div v-else class="aspect-square bg-base-200 rounded-xl flex items-center justify-center">
                       <span class="text-base-content/40">Chưa có ảnh</span>
@@ -110,7 +110,7 @@
                   v-for="(img, index) in galleryImages"
                   :key="index"
                   type="button"
-                  class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 shadow-md transition-colors"
+                  class="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 shadow-md bg-base-100 transition-colors"
                   :class="index === activeImageIndex ? 'border-primary' : 'border-transparent'"
                   @click="goToGallerySlide(index)"
                 >
@@ -120,7 +120,7 @@
                     width="64"
                     height="64"
                     loading="lazy"
-                    class="w-full h-full object-cover"
+                    class="w-full h-full object-contain"
                   />
                 </button>
               </div>
@@ -219,7 +219,11 @@
           <ProductDetailTabs :product="product" class="mt-10 lg:mt-12" />
 
           <!-- Similar products -->
-          <ProductSimilar :current-slug="product.slug" :category-slug="product.category.slug" />
+          <ProductSimilar
+            :current-slug="product.slug"
+            :category-slug="product.category.slug"
+            :brand-slug="product.brand?.slug"
+          />
         </div>
 
         <!-- Right sidebar: similar products (desktop only) -->

@@ -298,7 +298,10 @@
                     :aria-label="expandedCategoryId === cat.id ? `Thu gọn ${cat.name}` : `Xem thương hiệu trong ${cat.name}`"
                     @click="toggleCategory(cat)"
                   >
-                    <span class="truncate">{{ cat.name }}</span>
+                    <span class="flex items-center gap-2 min-w-0">
+                      <span v-if="iconFor(cat)" class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary" v-html="iconFor(cat)" />
+                      <span class="truncate">{{ cat.name }}</span>
+                    </span>
                     <svg
                       class="w-4 h-4 flex-shrink-0 text-gray-400 transition-transform"
                       :class="{ 'rotate-180': expandedCategoryId === cat.id }"
@@ -310,10 +313,11 @@
                   <NuxtLink
                     v-else
                     :to="`/products?category=${cat.slug}`"
-                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                    class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                     @click="isMenuOpen = false"
                   >
-                    {{ cat.name }}
+                    <span v-if="iconFor(cat)" class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary" v-html="iconFor(cat)" />
+                    <span class="truncate">{{ cat.name }}</span>
                   </NuxtLink>
                   <ul v-if="cat.brands.length && expandedCategoryId === cat.id" class="bg-gray-50/70 pb-1">
                     <li v-for="brand in cat.brands" :key="brand.id">
@@ -380,6 +384,7 @@ import { useBusinessStore } from '~/stores/business.store'
 import { useCartStore } from '~/stores/cart.store'
 import { useCategoryStore } from '~/stores/category.store'
 import { formatCurrency } from '~/utils'
+import { CATEGORY_ICONS, getCategoryIconByKey } from '~/constants/categoryIcons'
 import type { ProductCatalogItem, ProductCategoryMenuItem } from '~/types'
 
 const { totalQuantity, subtotal } = storeToRefs(useCartStore())
@@ -425,6 +430,12 @@ const expandedCategoryId = ref<number | null>(null)
 
 function toggleCategory(cat: ProductCategoryMenuItem) {
   expandedCategoryId.value = expandedCategoryId.value === cat.id ? null : cat.id
+}
+
+// Mobile drawer's category tree -- cat.icon is the icon's key into CATEGORY_ICONS.
+// No icon shows when the category carries no recognized key -- no fallback icon.
+function iconFor(cat: ProductCategoryMenuItem): string {
+  return cat.icon && CATEGORY_ICONS[cat.icon] ? getCategoryIconByKey(cat.icon) : ''
 }
 
 onMounted(() => {
