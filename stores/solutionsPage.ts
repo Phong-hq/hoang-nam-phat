@@ -1,5 +1,5 @@
 // Solutions page store -- Pinia setup store
-// Manages data fetched from the CMS "solutions_page" record API
+// Manages the list of posts fetched from the CMS "solutions_page" record API
 
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -7,30 +7,34 @@ import { solutionsPageService } from '~/services/solutionsPage.service'
 import type { SolutionsPageApiRecord } from '~/types'
 
 export const useSolutionsPageStore = defineStore('solutionsPage', () => {
-  const solutionsInfo = ref<SolutionsPageApiRecord | null>(null)
+  const solutionsList = ref<SolutionsPageApiRecord[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
-  async function fetchSolutionsInfo() {
-    if (solutionsInfo.value) {
+  async function fetchSolutionsList() {
+    if (solutionsList.value.length) {
       return
     }
     isLoading.value = true
     error.value = null
     try {
-      const [first] = await solutionsPageService.getList()
-      solutionsInfo.value = first ?? null
+      solutionsList.value = await solutionsPageService.getList()
     } catch {
-      error.value = 'Không thể tải nội dung giải pháp'
+      error.value = 'Không thể tải danh sách giải pháp'
     } finally {
       isLoading.value = false
     }
   }
 
+  function getById(id: number): SolutionsPageApiRecord | undefined {
+    return solutionsList.value.find((item) => item.id === id)
+  }
+
   return {
-    solutionsInfo,
+    solutionsList,
     isLoading,
     error,
-    fetchSolutionsInfo,
+    fetchSolutionsList,
+    getById,
   }
 })

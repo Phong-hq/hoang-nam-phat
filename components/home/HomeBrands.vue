@@ -80,7 +80,11 @@ const swiperModules = [Autoplay, FreeMode]
 const autoplay = { delay: 0, disableOnInteraction: false }
 
 const brandStore = useBrandStore()
-const { brands } = storeToRefs(brandStore)
+const { brands: allBrands } = storeToRefs(brandStore)
+
+// Home strip only shows brands the CMS marked to appear on the homepage --
+// the full list still backs the /products filter sidebar elsewhere.
+const brands = computed(() => allBrands.value.filter((brand) => brand.show_on_home === 1))
 </script>
 
 <style>

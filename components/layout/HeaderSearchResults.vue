@@ -17,7 +17,7 @@
       >
         <div class="w-12 h-12 flex-shrink-0 rounded-md bg-gray-100 overflow-hidden flex items-center justify-center">
           <img
-            v-if="getProductThumbnail(item) && !brokenImages.has(item.id)"
+            v-if="!brokenImages.has(item.id)"
             :src="getProductThumbnail(item)"
             :alt="item.name"
             class="w-full h-full object-contain"

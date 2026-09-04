@@ -1,26 +1,13 @@
 <template>
-  <div ref="rootRef" @mouseleave="hoveredCat = null">
+  <div ref="rootRef" @mouseenter="cancelCloseFlyout" @mouseleave="scheduleCloseFlyout">
     <!-- No max-height/scroll here -- the list always renders at its natural full height.
          Rounding/overflow-hidden lives on the list box only, never on the root, so the
          flyout below (a sibling, not a descendant) is free to render outside its bounds. -->
     <div :class="['bg-white overflow-hidden', panelClass]">
       <slot name="header" />
-      <div v-if="isCategorySearchable" class="px-2.5 pt-2.5">
-        <div class="relative">
-          <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            v-model="categorySearch"
-            type="text"
-            placeholder="Tìm danh mục..."
-            class="w-full text-xs border border-gray-200 rounded-lg pl-7 pr-2 py-1.5 focus:outline-none focus:border-primary transition-colors"
-          />
-        </div>
-      </div>
       <ul class="py-1">
         <li
-          v-for="cat in filteredCategories"
+          v-for="cat in orderedCategories"
           :key="cat.id"
           @mouseenter="onCatHover(cat, $event)"
         >
@@ -52,9 +39,6 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </NuxtLink>
-        </li>
-        <li v-if="isCategorySearchable && !filteredCategories.length" class="px-3.5 py-3 text-xs text-gray-400 text-center">
-          Không tìm thấy danh mục
         </li>
       </ul>
     </div>
@@ -111,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useCategoryStore } from '~/stores/category.store'
 import type { ProductCategoryMenuItem } from '~/types'
 import { CATEGORY_ICONS, getCategoryIconByKey } from '~/constants/categoryIcons'
@@ -121,24 +105,31 @@ withDefaults(defineProps<{ panelClass?: string }>(), {
 })
 defineEmits<{ navigate: [] }>()
 
-const CATEGORY_SEARCH_THRESHOLD = 8
-
 const categoryStore = useCategoryStore()
 const rootRef = ref<HTMLElement | null>(null)
 const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 const hoveredTop = ref(0)
-const categorySearch = ref('')
-
-const isCategorySearchable = computed(() => categoryStore.categories.length > CATEGORY_SEARCH_THRESHOLD)
+let closeFlyoutTimeout: ReturnType<typeof setTimeout> | null = null
 
 // Store already holds the display order -- no re-sorting here
 const orderedCategories = computed(() => categoryStore.categories)
 
-const filteredCategories = computed(() => {
-  if (!isCategorySearchable.value || !categorySearch.value.trim()) return orderedCategories.value
-  const q = categorySearch.value.trim().toLowerCase()
-  return orderedCategories.value.filter((cat) => cat.name.toLowerCase().includes(q))
-})
+// The flyout sits a few pixels to the right of the list (ml-1 gap). Crossing that gap
+// slowly moves the pointer off root's rendered box for an instant, firing mouseleave
+// before it reaches the flyout. Delay the close briefly so a slow diagonal crossing
+// still lands back inside root (list or flyout) in time to cancel it.
+function scheduleCloseFlyout() {
+  closeFlyoutTimeout = setTimeout(() => {
+    hoveredCat.value = null
+  }, 200)
+}
+
+function cancelCloseFlyout() {
+  if (closeFlyoutTimeout) {
+    clearTimeout(closeFlyoutTimeout)
+    closeFlyoutTimeout = null
+  }
+}
 
 function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
   if (!cat.brands.length) {
@@ -156,4 +147,8 @@ function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
 function iconFor(cat: ProductCategoryMenuItem): string {
   return cat.icon && CATEGORY_ICONS[cat.icon] ? getCategoryIconByKey(cat.icon) : ''
 }
+
+onBeforeUnmount(() => {
+  if (closeFlyoutTimeout) clearTimeout(closeFlyoutTimeout)
+})
 </script>

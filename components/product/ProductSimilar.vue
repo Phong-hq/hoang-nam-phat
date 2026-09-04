@@ -17,7 +17,6 @@
       >
         <figure class="aspect-square overflow-hidden bg-base-200">
           <NuxtImg
-            v-if="getProductThumbnail(item)"
             :src="getProductThumbnail(item)"
             :alt="item.name"
             width="300"

@@ -6,6 +6,8 @@ export const SITE_URL = 'https://hnp.thanhtoan24on7.xyz'
 export const SITE_DESCRIPTION = 'Mua sam thiet bi cong nghe chinh hang tai Hoang Nam Phat.'
 export const SITE_KEYWORDS = 'dien thoai, laptop, tablet, phu kien, chinh hang'
 export const DEFAULT_OG_IMAGE = '/hnp.png'
+// Shown wherever a product has no photo yet -- stands in for the missing thumbnail.
+export const PRODUCT_IMAGE_PLACEHOLDER = '/hnp_1.png'
 export const DEFAULT_TWITTER_CARD = 'summary_large_image' as const
 export const DEFAULT_ROBOTS = 'index, follow'
 export const CURRENCY = 'VND'

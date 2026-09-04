@@ -19,6 +19,12 @@
               <span v-if="totalSelectedFilters" class="badge badge-primary badge-sm">{{ totalSelectedFilters }}</span>
             </button>
             <div v-if="mobileFilterOpen" class="mt-2 flex flex-col gap-3">
+              <ProductSortGroup
+                title="Sắp xếp"
+                name="sort-mobile"
+                :options="SORT_OPTIONS"
+                v-model="sortOrder"
+              />
               <ProductFilterGroup
                 title="Danh mục"
                 :model-value="selectedCategorySlugs"
@@ -26,12 +32,44 @@
                 @update:model-value="handleCategoryChange"
               />
               <ProductFilterGroup
+                v-if="selectedCategorySlugs.length"
+                title="Danh mục phụ"
+                :model-value="selectedSubCategories"
+                :items="MOCK_SUB_CATEGORIES"
+                @update:model-value="handleSubCategoryChange"
+              />
+              <ProductFilterGroup
+                v-if="selectedCategorySlugs.length"
                 title="Thương hiệu"
                 :model-value="selectedBrandIds"
                 :items="brands"
                 @update:model-value="handleBrandChange"
               />
             </div>
+          </div>
+
+          <!-- Active filters, removable at a glance without opening the sidebar/drawer -->
+          <div v-if="activeFilterChips.length" class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="text-xs font-medium text-base-content/40">Đang lọc:</span>
+            <button
+              v-for="chip in activeFilterChips"
+              :key="chip.key"
+              type="button"
+              class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 pl-3 pr-2 py-1 text-xs font-semibold text-primary hover:bg-primary/15 transition-colors"
+              @click="chip.remove()"
+            >
+              {{ chip.label }}
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="text-xs font-medium text-base-content/40 hover:text-primary underline underline-offset-2 ml-1"
+              @click="clearAllFilters"
+            >
+              Xóa tất cả
+            </button>
           </div>
 
           <div v-if="isLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-6">
@@ -65,7 +103,6 @@
                     -{{ getDiscountPercent(item) }}%
                   </span>
                   <NuxtImg
-                    v-if="getProductThumbnail(item)"
                     :src="getProductThumbnail(item)"
                     :alt="item.name"
                     width="300"
@@ -114,6 +151,12 @@
 
         <!-- Right sidebar: filter -->
         <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-[var(--header-height)] z-10">
+          <ProductSortGroup
+            title="Sắp xếp"
+            name="sort-desktop"
+            :options="SORT_OPTIONS"
+            v-model="sortOrder"
+          />
           <ProductFilterGroup
             title="Danh mục"
             :model-value="selectedCategorySlugs"
@@ -121,6 +164,14 @@
             @update:model-value="handleCategoryChange"
           />
           <ProductFilterGroup
+            v-if="selectedCategorySlugs.length"
+            title="Danh mục phụ"
+            :model-value="selectedSubCategories"
+            :items="MOCK_SUB_CATEGORIES"
+            @update:model-value="handleSubCategoryChange"
+          />
+          <ProductFilterGroup
+            v-if="selectedCategorySlugs.length"
             title="Thương hiệu"
             :model-value="selectedBrandIds"
             :items="brands"
@@ -138,6 +189,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency, formatPrice, getProductThumbnail } from '~/utils'
 import { useCategoryStore } from '~/stores/category.store'
 import { useBrandStore } from '~/stores/brand.store'
+import { CATEGORY_ICONS, getCategoryIconByKey } from '~/constants/categoryIcons'
 import { useProductStore } from '~/stores/product.store'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
@@ -174,9 +226,34 @@ const selectedBrandIds = ref<number[]>(parseList(route.query.brand).map(Number).
 const PER_PAGE = 20
 const currentPage = ref(Number(route.query.page) || 1)
 
+function iconForCategory(icon: string | false): string | undefined {
+  return icon && CATEGORY_ICONS[icon] ? getCategoryIconByKey(icon) : undefined
+}
+
 const categories = computed(() =>
-  categoryStore.categories.map((c) => ({ id: c.slug, label: c.name })),
+  categoryStore.categories.map((c) => ({ id: c.slug, label: c.name, icon: iconForCategory(c.icon) })),
 )
+
+// UI preview only -- no sub-category API yet, so this is static mock data with
+// no wiring into the product query. Swap for a real computed once the category
+// endpoint exposes children.
+const MOCK_SUB_CATEGORIES = [
+  { id: 'wifi-6', label: 'WiFi 6' },
+  { id: 'wifi-6e', label: 'WiFi 6E' },
+  { id: 'mesh', label: 'Mesh System' },
+  { id: 'outdoor-ap', label: 'Outdoor AP' },
+  { id: 'poe-switch', label: 'PoE Switch' },
+]
+const selectedSubCategories = ref<string[]>([])
+
+// Sort is real (sorts the currently loaded page client-side) -- only the
+// sub-category box above is mock.
+const SORT_OPTIONS = [
+  { value: 'default', label: 'Mặc định' },
+  { value: 'price-asc', label: 'Giá: Thấp đến cao' },
+  { value: 'price-desc', label: 'Giá: Cao đến thấp' },
+]
+const sortOrder = ref('default')
 
 // When one or more categories are selected, narrow the brand filter down to only the
 // brands that belong to those categories (merged across the selection) instead of the
@@ -200,10 +277,11 @@ const brands = computed(() => {
 })
 
 // Selecting brands is done against the currently visible options, so once the category
-// selection narrows that list, drop any selected brand that fell out of it.
+// selection narrows that list, drop any selected brand that fell out of it. With no
+// category selected the brand filter group is hidden entirely (see template), so any
+// leftover selection there would become an invisible, unclearable filter -- drop it too.
 watch(categoryBrands, (list) => {
-  if (!list) return
-  const validIds = new Set(list.map((b) => b.id))
+  const validIds = list ? new Set(list.map((b) => b.id)) : new Set<number>()
   const filtered = selectedBrandIds.value.filter((id) => validIds.has(id))
   if (filtered.length !== selectedBrandIds.value.length) {
     selectedBrandIds.value = filtered
@@ -219,6 +297,28 @@ const selectedCategoryIds = computed(() =>
 )
 
 const totalSelectedFilters = computed(() => selectedCategorySlugs.value.length + selectedBrandIds.value.length)
+
+// Selected filters surfaced as removable chips above the grid, so a shopper never
+// has to scroll back up to the sidebar (or reopen the mobile drawer) to see or undo
+// what's currently narrowing the results.
+interface FilterChip {
+  key: string
+  label: string
+  remove: () => void
+}
+
+const activeFilterChips = computed<FilterChip[]>(() => [
+  ...selectedCategorySlugs.value.map((slug) => ({
+    key: `category-${slug}`,
+    label: categories.value.find((c) => c.id === slug)?.label ?? slug,
+    remove: () => handleCategoryChange(selectedCategorySlugs.value.filter((s) => s !== slug)),
+  })),
+  ...selectedBrandIds.value.map((id) => ({
+    key: `brand-${id}`,
+    label: brands.value.find((b) => b.id === id)?.label ?? String(id),
+    remove: () => handleBrandChange(selectedBrandIds.value.filter((b) => b !== id)),
+  })),
+])
 
 function syncQuery() {
   const query: Record<string, string> = {}
@@ -238,6 +338,11 @@ function handleBrandChange(ids: (string | number)[]) {
   selectedBrandIds.value = ids.map(Number)
   currentPage.value = 1
   syncQuery()
+}
+
+// Mock preview only -- not synced to the URL/query, no real product data behind it yet.
+function handleSubCategoryChange(ids: (string | number)[]) {
+  selectedSubCategories.value = ids.map(String)
 }
 
 // Category/brand links (header menu, breadcrumbs, home sections...) all point to this
@@ -290,7 +395,7 @@ function handleAddToCart(item: ProductCatalogItem) {
     productId: item.id,
     productVariantId: item.variants?.id ?? item.id,
     name: item.name,
-    thumbnail: getProductThumbnail(item) ?? '',
+    thumbnail: getProductThumbnail(item),
     price: item.unit_price,
     originalPrice: item.compare_price ?? undefined,
     discount: getDiscountPercent(item) || undefined,
@@ -316,7 +421,13 @@ watch([selectedCategoryIds, selectedBrandIds], () => {
   loadProducts()
 })
 
-const products = computed(() => productStore.products)
+// Sorts only the current page's results client-side -- fine for a UI preview,
+// but a real "sort" needs the API to sort before paging once that param exists.
+const products = computed(() => {
+  if (sortOrder.value === 'price-asc') return [...productStore.products].sort((a, b) => a.unit_price - b.unit_price)
+  if (sortOrder.value === 'price-desc') return [...productStore.products].sort((a, b) => b.unit_price - a.unit_price)
+  return productStore.products
+})
 const isLoading = computed(() => productStore.isLoading)
 const totalPages = computed(() => productStore.meta?.pageCount ?? 1)
 </script>

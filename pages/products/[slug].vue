@@ -34,6 +34,7 @@
                     <SwiperSlide v-for="(img, index) in galleryImages" :key="index">
                       <NuxtImg
                         :src="img"
+                        :class="{'scale-[0.4]': img === PRODUCT_IMAGE_PLACEHOLDER}"
                         :alt="productImageAlt"
                         width="600"
                         height="600"
@@ -70,7 +71,6 @@
 
                   <template #fallback>
                     <NuxtImg
-                      v-if="galleryImages[activeImageIndex]"
                       :src="galleryImages[activeImageIndex]"
                       :alt="productImageAlt"
                       width="600"
@@ -80,9 +80,6 @@
                       sizes="(max-width: 768px) 100vw, 600px"
                       class="rounded-xl w-full aspect-square object-contain bg-base-100"
                     />
-                    <div v-else class="aspect-square bg-base-200 rounded-xl flex items-center justify-center">
-                      <span class="text-base-content/40">Chưa có ảnh</span>
-                    </div>
                   </template>
                 </ClientOnly>
 
@@ -268,6 +265,7 @@ import { storeToRefs } from 'pinia'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import type { Swiper as SwiperType } from 'swiper'
 import { formatCurrency, formatPrice, getProductImages, getProductThumbnail, resolveOembedTags } from '~/utils'
+import { PRODUCT_IMAGE_PLACEHOLDER } from '~/constants'
 import { useProductCatalog } from '~/composables/useProductCatalog'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
@@ -394,7 +392,12 @@ const productImageAlt = computed(() =>
 
 const activeImageIndex = ref(0)
 
-const galleryImages = computed<string[]>(() => (product.value ? getProductImages(product.value) : []))
+// Falls back to the shop logo when the product has no photo yet, same as
+// getProductThumbnail() does for every other product card/thumbnail.
+const galleryImages = computed<string[]>(() => {
+  const images = product.value ? getProductImages(product.value) : []
+  return images.length ? images : [PRODUCT_IMAGE_PLACEHOLDER]
+})
 
 watch(galleryImages, () => {
   activeImageIndex.value = 0
@@ -461,7 +464,7 @@ function buildCartItem() {
     productId: product.value.id,
     productVariantId: v?.id ?? product.value.id,
     name: product.value.name,
-    thumbnail: getProductThumbnail(product.value) ?? '',
+    thumbnail: getProductThumbnail(product.value),
     price: displayPrice.value,
     slug: product.value.slug,
   }

@@ -27,14 +27,7 @@
         </div>
 
         <!-- Right sidebar: best-selling products (desktop only) -->
-        <ProductSidebarList
-          title="Sản phẩm bán chạy"
-          subtitle="Được yêu thích nhất"
-          view-more-link="/products"
-          :items="bestSellingSidebarItems"
-          show-rank
-          empty-text="Chưa có sản phẩm bán chạy"
-        />
+        <ProductBestSellingSidebar />
       </div>
     </div>
 
@@ -56,13 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useIntroducePageStore } from '~/stores/introducePage'
 import { resolveOembedTags } from '~/utils'
-import { useBestSelling } from '~/composables/useBestSelling'
-import type { BestSellingRecordWithPricing } from '~/types'
-import type { SidebarProductItem } from '~/components/product/ProductSidebarList.vue'
 
 useSeo({
   title: 'Giới thiệu',
@@ -74,23 +64,8 @@ const introducePageStore = useIntroducePageStore()
 const { introduceInfo } = storeToRefs(introducePageStore)
 const introduceInfoHtml = computed(() => (introduceInfo.value?.info ? resolveOembedTags(introduceInfo.value.info) : ''))
 
-const { fetchBestSellingProducts } = useBestSelling()
-const bestSellingProducts = ref<BestSellingRecordWithPricing[]>([])
-
-const bestSellingSidebarItems = computed<SidebarProductItem[]>(() =>
-  bestSellingProducts.value.map((record) => ({
-    id: record.product.id,
-    slug: record.product.slug,
-    name: record.product.name,
-    image: record.product.images[0],
-    price: record.unitPrice,
-    comparePrice: record.comparePrice,
-  })),
-)
-
-onMounted(async () => {
+onMounted(() => {
   introducePageStore.fetchIntroduceInfo()
-  bestSellingProducts.value = await fetchBestSellingProducts()
 })
 </script>
 

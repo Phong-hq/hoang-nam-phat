@@ -56,8 +56,10 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
+import { storeToRefs } from 'pinia'
 import type { BestSellingRecordWithPricing, HomeProduct } from '~/types'
-import { useBestSelling } from '~/composables/useBestSelling'
+import { useBestSellingStore } from '~/stores/bestSelling.store'
+import { PRODUCT_IMAGE_PLACEHOLDER } from '~/constants'
 
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
@@ -72,7 +74,8 @@ const breakpoints = {
 const autoplay = { delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true }
 
 function toHomeProduct(record: BestSellingRecordWithPricing): HomeProduct {
-  const { product, unitPrice, comparePrice, brand } = record
+  const { product, brand } = record
+  const { unit_price: unitPrice, compare_price: comparePrice } = product
   const hasDiscount = comparePrice != null && comparePrice > unitPrice
   return {
     id: product.id,
@@ -84,15 +87,15 @@ function toHomeProduct(record: BestSellingRecordWithPricing): HomeProduct {
     discount: hasDiscount ? Math.round(((comparePrice - unitPrice) / comparePrice) * 100) : undefined,
     rating: 0,
     ratingCount: 0,
-    image: product.images[0],
+    image: product.images[0] ?? PRODUCT_IMAGE_PLACEHOLDER,
   }
 }
 
-const { fetchBestSellingProducts } = useBestSelling()
-const bestSellingRecords = ref<BestSellingRecordWithPricing[]>([])
+const bestSellingStore = useBestSellingStore()
+const { records: bestSellingRecords } = storeToRefs(bestSellingStore)
 const products = computed(() => bestSellingRecords.value.map(toHomeProduct))
 
-onMounted(async () => {
-  bestSellingRecords.value = await fetchBestSellingProducts()
+onMounted(() => {
+  bestSellingStore.fetchBestSellingProducts()
 })
 </script>

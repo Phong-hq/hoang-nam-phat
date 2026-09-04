@@ -3,6 +3,9 @@
 
 export interface SolutionsPageApiRecord {
   id: number
+  title: string
+  description: string | null
+  banner: string | null
   info: string | null
   created_at: string
   updated_at: string

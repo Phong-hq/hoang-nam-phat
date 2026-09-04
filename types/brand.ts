@@ -12,4 +12,5 @@ export interface Brand {
   color: string | null
   priority: number
   parent_id: number | null
+  show_on_home: number
 }
