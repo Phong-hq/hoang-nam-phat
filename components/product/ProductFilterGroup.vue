@@ -69,9 +69,12 @@ interface Props {
   title: string
   items: FilterItem[]
   modelValue: (string | number)[]
+  // false picks one item at a time (checking one clears any other) instead of
+  // accumulating a set -- used by filters where only a single value applies at once.
+  multiple?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { multiple: true })
 const emit = defineEmits<{ 'update:modelValue': [value: (string | number)[]] }>()
 
 function isSelected(id: string | number) {
@@ -79,6 +82,10 @@ function isSelected(id: string | number) {
 }
 
 function handleChange(id: string | number, checked: boolean) {
+  if (!props.multiple) {
+    emit('update:modelValue', checked ? [id] : [])
+    return
+  }
   const next = checked
     ? [...props.modelValue, id]
     : props.modelValue.filter((v) => v !== id)

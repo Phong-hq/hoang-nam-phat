@@ -8,6 +8,21 @@ export interface CategoryBrand {
   slug: string
 }
 
+// A sub-category. Doesn't carry `brands` yet -- the API will add that later,
+// shaped the same as the parent's, once children get their own brand lists.
+export interface ProductCategoryChild {
+  id: number
+  name: string
+  slug: string
+  code: string
+  icon: string | false
+  description: string
+  parent_id: number
+  priority: number
+  show_on_home: number
+  brands?: CategoryBrand[]
+}
+
 export interface ProductCategory {
   id: number
   name: string
@@ -18,6 +33,7 @@ export interface ProductCategory {
   created_at: string
   updated_at: string
   brands: CategoryBrand[]
+  children?: ProductCategoryChild[]
   status: number
   slug: string
 }

@@ -31,7 +31,7 @@
               <span class="truncate font-medium">{{ cat.name }}</span>
             </span>
             <svg
-              v-if="cat.brands.length"
+              v-if="cat.brands.length || cat.children?.length"
               class="w-3.5 h-3.5 flex-shrink-0"
               :class="hoveredCat?.id === cat.id ? 'opacity-80' : 'opacity-25'"
               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
@@ -66,7 +66,24 @@
           />
           {{ hoveredCat.name }}
         </p>
-        <div class="grid grid-flow-col grid-rows-5 gap-x-3 gap-y-0.5">
+        <!-- Sub-categories in a row, replacing the parent's brand grid below. Skipped
+             past MAX_CHILDREN_IN_ROW, since that many chips no longer fit one line at
+             the flyout's max width -- falls back to the plain brand grid instead. -->
+        <div
+          v-if="showChildrenRow"
+          class="flex flex-wrap gap-1.5"
+        >
+          <NuxtLink
+            v-for="child in hoveredCat.children"
+            :key="child.id"
+            :to="`/products?category=${child.slug}`"
+            class="px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-colors"
+            @click="$emit('navigate')"
+          >
+            {{ child.name }}
+          </NuxtLink>
+        </div>
+        <div v-else-if="hoveredCat.brands.length" class="grid grid-flow-col grid-rows-5 gap-x-3 gap-y-0.5">
           <NuxtLink
             v-for="brand in hoveredCat.brands"
             :key="brand.id"
@@ -111,8 +128,17 @@ const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 const hoveredTop = ref(0)
 let closeFlyoutTimeout: ReturnType<typeof setTimeout> | null = null
 
+// Roughly how many chips fit one line at the flyout's max width (36rem, minus
+// padding) before wrapping -- past this the children row is dropped instead.
+const MAX_CHILDREN_IN_ROW = 6
+
 // Store already holds the display order -- no re-sorting here
 const orderedCategories = computed(() => categoryStore.categories)
+
+const showChildrenRow = computed(() => {
+  const count = hoveredCat.value?.children?.length ?? 0
+  return count > 0 && count <= MAX_CHILDREN_IN_ROW
+})
 
 // The flyout sits a few pixels to the right of the list (ml-1 gap). Crossing that gap
 // slowly moves the pointer off root's rendered box for an instant, firing mouseleave
@@ -132,7 +158,7 @@ function cancelCloseFlyout() {
 }
 
 function onCatHover(cat: ProductCategoryMenuItem, event: MouseEvent) {
-  if (!cat.brands.length) {
+  if (!cat.brands.length && !cat.children?.length) {
     hoveredCat.value = null
     return
   }

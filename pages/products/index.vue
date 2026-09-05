@@ -29,13 +29,15 @@
                 title="Danh mục"
                 :model-value="selectedCategorySlugs"
                 :items="categories"
+                :multiple="false"
                 @update:model-value="handleCategoryChange"
               />
               <ProductFilterGroup
-                v-if="selectedCategorySlugs.length"
+                v-if="subCategoryItems.length"
                 title="Danh mục phụ"
                 :model-value="selectedSubCategories"
-                :items="MOCK_SUB_CATEGORIES"
+                :items="subCategoryItems"
+                :multiple="false"
                 @update:model-value="handleSubCategoryChange"
               />
               <ProductFilterGroup
@@ -161,13 +163,15 @@
             title="Danh mục"
             :model-value="selectedCategorySlugs"
             :items="categories"
+            :multiple="false"
             @update:model-value="handleCategoryChange"
           />
           <ProductFilterGroup
-            v-if="selectedCategorySlugs.length"
+            v-if="subCategoryItems.length"
             title="Danh mục phụ"
             :model-value="selectedSubCategories"
-            :items="MOCK_SUB_CATEGORIES"
+            :items="subCategoryItems"
+            :multiple="false"
             @update:model-value="handleSubCategoryChange"
           />
           <ProductFilterGroup
@@ -194,6 +198,7 @@ import { useProductStore } from '~/stores/product.store'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
 import type { ProductCatalogItem } from '~/types/productCatalog'
+import type { ProductCategoryChild } from '~/types'
 
 useSeo({
   title: 'Tat ca san pham',
@@ -218,9 +223,10 @@ function parseList(value: unknown): string[] {
 
 // Category links across the site (header, footer, hero, breadcrumbs...) all point to
 // /products?category=<slug>, so the selection stays slug-based here for compatibility.
-// Multi-select just joins several slugs with a comma in the same query param.
+// Single-select, but kept as an array (max one element) to match ProductFilterGroup's
+// array-based model-value contract, shared with the (multi-select) brand filter.
 const initialCategoryQuery = route.query.category ?? route.query.category_slug
-const selectedCategorySlugs = ref<string[]>(parseList(initialCategoryQuery))
+const selectedCategorySlugs = ref<string[]>(parseList(initialCategoryQuery).slice(0, 1))
 const selectedBrandIds = ref<number[]>(parseList(route.query.brand).map(Number).filter((n) => !Number.isNaN(n)))
 
 const PER_PAGE = 20
@@ -234,32 +240,56 @@ const categories = computed(() =>
   categoryStore.categories.map((c) => ({ id: c.slug, label: c.name, icon: iconForCategory(c.icon) })),
 )
 
-// UI preview only -- no sub-category API yet, so this is static mock data with
-// no wiring into the product query. Swap for a real computed once the category
-// endpoint exposes children.
-const MOCK_SUB_CATEGORIES = [
-  { id: 'wifi-6', label: 'WiFi 6' },
-  { id: 'wifi-6e', label: 'WiFi 6E' },
-  { id: 'mesh', label: 'Mesh System' },
-  { id: 'outdoor-ap', label: 'Outdoor AP' },
-  { id: 'poe-switch', label: 'PoE Switch' },
-]
-const selectedSubCategories = ref<string[]>([])
+const initialSubCategorySlug = route.query.sub_category
+const selectedSubCategories = ref<string[]>(initialSubCategorySlug ? [String(initialSubCategorySlug)] : [])
 
-// Sort is real (sorts the currently loaded page client-side) -- only the
-// sub-category box above is mock.
 const SORT_OPTIONS = [
   { value: 'default', label: 'Mặc định' },
   { value: 'price-asc', label: 'Giá: Thấp đến cao' },
   { value: 'price-desc', label: 'Giá: Cao đến thấp' },
+  { value: 'contact-price', label: 'Giá liên hệ' },
 ]
 const sortOrder = ref('default')
 
-// When one or more categories are selected, narrow the brand filter down to only the
-// brands that belong to those categories (merged across the selection) instead of the
-// full brand list -- picking a category that has no matching brand left is then a no-op
-// rather than showing stale, unrelated options.
+// Sub-categories of the selected parent categories (merged across the selection,
+// same as brands below). Only one can be picked at a time -- see ProductFilterGroup's
+// `multiple` prop -- so there's no need to merge children's brands across a selection.
+const subCategoryChildren = computed(() => {
+  if (!selectedCategorySlugs.value.length) return []
+  const merged = new Map<string, ProductCategoryChild>()
+  for (const slug of selectedCategorySlugs.value) {
+    const category = categoryStore.categories.find((c) => c.slug === slug)
+    for (const child of category?.children ?? []) {
+      merged.set(child.slug, child)
+    }
+  }
+  return Array.from(merged.values())
+})
+
+const subCategoryItems = computed(() =>
+  subCategoryChildren.value.map((c) => ({ id: c.slug, label: c.name, icon: iconForCategory(c.icon) })),
+)
+
+const selectedSubCategoryChild = computed(
+  () => subCategoryChildren.value.find((c) => c.slug === selectedSubCategories.value[0]) ?? null,
+)
+
+// Drop the sub-category selection once it falls out of the current parent-category
+// selection (e.g. the parent itself got deselected) -- otherwise it'd linger as an
+// invisible filter, since the box only renders while its parent is selected.
+watch(subCategoryChildren, (list) => {
+  if (selectedSubCategories.value.length && !list.some((c) => c.slug === selectedSubCategories.value[0])) {
+    selectedSubCategories.value = []
+    syncQuery()
+  }
+})
+
+// When a sub-category is selected, its own brands take over the brand filter --
+// otherwise fall back to the brands of the selected parent categories (merged
+// across the selection) instead of the full brand list. Picking a category/sub-category
+// that has no matching brand left is then a no-op rather than showing stale options.
 const categoryBrands = computed(() => {
+  if (selectedSubCategoryChild.value) return selectedSubCategoryChild.value.brands ?? []
   if (!selectedCategorySlugs.value.length) return null
   const merged = new Map<number, { id: number; name: string }>()
   for (const slug of selectedCategorySlugs.value) {
@@ -290,13 +320,18 @@ watch(categoryBrands, (list) => {
 })
 
 // The list API filters by category_id, not slug, so resolve the selected slugs to ids.
-const selectedCategoryIds = computed(() =>
-  selectedCategorySlugs.value
+// A selected sub-category is itself a real category id, more specific than its parent,
+// so it takes over the filter entirely rather than adding to it.
+const selectedCategoryIds = computed(() => {
+  if (selectedSubCategoryChild.value) return [selectedSubCategoryChild.value.id]
+  return selectedCategorySlugs.value
     .map((slug) => categoryStore.categories.find((c) => c.slug === slug)?.id)
-    .filter((id): id is number => id != null),
-)
+    .filter((id): id is number => id != null)
+})
 
-const totalSelectedFilters = computed(() => selectedCategorySlugs.value.length + selectedBrandIds.value.length)
+const totalSelectedFilters = computed(
+  () => selectedCategorySlugs.value.length + selectedSubCategories.value.length + selectedBrandIds.value.length,
+)
 
 // Selected filters surfaced as removable chips above the grid, so a shopper never
 // has to scroll back up to the sidebar (or reopen the mobile drawer) to see or undo
@@ -313,6 +348,11 @@ const activeFilterChips = computed<FilterChip[]>(() => [
     label: categories.value.find((c) => c.id === slug)?.label ?? slug,
     remove: () => handleCategoryChange(selectedCategorySlugs.value.filter((s) => s !== slug)),
   })),
+  ...selectedSubCategories.value.map((slug) => ({
+    key: `sub-category-${slug}`,
+    label: subCategoryItems.value.find((c) => c.id === slug)?.label ?? slug,
+    remove: () => handleSubCategoryChange([]),
+  })),
   ...selectedBrandIds.value.map((id) => ({
     key: `brand-${id}`,
     label: brands.value.find((b) => b.id === id)?.label ?? String(id),
@@ -323,6 +363,7 @@ const activeFilterChips = computed<FilterChip[]>(() => [
 function syncQuery() {
   const query: Record<string, string> = {}
   if (selectedCategorySlugs.value.length) query.category = selectedCategorySlugs.value.join(',')
+  if (selectedSubCategories.value.length) query.sub_category = selectedSubCategories.value[0]
   if (selectedBrandIds.value.length) query.brand = selectedBrandIds.value.join(',')
   if (currentPage.value > 1) query.page = String(currentPage.value)
   router.replace({ query })
@@ -340,9 +381,10 @@ function handleBrandChange(ids: (string | number)[]) {
   syncQuery()
 }
 
-// Mock preview only -- not synced to the URL/query, no real product data behind it yet.
 function handleSubCategoryChange(ids: (string | number)[]) {
   selectedSubCategories.value = ids.map(String)
+  currentPage.value = 1
+  syncQuery()
 }
 
 // Category/brand links (header menu, breadcrumbs, home sections...) all point to this
@@ -351,12 +393,16 @@ function handleSubCategoryChange(ids: (string | number)[]) {
 // mount would never notice the new query and clicking a link while already on this page
 // would do nothing.
 function syncFiltersFromRoute() {
-  const nextCategorySlugs = parseList(route.query.category ?? route.query.category_slug)
+  const nextCategorySlugs = parseList(route.query.category ?? route.query.category_slug).slice(0, 1)
+  const nextSubCategorySlug = route.query.sub_category
   const nextBrandIds = parseList(route.query.brand).map(Number).filter((n) => !Number.isNaN(n))
   const nextPage = Number(route.query.page) || 1
 
   if (nextCategorySlugs.join(',') !== selectedCategorySlugs.value.join(',')) {
     selectedCategorySlugs.value = nextCategorySlugs
+  }
+  if (String(nextSubCategorySlug ?? '') !== (selectedSubCategories.value[0] ?? '')) {
+    selectedSubCategories.value = nextSubCategorySlug ? [String(nextSubCategorySlug)] : []
   }
   if (nextBrandIds.join(',') !== selectedBrandIds.value.join(',')) {
     selectedBrandIds.value = nextBrandIds
@@ -370,6 +416,7 @@ watch(() => route.fullPath, syncFiltersFromRoute)
 
 function clearAllFilters() {
   selectedCategorySlugs.value = []
+  selectedSubCategories.value = []
   selectedBrandIds.value = []
   currentPage.value = 1
   mobileFilterOpen.value = false
@@ -405,11 +452,27 @@ function handleAddToCart(item: ProductCatalogItem) {
   uiStore.addToast({ type: 'success', message: 'Đã thêm sản phẩm vào giỏ hàng' })
 }
 
+// API sort param: a bare field sorts ascending, a `-`-prefixed field descending.
+function sortParam(): string | undefined {
+  if (sortOrder.value === 'price-asc') return 'unit_price'
+  if (sortOrder.value === 'price-desc') return '-unit_price'
+  return undefined
+}
+
 async function loadProducts() {
+  const sortingByPrice = sortOrder.value === 'price-asc' || sortOrder.value === 'price-desc'
   await productStore.fetchProducts({
     type: 'new',
     category_id: selectedCategoryIds.value.join(',') || undefined,
     brand_id: selectedBrandIds.value.join(',') || undefined,
+    sort: sortParam(),
+    // The API's max_price=0 falsy-check bug means it can't filter unit_price=0
+    // out with min_price=0, so send min_price=1 instead -- only while sorting by
+    // price, since ascending order would otherwise surface those first.
+    min_price: sortingByPrice ? 1 : undefined,
+    // Same falsy-check bug flips in our favor here: max_price=1 is the only way
+    // to isolate unit_price=0 items, since max_price=0 is ignored outright.
+    max_price: sortOrder.value === 'contact-price' ? 1 : undefined,
     page: currentPage.value,
     'per-page': PER_PAGE,
   })
@@ -420,14 +483,13 @@ watch([selectedCategoryIds, selectedBrandIds], () => {
   currentPage.value = 1
   loadProducts()
 })
-
-// Sorts only the current page's results client-side -- fine for a UI preview,
-// but a real "sort" needs the API to sort before paging once that param exists.
-const products = computed(() => {
-  if (sortOrder.value === 'price-asc') return [...productStore.products].sort((a, b) => a.unit_price - b.unit_price)
-  if (sortOrder.value === 'price-desc') return [...productStore.products].sort((a, b) => b.unit_price - a.unit_price)
-  return productStore.products
+watch(sortOrder, () => {
+  currentPage.value = 1
+  syncQuery()
+  loadProducts()
 })
+
+const products = computed(() => productStore.products)
 const isLoading = computed(() => productStore.isLoading)
 const totalPages = computed(() => productStore.meta?.pageCount ?? 1)
 </script>

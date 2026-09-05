@@ -81,6 +81,8 @@ export interface ProductQueryParams {
   min_price?: number
   max_price?: number
   tags?: string
+  // Field name to sort by, ascending; prefix with `-` for descending (e.g. `-unit_price`).
+  sort?: string
   page?: number
   'per-page'?: number
   [key: string]: string | number | undefined
