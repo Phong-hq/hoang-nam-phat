@@ -143,14 +143,17 @@
                   Flash Sale
                 </span>
 
-                <div class="flex items-baseline gap-3">
-                  <span class="text-xl font-bold text-primary">{{ formatPrice(displayPrice) }}</span>
-                  <span
+                <div class="space-y-1">
+                  <div class="flex items-baseline gap-2">
+                    <span class="text-xl font-bold text-primary">{{ formatPrice(displayPrice) }}</span>
+                    <span v-if="displayPrice > 0" class="text-xs text-base-content/50">(Đã bao gồm VAT)</span>
+                  </div>
+                  <div
                     v-if="(isFlashSale && regularPrice > 0) || (product.compare_price && product.compare_price > regularPrice)"
                     class="text-sm text-base-content/40 line-through"
                   >
                     {{ formatCurrency(isFlashSale ? regularPrice : product.compare_price!) }}
-                  </span>
+                  </div>
                 </div>
 
                 <div

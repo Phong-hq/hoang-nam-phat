@@ -55,7 +55,7 @@
     >
       <div
         v-if="hoveredCat"
-        class="absolute left-full z-50 ml-1 w-max max-w-[36rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
+        class="absolute left-full z-50 ml-1 w-max max-w-[42rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
         :style="{ top: hoveredTop + 'px' }"
       >
         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -66,22 +66,34 @@
           />
           {{ hoveredCat.name }}
         </p>
-        <!-- Sub-categories in a row, replacing the parent's brand grid below. Skipped
-             past MAX_CHILDREN_IN_ROW, since that many chips no longer fit one line at
-             the flyout's max width -- falls back to the plain brand grid instead. -->
+        <!-- One column per sub-category, each listing that sub-category's own brands --
+             replaces the parent's plain brand grid below, since brands are scoped to
+             whichever sub-category they belong to, not pooled at the parent level. -->
         <div
-          v-if="showChildrenRow"
-          class="flex flex-wrap gap-1.5"
+          v-if="hoveredCat.children?.length"
+          class="flex flex-wrap gap-x-6 gap-y-3"
         >
-          <NuxtLink
-            v-for="child in hoveredCat.children"
-            :key="child.id"
-            :to="`/products?category=${child.slug}`"
-            class="px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-colors"
-            @click="$emit('navigate')"
-          >
-            {{ child.name }}
-          </NuxtLink>
+          <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-[8rem] max-w-[10rem]">
+            <NuxtLink
+              :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}`"
+              class="block text-xs font-bold text-gray-800 hover:text-primary truncate mb-1.5"
+              @click="$emit('navigate')"
+            >
+              {{ child.name }}
+            </NuxtLink>
+            <ul v-if="child.brands.length" class="space-y-1">
+              <li v-for="brand in child.brands" :key="brand.id">
+                <NuxtLink
+                  :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
+                  class="block text-xs text-gray-500 hover:text-primary truncate"
+                  @click="$emit('navigate')"
+                >
+                  {{ brand.name }}
+                </NuxtLink>
+              </li>
+            </ul>
+            <p v-else class="text-[11px] text-gray-400 italic">Chưa có thương hiệu</p>
+          </div>
         </div>
         <div v-else-if="hoveredCat.brands.length" class="grid grid-flow-col grid-rows-5 gap-x-3 gap-y-0.5">
           <NuxtLink
@@ -128,17 +140,8 @@ const hoveredCat = ref<ProductCategoryMenuItem | null>(null)
 const hoveredTop = ref(0)
 let closeFlyoutTimeout: ReturnType<typeof setTimeout> | null = null
 
-// Roughly how many chips fit one line at the flyout's max width (36rem, minus
-// padding) before wrapping -- past this the children row is dropped instead.
-const MAX_CHILDREN_IN_ROW = 6
-
 // Store already holds the display order -- no re-sorting here
 const orderedCategories = computed(() => categoryStore.categories)
-
-const showChildrenRow = computed(() => {
-  const count = hoveredCat.value?.children?.length ?? 0
-  return count > 0 && count <= MAX_CHILDREN_IN_ROW
-})
 
 // The flyout sits a few pixels to the right of the list (ml-1 gap). Crossing that gap
 // slowly moves the pointer off root's rendered box for an instant, firing mouseleave

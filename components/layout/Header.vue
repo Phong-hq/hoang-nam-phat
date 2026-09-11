@@ -292,10 +292,10 @@
               <ul v-if="isCategorySectionOpen" class="pb-2">
                 <li v-for="cat in orderedCategories" :key="cat.id">
                   <button
-                    v-if="cat.brands.length"
+                    v-if="cat.children?.length || cat.brands.length"
                     type="button"
                     class="w-full flex items-center justify-between gap-2 px-4 py-2.5 text-sm text-gray-700 active:bg-gray-100"
-                    :aria-label="expandedCategoryId === cat.id ? `Thu gọn ${cat.name}` : `Xem thương hiệu trong ${cat.name}`"
+                    :aria-label="expandedCategoryId === cat.id ? `Thu gọn ${cat.name}` : `Xem danh mục con trong ${cat.name}`"
                     @click="toggleCategory(cat)"
                   >
                     <span class="flex items-center gap-2 min-w-0">
@@ -319,16 +319,44 @@
                     <span v-if="iconFor(cat)" class="w-4 h-4 flex-shrink-0 flex items-center justify-center text-primary" v-html="iconFor(cat)" />
                     <span class="truncate">{{ cat.name }}</span>
                   </NuxtLink>
-                  <ul v-if="cat.brands.length && expandedCategoryId === cat.id" class="bg-gray-50/70 pb-1">
-                    <li v-for="brand in cat.brands" :key="brand.id">
-                      <NuxtLink
-                        :to="`/products?category=${cat.slug}&brand=${brand.id}`"
-                        class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
-                        @click="isMenuOpen = false"
-                      >
-                        <span class="truncate">{{ brand.name }}</span>
-                      </NuxtLink>
-                    </li>
+                  <!-- Same rule as the desktop flyout: children (sub-categories) take
+                       priority over brands when a category has both -- selecting a
+                       sub-category is what then surfaces its own brands, on the product
+                       list page. -->
+                  <ul v-if="(cat.children?.length || cat.brands.length) && expandedCategoryId === cat.id" class="bg-gray-50/70 pb-1">
+                    <template v-if="cat.children?.length">
+                      <li v-for="child in cat.children" :key="child.id">
+                        <NuxtLink
+                          :to="`/products?category=${cat.slug}&sub_category=${child.slug}`"
+                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100"
+                          @click="isMenuOpen = false"
+                        >
+                          <span class="truncate">{{ child.name }}</span>
+                        </NuxtLink>
+                        <ul v-if="child.brands.length" class="pb-1">
+                          <li v-for="brand in child.brands" :key="brand.id">
+                            <NuxtLink
+                              :to="`/products?category=${cat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
+                              class="flex items-center gap-2 pl-12 pr-4 py-1.5 text-[11px] text-gray-500 hover:bg-gray-100"
+                              @click="isMenuOpen = false"
+                            >
+                              <span class="truncate">{{ brand.name }}</span>
+                            </NuxtLink>
+                          </li>
+                        </ul>
+                      </li>
+                    </template>
+                    <template v-else>
+                      <li v-for="brand in cat.brands" :key="brand.id">
+                        <NuxtLink
+                          :to="`/products?category=${cat.slug}&brand=${brand.id}`"
+                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
+                          @click="isMenuOpen = false"
+                        >
+                          <span class="truncate">{{ brand.name }}</span>
+                        </NuxtLink>
+                      </li>
+                    </template>
                     <li>
                       <NuxtLink
                         :to="`/products?category=${cat.slug}`"
