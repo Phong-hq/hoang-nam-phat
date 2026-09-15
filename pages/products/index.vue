@@ -4,6 +4,38 @@
       <h1 class="text-3xl font-bold mb-8">Tất cả sản phẩm</h1>
 
       <div class="flex gap-6 items-start">
+        <!-- Left sidebar: filter -->
+        <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-[var(--header-height)] z-10">
+          <ProductSortGroup
+            title="Sắp xếp"
+            name="sort-desktop"
+            :options="SORT_OPTIONS"
+            v-model="sortOrder"
+          />
+          <ProductFilterGroup
+            title="Danh mục"
+            :model-value="selectedCategorySlugs"
+            :items="categories"
+            :multiple="false"
+            @update:model-value="handleCategoryChange"
+          />
+          <ProductFilterGroup
+            v-if="subCategoryItems.length"
+            title="Danh mục phụ"
+            :model-value="selectedSubCategories"
+            :items="subCategoryItems"
+            :multiple="false"
+            @update:model-value="handleSubCategoryChange"
+          />
+          <ProductFilterGroup
+            v-if="selectedCategorySlugs.length"
+            title="Thương hiệu"
+            :model-value="selectedBrandIds"
+            :items="brands"
+            @update:model-value="handleBrandChange"
+          />
+        </aside>
+
         <!-- Product grid -->
         <div class="flex-1 min-w-0">
           <!-- Mobile filter toggle -->
@@ -150,38 +182,6 @@
             </div>
           </template>
         </div>
-
-        <!-- Right sidebar: filter -->
-        <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-[var(--header-height)] z-10">
-          <ProductSortGroup
-            title="Sắp xếp"
-            name="sort-desktop"
-            :options="SORT_OPTIONS"
-            v-model="sortOrder"
-          />
-          <ProductFilterGroup
-            title="Danh mục"
-            :model-value="selectedCategorySlugs"
-            :items="categories"
-            :multiple="false"
-            @update:model-value="handleCategoryChange"
-          />
-          <ProductFilterGroup
-            v-if="subCategoryItems.length"
-            title="Danh mục phụ"
-            :model-value="selectedSubCategories"
-            :items="subCategoryItems"
-            :multiple="false"
-            @update:model-value="handleSubCategoryChange"
-          />
-          <ProductFilterGroup
-            v-if="selectedCategorySlugs.length"
-            title="Thương hiệu"
-            :model-value="selectedBrandIds"
-            :items="brands"
-            @update:model-value="handleBrandChange"
-          />
-        </aside>
       </div>
     </div>
   </div>
@@ -247,7 +247,6 @@ const SORT_OPTIONS = [
   { value: 'default', label: 'Mặc định' },
   { value: 'price-asc', label: 'Giá: Thấp đến cao' },
   { value: 'price-desc', label: 'Giá: Cao đến thấp' },
-  { value: 'contact-price', label: 'Giá liên hệ' },
 ]
 const sortOrder = ref('default')
 
@@ -470,9 +469,6 @@ async function loadProducts() {
     // out with min_price=0, so send min_price=1 instead -- only while sorting by
     // price, since ascending order would otherwise surface those first.
     min_price: sortingByPrice ? 1 : undefined,
-    // Same falsy-check bug flips in our favor here: max_price=1 is the only way
-    // to isolate unit_price=0 items, since max_price=0 is ignored outright.
-    max_price: sortOrder.value === 'contact-price' ? 1 : undefined,
     page: currentPage.value,
     'per-page': PER_PAGE,
   })

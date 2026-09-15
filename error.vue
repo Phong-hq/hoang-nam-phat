@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="layout-default flex flex-col min-h-screen" :data-theme="uiStore.theme">
+  <div class="layout-default flex flex-col min-h-screen">
     <LayoutHeader />
     <main class="flex-1 flex items-center justify-center bg-base-100">
       <div class="text-center p-8 max-w-lg">
@@ -27,8 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUiStore } from '~/stores/ui.store'
-const uiStore = useUiStore()
 const props = defineProps<{ error: { statusCode?: number; message?: string } | null }>()
 
 const errorTitle = computed(() => {

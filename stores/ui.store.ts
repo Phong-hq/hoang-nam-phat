@@ -1,4 +1,4 @@
-﻿// UI store -- manages global UI state (modals, toasts, theme)
+﻿// UI store -- manages global UI state (modals, toasts)
 
 import { defineStore } from 'pinia'
 
@@ -20,7 +20,6 @@ export const useUiStore = defineStore('ui', () => {
   const toasts = ref<Toast[]>([])
   const isDrawerOpen = ref(false)
   const isMobileMenuOpen = ref(false)
-  const theme = ref<'light' | 'dark'>('light')
   const timers = new Map<string, ToastTimer>()
 
   function addToast(toast: Omit<Toast, 'id'>) {
@@ -64,24 +63,15 @@ export const useUiStore = defineStore('ui', () => {
     isMobileMenuOpen.value = !isMobileMenuOpen.value
   }
 
-  function setTheme(t: 'light' | 'dark') {
-    theme.value = t
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', t)
-    }
-  }
-
   return {
     toasts,
     isDrawerOpen,
     isMobileMenuOpen,
-    theme,
     addToast,
     removeToast,
     pauseToast,
     resumeToast,
     toggleDrawer,
     toggleMobileMenu,
-    setTheme,
   }
 })

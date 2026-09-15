@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default flex flex-col min-h-screen" :data-theme="uiStore.theme">
+  <div class="layout-default flex flex-col min-h-screen">
     <LayoutHeader />
     <main class="flex-1">
       <slot />
@@ -8,8 +8,3 @@
     <BaseToast />
   </div>
 </template>
-
-<script setup lang="ts">
-import { useUiStore } from '~/stores/ui.store'
-const uiStore = useUiStore()
-</script>

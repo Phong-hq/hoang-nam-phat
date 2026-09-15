@@ -58,7 +58,7 @@
         class="absolute left-full z-50 ml-1 w-max max-w-[42rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
         :style="{ top: hoveredTop + 'px' }"
       >
-        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+        <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
           <span
             v-if="iconFor(hoveredCat)"
             class="w-4 h-4 flex items-center justify-center text-primary"
@@ -73,10 +73,10 @@
           v-if="hoveredCat.children?.length"
           class="flex flex-wrap gap-x-6 gap-y-3"
         >
-          <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-[8rem] max-w-[10rem]">
+          <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-[9rem] max-w-[12rem]">
             <NuxtLink
               :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}`"
-              class="block text-xs font-bold text-gray-800 hover:text-primary truncate mb-1.5"
+              class="block text-sm font-bold text-gray-800 truncate mb-1.5 -mx-2 px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
               @click="$emit('navigate')"
             >
               {{ child.name }}
@@ -85,14 +85,14 @@
               <li v-for="brand in child.brands" :key="brand.id">
                 <NuxtLink
                   :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
-                  class="block text-xs text-gray-500 hover:text-primary truncate"
+                  class="block text-sm text-gray-500 truncate -mx-2 px-2 py-1 rounded-md hover:bg-primary hover:text-white transition-colors"
                   @click="$emit('navigate')"
                 >
                   {{ brand.name }}
                 </NuxtLink>
               </li>
             </ul>
-            <p v-else class="text-[11px] text-gray-400 italic">Chưa có thương hiệu</p>
+            <p v-else class="text-sm text-gray-400 italic">Chưa có thương hiệu</p>
           </div>
         </div>
         <div v-else-if="hoveredCat.brands.length" class="grid grid-flow-col grid-rows-5 gap-x-3 gap-y-0.5">
@@ -109,7 +109,7 @@
         <div class="border-t border-gray-100 mt-3 pt-3">
           <NuxtLink
             :to="`/products?category=${hoveredCat.slug}`"
-            class="text-xs text-primary hover:underline font-semibold flex items-center gap-1"
+            class="text-sm text-primary hover:underline font-semibold flex items-center gap-1"
             @click="$emit('navigate')"
           >
             Xem tất cả {{ hoveredCat.name }}
