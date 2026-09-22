@@ -128,6 +128,7 @@
               <div class="flex items-center gap-2 flex-wrap">
                 <span v-if="product.brand" class="badge badge-primary">{{ product.brand.name }}</span>
                 <span class="badge badge-ghost">{{ product.category.name }}</span>
+                <span v-if="product.sub_category" class="badge badge-ghost">{{ product.sub_category.name }}</span>
               </div>
 
               <h1 class="text-lg lg:text-xl font-bold leading-snug">{{ product.name }}</h1>

@@ -2,13 +2,33 @@
   <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_40px)]">
     <div v-if="banner" class="container mx-auto px-4 h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
-      <!-- Mobile / tablet layout: main banner + all banners shown statically (no swiper) -->
+      <!-- Mobile / tablet layout: main banner swiper + side banners shown statically -->
       <div class="flex flex-col gap-2.5 lg:hidden h-full">
-        <NuxtLink
-          to="/products"
-          class="relative rounded-xl overflow-hidden aspect-[1.52]"
-          :style="mainBannerStyle"
-        />
+        <ClientOnly>
+          <Swiper
+            :modules="mainSwiperModules"
+            :autoplay="mainAutoplay"
+            :loop="mainBannerStyles.length > 1"
+            class="rounded-xl overflow-hidden aspect-[1.52]"
+          >
+            <SwiperSlide v-for="(style, i) in mainBannerStyles" :key="i">
+              <NuxtLink
+                to="/products"
+                aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
+                class="relative block w-full h-full"
+                :style="style"
+              />
+            </SwiperSlide>
+          </Swiper>
+          <template #fallback>
+            <NuxtLink
+              to="/products"
+              aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
+              class="relative block rounded-xl overflow-hidden aspect-[1.52]"
+              :style="mainBannerStyles[0]"
+            />
+          </template>
+        </ClientOnly>
         <div class="grid grid-cols-1 gap-2.5">
           <NuxtLink
             v-for="b in sideBanners"
@@ -31,11 +51,33 @@
 
           <!-- Large hero banner: height matches the header's category dropdown, so it fills
                the same vertical space the reserved gap on its left occupies -->
-          <NuxtLink
-            to="/products"
-            class="col-span-2 relative rounded-xl overflow-hidden group h-full"
-            :style="mainBannerStyle"
-          />
+          <div class="col-span-2 relative rounded-xl overflow-hidden group h-full">
+            <ClientOnly>
+              <Swiper
+                :modules="mainSwiperModules"
+                :autoplay="mainAutoplay"
+                :loop="mainBannerStyles.length > 1"
+                class="h-full w-full"
+              >
+                <SwiperSlide v-for="(style, i) in mainBannerStyles" :key="i">
+                  <NuxtLink
+                    to="/products"
+                    aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
+                    class="block w-full h-full"
+                    :style="style"
+                  />
+                </SwiperSlide>
+              </Swiper>
+              <template #fallback>
+                <NuxtLink
+                  to="/products"
+                  aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
+                  class="block w-full h-full"
+                  :style="mainBannerStyles[0]"
+                />
+              </template>
+            </ClientOnly>
+          </div>
 
           <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
           <div class="relative h-full">
@@ -88,6 +130,9 @@ import { useBannerStore } from '~/stores/banner.store'
 const heroSwiperModules = [Autoplay]
 const heroAutoplay = { delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true }
 
+const mainSwiperModules = [Autoplay]
+const mainAutoplay = { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }
+
 const bannerStore = useBannerStore()
 
 const banner = computed(() => bannerStore.banner)
@@ -102,9 +147,13 @@ onMounted(() => {
   bannerStore.fetchBanner()
 })
 
-const mainBannerStyle = computed(() =>
-  toBgStyle(banner.value?.main, 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%)'),
-)
+// `main` is now a list of images -- always render at least one slide (a
+// gradient placeholder) so the swiper never ends up with zero slides.
+const mainBannerStyles = computed(() => {
+  const fallbackGradient = 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%)'
+  const images = banner.value?.main ?? []
+  return images.length ? images.map((img) => toBgStyle(img, fallbackGradient)) : [toBgStyle(undefined, fallbackGradient)]
+})
 
 const rightBannersMeta = [
   { href: '/products?category=camera', gradient: 'linear-gradient(135deg, #7C3AED, #5B21B6)', field: 'left', index: 0 },

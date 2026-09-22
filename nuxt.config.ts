@@ -119,7 +119,7 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
       erpApiBaseUrl: process.env.NUXT_PUBLIC_ERP_API_BASE_URL || 'https://hoangnamphat-be.captain2.thanhtoan24on7.xyz/',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://hoangnamphat.vn',
-      siteName: 'Hoang Nam Phat',
+      siteName: 'Hoàng Nam Phát',
     },
   },
 

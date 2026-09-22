@@ -4,7 +4,7 @@
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-2.5">
           <span class="w-1 h-6 bg-primary rounded-full block flex-shrink-0" />
-          <h2 class="text-base font-bold text-[#0F172A]">Thương hiệu chính hãng</h2>
+          <h2 class="text-base font-bold text-[#0F172A]">Thương Hiệu Thiết Bị Mạng Nổi Bật</h2>
         </div>
       </div>
       <ClientOnly>

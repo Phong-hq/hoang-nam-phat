@@ -3,7 +3,7 @@
 
 export interface BannerApiRecord {
   id: number
-  main: string
+  main: string[]
   left: string[]
   right: string[]
   created_at: string

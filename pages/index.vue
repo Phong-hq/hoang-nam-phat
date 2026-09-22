@@ -1,5 +1,6 @@
 <template>
   <div class="bg-[#EEF2F7] min-h-screen">
+    <h1 class="sr-only">Hoàng Nam Phát – Thiết Bị Mạng & Camera Chính Hãng</h1>
     <HomeHero />
     <HomeFlashSale />
     <HomeBestSellers />
@@ -20,9 +21,10 @@ import { computed, onMounted } from 'vue'
 import { useCategoryStore } from '~/stores/category.store'
 
 useSeo({
-  title: 'Trang chủ',
+  title: 'Thiết Bị Mạng & Camera Chính Hãng',
   description:
-    'Mua thiết bị mạng, camera quan sát, laptop chính hãng tại Hoàng Nam Phát. Router Mikrotik, Camera Hikvision, Switch Cisco, WiFi TP-Link – Giá tốt, bảo hành chính hãng, giao hàng toàn quốc.',
+    'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng; giá tốt, tư vấn tận tâm, giao hàng toàn quốc.',
+  keywords: 'thiết bị mạng chính hãng, router mikrotik, camera hikvision, switch cisco, wifi tp-link',
 })
 
 const categoryStore = useCategoryStore()

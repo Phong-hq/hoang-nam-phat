@@ -55,7 +55,7 @@
     >
       <div
         v-if="hoveredCat"
-        class="absolute left-full z-50 ml-1 w-max max-w-[42rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
+        class="absolute left-full z-50 ml-1 w-max max-w-[52rem] bg-white shadow-2xl rounded-xl border border-gray-100 p-4"
         :style="{ top: hoveredTop + 'px' }"
       >
         <p class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -71,9 +71,9 @@
              whichever sub-category they belong to, not pooled at the parent level. -->
         <div
           v-if="hoveredCat.children?.length"
-          class="flex flex-wrap gap-x-6 gap-y-3"
+          class="grid grid-cols-4 gap-x-6 gap-y-3"
         >
-          <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-[9rem] max-w-[12rem]">
+          <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-0">
             <NuxtLink
               :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}`"
               class="block text-sm font-bold text-gray-800 truncate mb-1.5 -mx-2 px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"

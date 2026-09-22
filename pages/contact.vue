@@ -198,13 +198,13 @@
                   class="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary flex-shrink-0"
                 />
                 <span class="text-sm text-gray-600">
-                  Tôi đồng ý với
+                  Tôi đã đọc, hiểu và đồng ý với
                   <button
                     type="button"
                     class="font-medium text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
                     @click.stop="openTerms"
-                  >điều khoản</button>
-                  của Hoàng Nam Phát
+                  >Chính sách bảo vệ dữ liệu cá nhân</button>
+                  của Hoàng Nam Phát, bao gồm việc thu thập và xử lý thông tin tôi cung cấp nhằm tiếp nhận, liên hệ và phản hồi yêu cầu tư vấn.
                   <span class="text-red-500">*</span>
                 </span>
               </label>

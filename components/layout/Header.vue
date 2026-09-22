@@ -46,7 +46,7 @@
           <NuxtLink to="/" class="flex-shrink-0">
             <img
               src="~/assets/images/hnp.png"
-              alt="Hoàng Nam Phát"
+              alt="Logo Công ty Công nghệ Hoàng Nam Phát"
               class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-24 w-auto object-contain"
             />
           </NuxtLink>
@@ -576,6 +576,7 @@ const navItems = [
   { label: 'Sản phẩm',   href: '/products',  exact: false },
   { label: 'Giải pháp',  href: '/solutions', exact: false },
   { label: 'Tin tức',    href: '/news',      exact: false },
+  { label: 'Chính sách', href: '/policy',    exact: false },
   { label: 'Giới thiệu', href: '/about',     exact: false },
   { label: 'Liên hệ',    href: '/contact',   exact: false },
 ]

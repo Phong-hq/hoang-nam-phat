@@ -319,14 +319,15 @@ watch(categoryBrands, (list) => {
 })
 
 // The list API filters by category_id, not slug, so resolve the selected slugs to ids.
-// A selected sub-category is itself a real category id, more specific than its parent,
-// so it takes over the filter entirely rather than adding to it.
-const selectedCategoryIds = computed(() => {
-  if (selectedSubCategoryChild.value) return [selectedSubCategoryChild.value.id]
-  return selectedCategorySlugs.value
+const selectedCategoryIds = computed(() =>
+  selectedCategorySlugs.value
     .map((slug) => categoryStore.categories.find((c) => c.slug === slug)?.id)
-    .filter((id): id is number => id != null)
-})
+    .filter((id): id is number => id != null),
+)
+
+// The sub-category goes to the API as its own `sub_category_id` param alongside the
+// parent's `category_id`, instead of replacing it.
+const selectedSubCategoryId = computed(() => selectedSubCategoryChild.value?.id ?? null)
 
 const totalSelectedFilters = computed(
   () => selectedCategorySlugs.value.length + selectedSubCategories.value.length + selectedBrandIds.value.length,
@@ -463,6 +464,7 @@ async function loadProducts() {
   await productStore.fetchProducts({
     type: 'new',
     category_id: selectedCategoryIds.value.join(',') || undefined,
+    sub_category_id: selectedSubCategoryId.value != null ? String(selectedSubCategoryId.value) : undefined,
     brand_id: selectedBrandIds.value.join(',') || undefined,
     sort: sortParam(),
     // The API's max_price=0 falsy-check bug means it can't filter unit_price=0
@@ -475,7 +477,7 @@ async function loadProducts() {
 }
 
 onMounted(loadProducts)
-watch([selectedCategoryIds, selectedBrandIds], () => {
+watch([selectedCategoryIds, selectedSubCategoryId, selectedBrandIds], () => {
   currentPage.value = 1
   loadProducts()
 })

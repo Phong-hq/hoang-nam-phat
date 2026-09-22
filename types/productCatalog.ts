@@ -12,6 +12,8 @@ export interface ProductCategorySummary {
   id: number
   name: string
   slug: string
+  // null on a top-level category; the parent category's id on a sub-category.
+  parent_id: number | null
 }
 
 export interface ProductOptionValue {
@@ -52,6 +54,10 @@ export interface ProductCatalogItem {
   compare_price: number | null
   brand: ProductBrand | null
   category: ProductCategorySummary
+  // The sub-category the product sits in, when it has one. `category` always stays
+  // the top-level parent, so the two are shown side by side rather than one replacing
+  // the other.
+  sub_category: ProductCategorySummary | null
   product_options: ProductOption[]
   variants: ProductVariant
   images: string[]
@@ -76,6 +82,7 @@ export interface ProductQueryParams {
   brand_slug?: string
   category_slug?: string
   category_id?: string
+  sub_category_id?: string
   brand_id?: string
   ids?: string
   min_price?: number
