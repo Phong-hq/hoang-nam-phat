@@ -576,7 +576,7 @@ const navItems = [
   { label: 'Sản phẩm',   href: '/products',  exact: false },
   { label: 'Giải pháp',  href: '/solutions', exact: false },
   { label: 'Tin tức',    href: '/news',      exact: false },
-  { label: 'Chính sách', href: '/policy',    exact: false },
+  // { label: 'Chính sách', href: '/policy',    exact: false },
   { label: 'Giới thiệu', href: '/about',     exact: false },
   { label: 'Liên hệ',    href: '/contact',   exact: false },
 ]

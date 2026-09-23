@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_40px)]">
+  <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_24px)]">
     <div v-if="banner" class="container mx-auto px-4 h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
       <!-- Mobile / tablet layout: main banner swiper + side banners shown statically -->
