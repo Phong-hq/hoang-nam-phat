@@ -3,7 +3,7 @@
 // Flow: Composable -> Service -> API
 
 import { httpClient } from '~/utils/httpClient'
-import { buildQueryString } from '~/utils'
+import { buildQueryString, normalizeProductPrice } from '~/utils'
 import type { ApiListMeta, ApiListResponse, ProductCatalogItem, ProductDetail, ProductQueryParams, ProductVariant } from '~/types'
 
 const PRODUCT_API_URL = '/api/v1/frontend/product/product'
@@ -37,7 +37,7 @@ export const productCatalogService = {
   async getList(params?: ProductQueryParams): Promise<ProductCatalogItem[]> {
     const query = buildQueryString(params ?? {})
     const res = await httpClient.get<ApiListResponse<ApiProductListItem>>(`${PRODUCT_API_URL}${query}`)
-    return res.items.map(normalizeImages)
+    return res.items.map((item) => normalizeProductPrice(normalizeImages(item)))
   },
 
   // Same list endpoint, but also hands back the `_meta` page info -- used by
@@ -45,12 +45,12 @@ export const productCatalogService = {
   async getListWithMeta(params?: ProductQueryParams): Promise<{ items: ProductCatalogItem[]; meta: ApiListMeta }> {
     const query = buildQueryString(params ?? {})
     const res = await httpClient.get<ApiListResponse<ApiProductListItem>>(`${PRODUCT_API_URL}${query}`)
-    return { items: res.items.map(normalizeImages), meta: res._meta }
+    return { items: res.items.map((item) => normalizeProductPrice(normalizeImages(item))), meta: res._meta }
   },
 
   async getDetail(slug: string): Promise<ProductDetail> {
     const query = buildQueryString({ slug })
     const res = await httpClient.get<{ product: ApiProductDetail }>(`${PRODUCT_API_URL}/view${query}`)
-    return normalizeImages(normalizeVariants(res.product))
+    return normalizeProductPrice(normalizeImages(normalizeVariants(res.product)))
   },
 }

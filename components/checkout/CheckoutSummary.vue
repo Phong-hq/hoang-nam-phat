@@ -70,7 +70,7 @@
       <p class="text-xs text-base-content/40 text-center mt-3 leading-relaxed">
         Bằng cách đặt hàng, bạn đồng ý với
         <a href="#" class="underline hover:text-primary">Điều khoản dịch vụ</a>
-        và <a href="#" class="underline hover:text-primary">Chính sách bảo mật</a>
+        và <NuxtLink to="/policy/1" class="underline hover:text-primary">Chính sách bảo hành</NuxtLink>
       </p>
     </div>
   </div>

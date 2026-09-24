@@ -77,7 +77,10 @@ onMounted(() => {
 // the category endpoint already carries the brands attached to that category,
 // so the tabs can never drift from the catalog.
 const brands = computed<CategoryBrand[]>(
-  () => categoryStore.categories.find((c) => c.id === props.categoryId)?.brands ?? [],
+  () => {
+    console.log(categoryStore.categories);
+    
+    return categoryStore.categories.find((c) => c.id === props.categoryId)?.brands ?? []}
 )
 const activeBrand = ref<CategoryBrand | null>(null)
 watch(brands, (newBrands) => {

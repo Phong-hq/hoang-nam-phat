@@ -128,7 +128,7 @@
             © {{ new Date().getFullYear() }} Công Ty TNHH Công Nghệ Hoàng Nam Phát. Tất cả quyền được bảo lưu.
           </p>
           <div class="flex items-center gap-4 text-xs text-gray-600">
-            <NuxtLink to="/warranty" class="hover:text-gray-400 transition-colors">Chính sách bảo hành</NuxtLink>
+            <NuxtLink to="/policy/1" class="hover:text-gray-400 transition-colors">Chính sách bảo hành</NuxtLink>
             <NuxtLink to="/returns" class="hover:text-gray-400 transition-colors">Đổi trả</NuxtLink>
           </div>
         </div>
@@ -241,9 +241,11 @@ const productLinks = computed(() =>
 const supportLinks = [
   { label: 'Giới thiệu', href: '/about' },
   { label: 'Liên hệ', href: '/contact' },
-  { label: 'Chính sách bảo hành', href: '/warranty' },
+  { label: 'Chính sách bảo hành', href: '/policy/1' },
   { label: 'Hướng dẫn mua hàng', href: '/guide' },
-  { label: 'Chính sách đổi trả', href: '/returns' },
+  { label: 'Chính sách đổi trả', href: '/policy/2' },
+  { label: 'Chính sách giao hàng', href: '/policy/3' },
+  { label: 'Chính sách thanh toán', href: '/policy/4' },
   { label: 'Tin tức & Thủ thuật', href: '/blog' },
 ]
 
