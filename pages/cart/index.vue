@@ -61,7 +61,7 @@
           <CheckoutForm />
         </div>
         <div class="checkout-side">
-          <div class="checkout-sticky space-y-4">
+        <div class="checkout-sticky space-y-4">
             <CheckoutCart />
             <CheckoutSummary />
           </div>

@@ -78,7 +78,7 @@ onMounted(() => {
 // so the tabs can never drift from the catalog.
 const brands = computed<CategoryBrand[]>(
   () => {
-    console.log(categoryStore.categories);
+    // console.log(categoryStore.categories);
     
     return categoryStore.categories.find((c) => c.id === props.categoryId)?.brands ?? []}
 )

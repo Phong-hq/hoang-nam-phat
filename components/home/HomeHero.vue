@@ -1,15 +1,19 @@
 <template>
   <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_24px)]">
-    <div v-if="banner" class="container mx-auto px-4 h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
+    <div v-if="banner" class="container mx-auto px-4 lg:h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
-      <!-- Mobile / tablet layout: main banner swiper + side banners shown statically -->
-      <div class="flex flex-col gap-2.5 lg:hidden h-full">
+      <!-- Mobile / tablet layout: main banner swiper with dots, then the side banners
+           stacked vertically (2 columns on tablet). The fixed desktop height only
+           applies at lg+, so the stack grows with its content instead of overflowing
+           into the next section. -->
+      <div class="flex flex-col gap-3 py-3 lg:hidden">
         <ClientOnly>
           <Swiper
-            :modules="mainSwiperModules"
+            :modules="mobileMainSwiperModules"
             :autoplay="mainAutoplay"
             :loop="mainBannerStyles.length > 1"
-            class="rounded-xl overflow-hidden aspect-[1.52]"
+            :pagination="mainBannerStyles.length > 1 ? { clickable: true } : false"
+            class="hero-mobile-main w-full rounded-xl overflow-hidden aspect-[1.52] shadow-lg"
           >
             <SwiperSlide v-for="(style, i) in mainBannerStyles" :key="i">
               <NuxtLink
@@ -29,12 +33,12 @@
             />
           </template>
         </ClientOnly>
-        <div class="grid grid-cols-1 gap-2.5">
+        <div v-if="sideBanners.length" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <NuxtLink
             v-for="b in sideBanners"
             :key="b.href"
             :to="b.href"
-            class="relative rounded-xl overflow-hidden aspect-[3.21]"
+            class="block rounded-lg overflow-hidden aspect-[3.21] shadow-md active:opacity-80 transition-opacity"
             :style="b.style"
           />
         </div>
@@ -124,7 +128,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Autoplay } from 'swiper/modules'
+import { Autoplay, Pagination } from 'swiper/modules'
 import { useBannerStore } from '~/stores/banner.store'
 
 const heroSwiperModules = [Autoplay]
@@ -132,6 +136,7 @@ const heroAutoplay = { delay: 3000, disableOnInteraction: false, pauseOnMouseEnt
 
 const mainSwiperModules = [Autoplay]
 const mainAutoplay = { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }
+const mobileMainSwiperModules = [Autoplay, Pagination]
 
 const bannerStore = useBannerStore()
 
@@ -164,11 +169,15 @@ const rightBannersMeta = [
   { href: '/products?category=accessories', gradient: 'linear-gradient(135deg, #D97706, #B45309)', field: 'right', index: 3 },
 ] as const
 
+// A slot the CMS left without an image would render as a bare gradient block
+// (e.g. the orange accessories one) -- only list the banners that have a photo.
 const sideBanners = computed(() =>
-  rightBannersMeta.map((m) => ({
-    href: m.href,
-    style: toBgStyle(banner.value?.[m.field]?.[m.index], m.gradient),
-  })),
+  rightBannersMeta
+    .filter((m) => !!banner.value?.[m.field]?.[m.index])
+    .map((m) => ({
+      href: m.href,
+      style: toBgStyle(banner.value?.[m.field]?.[m.index], m.gradient),
+    })),
 )
 
 const HERO_SWIPER_SLIDES_PER_VIEW = 4
@@ -187,3 +196,24 @@ const loopSideBanners = computed(() => {
   return repeated
 })
 </script>
+
+<style scoped>
+.hero-mobile-main :deep(.swiper-pagination) {
+  bottom: 8px;
+}
+
+.hero-mobile-main :deep(.swiper-pagination-bullet) {
+  width: 6px;
+  height: 6px;
+  margin: 0 3px;
+  background: #fff;
+  opacity: 0.55;
+  transition: width 0.25s, opacity 0.25s;
+}
+
+.hero-mobile-main :deep(.swiper-pagination-bullet-active) {
+  width: 18px;
+  border-radius: 3px;
+  opacity: 1;
+}
+</style>

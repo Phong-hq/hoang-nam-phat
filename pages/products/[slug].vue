@@ -21,9 +21,9 @@
         <!-- Main content -->
         <div class="flex-1 min-w-0">
           <!-- Main product block -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <!-- Gallery -->
-            <div class="product-images">
+            <div class="product-images lg:col-span-2">
               <div class="relative rounded-xl shadow-xl">
                 <ClientOnly>
                   <Swiper
@@ -124,7 +124,7 @@
             </div>
 
             <!-- Product info -->
-            <div class="product-info space-y-4">
+            <div class="product-info space-y-4 lg:col-span-3">
               <div class="flex items-center gap-2 flex-wrap">
                 <span v-if="product.brand" class="badge badge-primary">{{ product.brand.name }}</span>
                 <span class="badge badge-ghost">{{ product.category.name }}</span>

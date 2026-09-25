@@ -328,7 +328,7 @@
                       <li v-for="child in cat.children" :key="child.id">
                         <NuxtLink
                           :to="`/products?category=${cat.slug}&sub_category=${child.slug}`"
-                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100"
+                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
                           @click="isMenuOpen = false"
                         >
                           <span class="truncate">{{ child.name }}</span>
@@ -337,7 +337,7 @@
                           <li v-for="brand in child.brands" :key="brand.id">
                             <NuxtLink
                               :to="`/products?category=${cat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
-                              class="flex items-center gap-2 pl-12 pr-4 py-1.5 text-[11px] text-gray-500 hover:bg-gray-100"
+                              class="flex items-center gap-2 pl-12 pr-4 py-1.5 text-sm text-gray-500 hover:bg-gray-100"
                               @click="isMenuOpen = false"
                             >
                               <span class="truncate">{{ brand.name }}</span>
@@ -350,7 +350,7 @@
                       <li v-for="brand in cat.brands" :key="brand.id">
                         <NuxtLink
                           :to="`/products?category=${cat.slug}&brand=${brand.id}`"
-                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-xs text-gray-600 hover:bg-gray-100"
+                          class="flex items-center gap-2 pl-8 pr-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
                           @click="isMenuOpen = false"
                         >
                           <span class="truncate">{{ brand.name }}</span>
@@ -360,7 +360,7 @@
                     <li>
                       <NuxtLink
                         :to="`/products?category=${cat.slug}`"
-                        class="block pl-8 pr-4 py-2 text-xs text-primary font-semibold hover:underline"
+                        class="block pl-8 pr-4 py-2 text-sm text-primary font-semibold hover:underline"
                         @click="isMenuOpen = false"
                       >
                         Xem tất cả {{ cat.name }}
