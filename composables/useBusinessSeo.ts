@@ -29,7 +29,12 @@ export function useBusinessSeo() {
   })
 
   useHead({
-    titleTemplate: () => `%s | ${siteName.value}`,
+    // Single place the site name is appended to page titles. A page with no title
+    // shows just the site name; a title that already names the site is kept as is.
+    titleTemplate: (title?: string) => {
+      if (!title) return siteName.value
+      return title.includes(siteName.value) ? title : `${title} | ${siteName.value}`
+    },
   })
 
   watch(

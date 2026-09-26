@@ -23,17 +23,18 @@ interface HttpClient extends Omit<AxiosInstance, 'get' | 'post' | 'put' | 'patch
 }
 
 const instance = axios.create({
+  // Server-side rendering waits on these calls -- don't let a hung ERP request
+  // hold the whole page response forever.
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// baseURL is resolved per-request (not at module load) so it always reads
-// the runtime config from the active Nuxt/Nitro context.
-instance.interceptors.request.use((config) => {
-  config.baseURL = useRuntimeConfig().public.erpApiBaseUrl
-  return config
-})
+// Set once from plugins/http-client.ts, where the Nuxt context is available.
+export function setHttpClientBaseUrl(baseURL: string) {
+  instance.defaults.baseURL = baseURL
+}
 
 instance.interceptors.response.use(
   ((response: AxiosResponse) => {

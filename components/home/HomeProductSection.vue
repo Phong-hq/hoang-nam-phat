@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
@@ -69,10 +69,6 @@ const props = defineProps<{
 const { fetchProducts } = useProductCatalog()
 const categoryStore = useCategoryStore()
 
-onMounted(() => {
-  if (!categoryStore.categories.length) categoryStore.fetchCategories()
-})
-
 // Brand tabs come from the category itself, not from the CMS session record --
 // the category endpoint already carries the brands attached to that category,
 // so the tabs can never drift from the catalog.
@@ -87,15 +83,20 @@ watch(brands, (newBrands) => {
   if (!newBrands.some((b) => b.id === activeBrand.value?.id)) activeBrand.value = newBrands[0] ?? null
 }, { immediate: true })
 
-// Products are only fetched once the category list has settled -- otherwise the
-// first fetch fires before `activeBrand` is known and is immediately redone.
-// A failed category fetch counts as settled so the section still renders.
-const categoriesSettled = computed(
-  () => categoryStore.categories.length > 0 || categoryStore.error !== null,
+// Fetched during server-side rendering so the section's products (names, links,
+// prices) are already in the HTML crawlers read. Categories -- and so
+// `activeBrand` -- are loaded in app.vue before any page renders; switching the
+// brand tab refetches on the client.
+const { data: rawProducts, status } = await useAsyncData(
+  `home-section-${props.categoryId}`,
+  () =>
+    fetchProducts({
+      category_id: String(props.categoryId),
+      ...(activeBrand.value ? { brand_id: String(activeBrand.value.id) } : {}),
+    }),
+  { watch: [activeBrand], default: () => [] as ProductCatalogItem[] },
 )
-
-const rawProducts = ref<ProductCatalogItem[]>([])
-const isLoading = ref(false)
+const isLoading = computed(() => status.value === 'pending')
 
 function toHomeProduct(item: ProductCatalogItem): HomeProduct {
   const hasDiscount = item.compare_price != null && item.compare_price > item.unit_price
@@ -113,26 +114,6 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
     image: getProductThumbnail(item),
   }
 }
-
-async function loadProducts() {
-  isLoading.value = true
-  try {
-    rawProducts.value = await fetchProducts({
-      category_id: String(props.categoryId),
-      ...(activeBrand.value ? { brand_id: String(activeBrand.value.id) } : {}),
-    })
-  } finally {
-    isLoading.value = false
-  }
-}
-
-watch(
-  [activeBrand, () => props.categoryId, categoriesSettled],
-  () => {
-    if (categoriesSettled.value) loadProducts()
-  },
-  { immediate: true },
-)
 
 const activeProducts = computed(() => rawProducts.value.map(toHomeProduct))
 

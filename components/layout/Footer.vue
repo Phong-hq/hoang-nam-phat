@@ -167,11 +167,16 @@ const facebookHref = computed(() => socialRecord.value?.facebook ?? '')
 // The fb-page div only appears once socialRecord loads from the API, which
 // happens after the Facebook SDK's own automatic XFBML scan already ran —
 // so it must be parsed manually once the div shows up in the DOM.
+// Browser only: `window.FB` doesn't exist during server-side rendering. With SSR
+// the link is usually already there on mount; the watch covers a later load.
+onMounted(() => {
+  if (facebookHref.value) parseFacebookPlugins()
+})
 watch(facebookHref, async (href) => {
   if (!href) return
   await nextTick()
   parseFacebookPlugins()
-}, { immediate: true })
+})
 
 function parseFacebookPlugins() {
   const win = window as any

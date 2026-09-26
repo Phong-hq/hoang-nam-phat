@@ -3,7 +3,7 @@
 
 export const SITE_NAME = 'Hoàng Nam Phát'
 export const SITE_URL = 'https://hnp.thanhtoan24on7.xyz'
-export const SITE_DESCRIPTION = 'Mua sam thiet bi cong nghe chinh hang tai Hoang Nam Phat.'
+export const SITE_DESCRIPTION = 'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng.'
 export const SITE_KEYWORDS = 'dien thoai, laptop, tablet, phu kien, chinh hang'
 export const DEFAULT_OG_IMAGE = '/hnp.png'
 // Shown wherever a product has no photo yet -- stands in for the missing thumbnail.
