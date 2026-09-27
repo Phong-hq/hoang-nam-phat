@@ -3,7 +3,7 @@
     <BaseSectionHeader
       label="Có thể bạn thích"
       title="Sản phẩm tương tự"
-      :to="`/products?category=${encodeURIComponent(categorySlug)}`"
+      :to="viewMoreLink"
     />
 
     <!-- Product grid -->
@@ -45,27 +45,40 @@ import { computed } from 'vue'
 import { formatCurrency, formatPrice, getProductThumbnail } from '~/utils'
 import { productCatalogService } from '~/services/productCatalog.service'
 import { useProductStore } from '~/stores/product.store'
-import type { ProductCatalogItem } from '~/types'
+import type { ProductCatalogItem, ProductCategorySummary } from '~/types'
 
 const props = defineProps<{
   currentSlug: string
   categorySlug: string
+  subCategory?: ProductCategorySummary | null
   brandSlug?: string
 }>()
 
 const productStore = useProductStore()
 
+// A product with a sub-category only lists products from that same sub-category
+// (brand is not applied there); otherwise it lists the category, narrowed by brand.
 const { data } = await useAsyncData(
   `similar-${props.currentSlug}`,
   () =>
     productCatalogService.getList({
       category_slug: props.categorySlug,
-      ...(props.brandSlug ? { brand_slug: props.brandSlug } : {}),
+      ...(props.subCategory
+        ? { sub_category_id: String(props.subCategory.id) }
+        : props.brandSlug ? { brand_slug: props.brandSlug } : {}),
     }),
-  { watch: [() => props.categorySlug, () => props.brandSlug] },
+  { watch: [() => props.categorySlug, () => props.subCategory?.id, () => props.brandSlug] },
 )
 
 const similarProducts = computed<ProductCatalogItem[]>(() =>
-  (data.value ?? []).filter((p) => p.slug !== props.currentSlug).slice(0, 4),
+  (data.value ?? [])
+    .filter((p) => p.slug !== props.currentSlug)
+    .filter((p) => !props.subCategory || p.sub_category?.id === props.subCategory.id)
+    .slice(0, 4),
 )
+
+const viewMoreLink = computed(() => {
+  const base = `/products?category=${encodeURIComponent(props.categorySlug)}`
+  return props.subCategory ? `${base}&sub_category=${encodeURIComponent(props.subCategory.slug)}` : base
+})
 </script>

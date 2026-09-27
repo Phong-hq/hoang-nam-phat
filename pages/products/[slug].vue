@@ -242,6 +242,7 @@
           <ProductSimilar
             :current-slug="product.slug"
             :category-slug="product.category.slug"
+            :sub-category="product.sub_category"
             :brand-slug="product.brand?.slug"
           />
         </div>

@@ -2,10 +2,10 @@
   <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_24px)]">
     <div v-if="banner" class="container mx-auto px-4 lg:h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
-      <!-- Mobile / tablet layout: main banner swiper with dots, then the side banners
-           stacked vertically (2 columns on tablet). The fixed desktop height only
-           applies at lg+, so the stack grows with its content instead of overflowing
-           into the next section. -->
+      <!-- Mobile / tablet layout: main banner swiper with dots. Tablets also get the side
+           banners below it in 2 columns; phones show the main banner only. The fixed desktop
+           height only applies at lg+, so the stack grows with its content instead of
+           overflowing into the next section. -->
       <div class="flex flex-col gap-3 py-3 lg:hidden">
         <ClientOnly>
           <Swiper
@@ -33,7 +33,7 @@
             />
           </template>
         </ClientOnly>
-        <div v-if="sideBanners.length" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+        <div v-if="sideBanners.length" class="hidden sm:grid sm:grid-cols-2 sm:gap-3">
           <NuxtLink
             v-for="b in sideBanners"
             :key="b.href"
