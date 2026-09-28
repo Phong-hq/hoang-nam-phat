@@ -29,9 +29,11 @@ const instance = axios.create({
 })
 
 // baseURL is resolved per-request (not at module load) so it always reads
-// the runtime config from the active Nuxt/Nitro context.
+// the runtime config from the active Nuxt/Nitro context. A caller that passes its
+// own `baseURL` keeps it -- that's how the sitemap routes pin the ERP host, since
+// the runtime config comes back empty for them on the deployed server.
 instance.interceptors.request.use((config) => {
-  config.baseURL = useRuntimeConfig().public.erpApiBaseUrl
+  config.baseURL = config.baseURL || useRuntimeConfig().public.erpApiBaseUrl
   return config
 })
 

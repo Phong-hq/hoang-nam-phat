@@ -14,6 +14,11 @@ export const CURRENCY = 'VND'
 export const CURRENCY_LOCALE = 'vi-VN'
 export const ITEMS_PER_PAGE = 20
 export const MAX_SITEMAP_URLS = 50000
+// The sitemap routes run as plain Nitro handlers, outside any Nuxt app context, where
+// `useRuntimeConfig()` resolved an empty `erpApiBaseUrl` on the deployed server -- axios
+// then built a relative URL and threw `TypeError: Invalid URL`, leaving every sitemap
+// empty. They call the ERP through this fixed base instead of the runtime config.
+export const ERP_API_BASE_URL_FALLBACK = 'https://hoangnamphat-be.captain2.thanhtoan24on7.xyz'
 
 export const ROUTES = {
   HOME: '/',
