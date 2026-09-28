@@ -4,10 +4,11 @@
 
 import { httpClient } from '~/utils/httpClient'
 import { ERP_API_BASE_URL_FALLBACK } from '~/constants'
-import type { SitemapApiItem } from '~/types'
+import type { ApiListResponse, ProductCategory, SitemapApiItem } from '~/types'
 
 const SITEMAP_PRODUCTS_API_URL = '/api/v1/frontend/sitemap/products'
 const SITEMAP_CATEGORIES_API_URL = '/api/v1/frontend/sitemap/categories'
+const CATEGORY_API_URL = '/api/v1/frontend/product/category'
 
 // These run from Nitro server routes where the runtime config resolved empty on the
 // deployed server, so the ERP host is pinned here rather than read from it.
@@ -20,5 +21,12 @@ export const sitemapService = {
 
   getCategories(): Promise<SitemapApiItem[]> {
     return httpClient.get<SitemapApiItem[]>(SITEMAP_CATEGORIES_API_URL, { unwrap: false, baseURL })
+  },
+
+  // The category sitemap only hands back slugs, but a sub-category's URL needs its
+  // parent's slug too -- the tree is what tells the two apart.
+  async getCategoryTree(): Promise<ProductCategory[]> {
+    const res = await httpClient.get<ApiListResponse<ProductCategory>>(CATEGORY_API_URL, { baseURL })
+    return res.items
   },
 }
