@@ -4,7 +4,7 @@
 
 import type { ProductDetail } from '~/types'
 import { SITE_URL, SITE_NAME } from '~/constants'
-import { getProductThumbnail } from '~/utils'
+import { getProductImages, getProductThumbnail } from '~/utils'
 import { useSeo } from './useSeo'
 import { useBreadcrumb } from './useBreadcrumb'
 import { useJsonLd } from './useJsonLd'
@@ -35,20 +35,29 @@ export function useProductSeo(product: ProductDetail) {
     { name: product.name },
   ])
 
-  const price = product.variants?.unit_price ?? product.unit_price
+  // Same price the page shows (variant first, then product). 0/empty renders
+  // "Liên hệ báo giá" -- quote-only, no fixed price to advertise. Emitting
+  // price: 0 would misrepresent the offer to Google, so the Offer is dropped
+  // entirely in that case instead of carrying a fake price.
+  const price = product.variants?.unit_price || product.unit_price || 0
+  const offers = price > 0
+    ? {
+        '@type': 'Offer',
+        priceCurrency: 'VND',
+        price,
+        availability: 'https://schema.org/InStock',
+        itemCondition: 'https://schema.org/NewCondition',
+        url: canonicalUrl,
+        seller: {
+          '@type': 'Organization',
+          name: SITE_NAME,
+        },
+      }
+    : null
 
-  const offers = {
-    '@type': 'Offer',
-    priceCurrency: 'VND',
-    price,
-    availability: 'https://schema.org/InStock',
-    itemCondition: 'https://schema.org/NewCondition',
-    url: canonicalUrl,
-    seller: {
-      '@type': 'Organization',
-      name: SITE_NAME,
-    },
-  }
+  // Real product photos only, as absolute URLs -- the shop-logo placeholder
+  // isn't a product image and must not be reported as one.
+  const images = getProductImages(product).map((src) => new URL(src, siteUrl).href)
 
   const productSchema = {
     '@context': 'https://schema.org',
@@ -58,9 +67,9 @@ export function useProductSeo(product: ProductDetail) {
     sku: String(product.id),
     url: canonicalUrl,
     category: product.category.name,
-    // image: product?.variants?.flatMap((v) => v.images),
+    ...(images.length ? { image: images } : {}),
     ...(product.brand ? { brand: { '@type': 'Brand', name: product.brand.name } } : {}),
-    offers,
+    ...(offers ? { offers } : {}),
   }
 
   useJsonLd(productSchema, 'jsonld-product')

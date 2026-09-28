@@ -529,10 +529,34 @@ function onScroll() {
   scrollFrame = requestAnimationFrame(() => {
     scrollFrame = null
     isScrolledDown.value = window.scrollY > collapseOffset.value
+    isAtTop.value = window.scrollY <= 0
   })
 }
 
 watch(isCollapsed, updateHeaderHeight)
+
+// Category dropdown hides once scrolled down and comes back only when the page is
+// scrolled all the way to the top again -- and only if it was open when it hid.
+const isAtTop = ref(true)
+let reopenCategoryMenuAtTop = false
+
+watch(isScrolledDown, (down) => {
+  if (down && isCategoryMenuOpen.value) {
+    isCategoryMenuOpen.value = false
+    reopenCategoryMenuAtTop = true
+  }
+})
+
+watch(isAtTop, (atTop) => {
+  if (atTop && reopenCategoryMenuAtTop) {
+    isCategoryMenuOpen.value = true
+    reopenCategoryMenuAtTop = false
+  }
+})
+
+watch(() => route.path, () => {
+  reopenCategoryMenuAtTop = false
+})
 
 onMounted(() => {
   if (!headerRoot.value) return
