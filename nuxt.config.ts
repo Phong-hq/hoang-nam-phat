@@ -23,17 +23,17 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: 'vi' },
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Hoang Nam Phat - Thiet bi cong nghe chinh hang',
-      titleTemplate: '%s | Hoang Nam Phat',
+      title: 'Thiết Bị Mạng & Camera Chính Hãng',
       meta: [
-        { name: 'description', content: 'Mua sam thiet bi cong nghe chinh hang tai Hoang Nam Phat.' },
-        { name: 'keywords', content: 'dien thoai, laptop, tablet, phu kien, chinh hang' },
+        { name: 'description', content: 'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng; giá tốt, tư vấn tận tâm, giao hàng toàn quốc.' },
+        { name: 'keywords', content: 'thiết bị mạng chính hãng, router, switch, wifi, camera, tổng đài ip' },
         { name: 'robots', content: 'index, follow' },
         { name: 'theme-color', content: '#ffffff' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'Hoang Nam Phat' },
+        { property: 'og:site_name', content: 'Hoàng Nam Phát' },
         { property: 'og:image', content: `${SITE_URL}${DEFAULT_OG_IMAGE}` },
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:site', content: '@hoangnamphat' },
@@ -107,7 +107,6 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': { prerender: true },
     '/products/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
     '/admin/**': { ssr: false },
     '/api/**': { cors: true },

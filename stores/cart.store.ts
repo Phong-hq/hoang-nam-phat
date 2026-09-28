@@ -1,12 +1,16 @@
 // Cart store -- Pinia setup store
 // Persists cart items to localStorage so the cart survives page reloads
 
-import { defineStore } from 'pinia'
+import { defineStore, skipHydrate } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import type { CartItem } from '~/types'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = useLocalStorage<CartItem[]>('hnp-cart', [])
+  // The cart only exists in the browser. initOnMounted: read localStorage after
+  // mount, so the server-rendered HTML (always an empty cart) and the first
+  // client render match. skipHydrate (below): never overwrite the saved cart
+  // with the server's empty state when the page hydrates.
+  const items = useLocalStorage<CartItem[]>('hnp-cart', [], { initOnMounted: true })
 
   const totalQuantity = computed(() => items.value.reduce((sum, item) => sum + item.quantity, 0))
   const subtotal = computed(() => items.value.reduce((sum, item) => sum + item.price * item.quantity, 0))

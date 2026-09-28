@@ -14,7 +14,8 @@ export function useSeo(meta: SeoMeta) {
     ? [meta.noIndex ? 'noindex' : 'index', meta.noFollow ? 'nofollow' : 'follow'].join(', ')
     : (meta.robots ?? DEFAULT_ROBOTS)
 
-  const title = meta.title ? `${meta.title} | ${siteName}` : siteName
+  // The " | <site name>" suffix is added once by the titleTemplate in useBusinessSeo.
+  const title = meta.title ?? siteName
   const ogImage = meta.ogImage ?? DEFAULT_OG_IMAGE
   const ogImageAbsolute = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`
   const canonical = meta.canonical ?? useRequestURL().href

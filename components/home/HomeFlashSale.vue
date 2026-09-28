@@ -66,9 +66,8 @@
 
           <template #fallback>
             <div class="flex gap-4 overflow-x-auto pb-2 snap-x">
-              <div v-for="p in products" :key="p.id" class="flex-shrink-0 w-[220px] snap-start bg-white rounded-xl p-3">
-                <div class="text-sm font-medium">{{ p.name }}</div>
-                <div class="text-primary font-extrabold mt-1">{{ formatPrice(p.price) }}</div>
+              <div v-for="p in products" :key="p.id" class="flex-shrink-0 w-[220px] snap-start">
+                <HomeFlashSaleCard :product="p" />
               </div>
             </div>
           </template>
@@ -82,7 +81,6 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import { formatPrice } from '~/utils'
 import type { FlashSaleProduct, FlashSaleRecordWithPricing } from '~/types'
 import { useFlashSaleStore } from '~/stores/flashSale.store'
 
@@ -144,7 +142,7 @@ const flashSaleStore = useFlashSaleStore()
 const flashSaleRecords = computed(() => flashSaleStore.records)
 const products = computed(() => flashSaleRecords.value.map(toFlashProduct))
 
-onMounted(() => {
-  flashSaleStore.fetchFlashSaleProducts()
-})
+// Fetched during server-side rendering so the flash sale products are in the
+// HTML crawlers read; the store keeps the result for the rest of the visit.
+await callOnce('home-flash-sale', () => flashSaleStore.fetchFlashSaleProducts())
 </script>

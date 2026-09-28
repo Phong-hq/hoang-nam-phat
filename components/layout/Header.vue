@@ -1,8 +1,12 @@
 <template>
-  <div ref="headerRoot" class="sticky top-0 z-40 shadow-md">
+  <div
+    ref="headerRoot"
+    class="sticky top-0 z-40 shadow-md transition-transform duration-300 ease-out"
+    :style="isCollapsed ? { transform: `translateY(-${collapseOffset}px)` } : undefined"
+  >
 
     <!-- Top announcement bar -->
-    <div class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm overflow-hidden">
+    <div ref="topBar" class="bg-[#8b0000] text-white py-1 sm:py-1.5 text-xs sm:text-sm overflow-hidden">
       <div class="flex w-max items-center whitespace-nowrap animate-marquee">
         <span class="flex items-center gap-8 pr-8 shrink-0 text-red-200">
           <span>Giải pháp kết nối toàn diện cho doanh nghiệp &amp; gia đình</span>
@@ -36,7 +40,7 @@
     </div>
 
     <!-- Main header: logo + search + cart + phone -->
-    <header class="relative z-30 bg-white border-b border-gray-200">
+    <header ref="mainHeader" class="relative z-30 bg-white border-b border-gray-200">
       <div class="container mx-auto px-3 sm:px-4 py-2 md:py-1.5  max-w-screen-xl">
 
         <!-- Brand row: logo is the visual anchor, cart alongside it -->
@@ -187,7 +191,7 @@
     </header>
 
     <!-- Main site navigation -->
-    <nav class="relative z-20 bg-primary hidden md:block" aria-label="Điều hướng chính">
+    <nav ref="mainNav" class="relative z-20 bg-primary hidden md:block" aria-label="Điều hướng chính">
       <div class="container mx-auto px-4 max-w-screen-xl">
         <div class="flex items-center">
 
@@ -493,19 +497,51 @@ watch(isMenuOpen, (open) => {
   }
 })
 const headerRoot = ref<HTMLElement | null>(null)
+const topBar = ref<HTMLElement | null>(null)
+const mainHeader = ref<HTMLElement | null>(null)
+const mainNav = ref<HTMLElement | null>(null)
+
+// Collapsed header: once scrolled down, the header slides up so only the menu
+// bar stays on screen. On mobile the menu bar is hidden (the menu lives in the
+// logo row), so there only the announcement bar slides away. It slides with a
+// transform rather than hiding rows, so the page layout never shifts.
+const collapseOffset = ref(0)
+const isScrolledDown = ref(false)
+const isCollapsed = computed(() =>
+  isScrolledDown.value && collapseOffset.value > 0 && !isSearchOpen.value && !isMenuOpen.value,
+)
 
 let resizeObserver: ResizeObserver | null = null
+let scrollFrame: number | null = null
+
+// --header-height is the part of the header actually on screen, so sticky
+// sidebars sit right under it in both states.
+function updateHeaderHeight() {
+  if (!headerRoot.value) return
+  const navVisible = !!mainNav.value?.offsetHeight
+  collapseOffset.value = (topBar.value?.offsetHeight ?? 0) + (navVisible ? mainHeader.value?.offsetHeight ?? 0 : 0)
+  const visibleHeight = headerRoot.value.offsetHeight - (isCollapsed.value ? collapseOffset.value : 0)
+  document.documentElement.style.setProperty('--header-height', `${visibleHeight}px`)
+}
+
+function onScroll() {
+  if (scrollFrame !== null) return
+  scrollFrame = requestAnimationFrame(() => {
+    scrollFrame = null
+    isScrolledDown.value = window.scrollY > collapseOffset.value
+  })
+}
+
+watch(isCollapsed, updateHeaderHeight)
 
 onMounted(() => {
   if (!headerRoot.value) return
 
-  const updateHeaderHeight = () => {
-    document.documentElement.style.setProperty('--header-height', `${headerRoot.value!.offsetHeight}px`)
-  }
-
   updateHeaderHeight()
+  onScroll()
   resizeObserver = new ResizeObserver(updateHeaderHeight)
   resizeObserver.observe(headerRoot.value)
+  window.addEventListener('scroll', onScroll, { passive: true })
 })
 
 // Business info -- populated at app startup (see app.vue); fetch here too
@@ -524,6 +560,8 @@ const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
+  window.removeEventListener('scroll', onScroll)
+  if (scrollFrame !== null) cancelAnimationFrame(scrollFrame)
   categoryMenuResizeObserver?.disconnect()
   if (searchBlurTimeout) clearTimeout(searchBlurTimeout)
   if (searchDebounceTimeout) clearTimeout(searchDebounceTimeout)

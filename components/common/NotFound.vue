@@ -13,7 +13,7 @@ interface Props {
   message?: string
 }
 withDefaults(defineProps<Props>(), {
-  title: 'Khong tim thay',
-  message: 'Trang hoac san pham ban tim kiem khong ton tai.',
+  title: 'Không tìm thấy',
+  message: 'Trang hoặc sản phẩm bạn tìm kiếm không tồn tại.',
 })
 </script>

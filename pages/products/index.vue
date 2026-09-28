@@ -201,8 +201,8 @@ import type { ProductCatalogItem } from '~/types/productCatalog'
 import type { ProductCategoryChild } from '~/types'
 
 useSeo({
-  title: 'Tat ca san pham',
-  description: 'Kham pha hang ngan san pham cong nghe chinh hang tai Hoang Nam Phat.',
+  title: 'Tất cả sản phẩm',
+  description: 'Khám phá router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng tại Hoàng Nam Phát.',
 })
 
 const route = useRoute()

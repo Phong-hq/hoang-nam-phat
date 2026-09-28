@@ -13,7 +13,8 @@ html {
   -webkit-text-size-adjust: 100%;
   --header-height: 200px;
   --category-menu-height: 380px;
-  overflow-x: hidden;
+  // clip (not hidden) so html/body don't become scroll containers -- hidden breaks the sticky header
+  overflow-x: clip;
 }
 
 body {
@@ -21,7 +22,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 

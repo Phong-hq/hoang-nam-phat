@@ -95,7 +95,7 @@ const bestSellingStore = useBestSellingStore()
 const { records: bestSellingRecords } = storeToRefs(bestSellingStore)
 const products = computed(() => bestSellingRecords.value.map(toHomeProduct))
 
-onMounted(() => {
-  bestSellingStore.fetchBestSellingProducts()
-})
+// Fetched during server-side rendering so the best sellers are in the HTML
+// crawlers read; the store keeps the result for the rest of the visit.
+await callOnce('home-best-sellers', () => bestSellingStore.fetchBestSellingProducts())
 </script>

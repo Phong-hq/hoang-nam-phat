@@ -69,15 +69,40 @@
 
       <p class="text-xs text-base-content/40 text-center mt-3 leading-relaxed">
         Bằng cách đặt hàng, bạn đồng ý với
-        <a href="#" class="underline hover:text-primary">Điều khoản dịch vụ</a>
+        <button type="button" class="underline hover:text-primary" @click="openTerms">Điều khoản dịch vụ</button>
         và <NuxtLink to="/policy/1" class="underline hover:text-primary">Chính sách bảo hành</NuxtLink>
       </p>
     </div>
+
+    <!-- Terms popup (CMS content) -- same as the contact page -->
+    <BaseModal v-model="showTerms" title="Điều khoản" max-width-class="max-w-4xl">
+      <div v-if="termsStore.isLoading" class="flex items-center justify-center py-12">
+        <svg class="w-6 h-6 animate-spin text-primary" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+      <p v-else-if="termsStore.error" class="text-sm text-red-600">{{ termsStore.error }}</p>
+      <div v-else class="cms-content max-h-[70vh] overflow-y-auto" v-html="termsInfoHtml" />
+    </BaseModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { formatCurrency } from '~/utils'
+import { computed, ref } from 'vue'
+import { formatCurrency, resolveOembedTags } from '~/utils'
+import { useTermsStore } from '~/stores/terms'
 
 const { subtotal, discount, total, isSubmitting, isError, hasItems, submit, retryAfterError } = useCheckout()
+
+const termsStore = useTermsStore()
+const showTerms = ref(false)
+const termsInfoHtml = computed(() =>
+  termsStore.termsInfo?.info ? resolveOembedTags(termsStore.termsInfo.info) : '',
+)
+
+function openTerms() {
+  showTerms.value = true
+  termsStore.fetchTermsInfo()
+}
 </script>
