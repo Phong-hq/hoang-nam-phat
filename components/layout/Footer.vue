@@ -246,12 +246,9 @@ const productLinks = computed(() =>
 const supportLinks = [
   { label: 'Giới thiệu', href: '/about' },
   { label: 'Liên hệ', href: '/contact' },
-  { label: 'Chính sách bảo hành', href: '/policy/1' },
-  { label: 'Hướng dẫn mua hàng', href: '/guide' },
-  { label: 'Chính sách đổi trả', href: '/policy/2' },
-  { label: 'Chính sách giao hàng', href: '/policy/3' },
-  { label: 'Chính sách thanh toán', href: '/policy/4' },
-  { label: 'Tin tức & Thủ thuật', href: '/blog' },
+  { label: 'Giải pháp', href: '/solutions' },
+  { label: 'Tin tức', href: '/news' },
+  { label: 'Chính sách', href: '/policy' },
 ]
 
 const socialLinks = computed(() => [
