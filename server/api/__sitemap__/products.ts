@@ -9,13 +9,14 @@ export default defineEventHandler(async (): Promise<SitemapEntry[]> => {
      console.log(`[sitemap:products] fetching from ERP at ${new Date().toISOString()}`)
 
     const products = await sitemapService.getProducts()
-    console.log(`[sitemap:products] received ${products} entries`)
+    console.log(`[sitemap:products] received ${products.length} entries`)
 
     return products.map((p) => ({
       loc: p.loc,
       lastmod: p.lastmod,
       changefreq: 'weekly' as const,
       priority: 0.8,
+      ...(p.images?.length ? { images: p.images.map((img) => ({ loc: img.loc })) } : {}),
     }))
   } catch (e) {
     console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',e);

@@ -8,6 +8,7 @@ export interface FlashSaleProductDetail {
   id: number
   name: string
   slug: string
+  product_slug: string
   unit_price: number
   compare_price: number | null
   meta_field: unknown[]

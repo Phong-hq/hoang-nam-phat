@@ -126,7 +126,7 @@ function toFlashProduct(record: FlashSaleRecordWithPricing): FlashSaleProduct {
   const hasDiscount = new_price < unitPrice
   return {
     id: product.id,
-    slug: product.slug,
+    slug: product.product_slug,
     name: product.name,
     brand: '',
     price: new_price,

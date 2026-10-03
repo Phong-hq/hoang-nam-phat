@@ -49,4 +49,6 @@ export interface SitemapEntry {
   lastmod?: string
   changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
   priority?: number
+  // Rendered as <image:image> entries by @nuxtjs/sitemap
+  images?: { loc: string }[]
 }

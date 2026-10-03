@@ -470,7 +470,7 @@ async function loadProducts() {
     // The API's max_price=0 falsy-check bug means it can't filter unit_price=0
     // out with min_price=0, so send min_price=1 instead -- only while sorting by
     // price, since ascending order would otherwise surface those first.
-    min_price: sortingByPrice ? 1 : undefined,
+    // min_price: sortingByPrice ? 1 : undefined,
     page: currentPage.value,
     'per-page': PER_PAGE,
   })

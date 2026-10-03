@@ -80,4 +80,10 @@ export interface AlternateLink {
 export interface SitemapApiItem {
   loc: string
   lastmod: string
+  // Absolute image URLs -- only the products sitemap sends these
+  images?: SitemapImage[]
+}
+
+export interface SitemapImage {
+  loc: string
 }
