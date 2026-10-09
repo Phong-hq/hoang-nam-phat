@@ -127,10 +127,10 @@
           <p class="text-xs text-gray-500 text-center sm:text-left">
             © {{ new Date().getFullYear() }} Công Ty TNHH Công Nghệ Hoàng Nam Phát. Tất cả quyền được bảo lưu.
           </p>
-          <div class="flex items-center gap-4 text-xs text-gray-600">
+          <!-- <div class="flex items-center gap-4 text-xs text-gray-600">
             <NuxtLink to="/policy/1" class="hover:text-gray-400 transition-colors">Chính sách bảo hành</NuxtLink>
             <NuxtLink to="/returns" class="hover:text-gray-400 transition-colors">Đổi trả</NuxtLink>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
