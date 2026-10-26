@@ -53,6 +53,11 @@
                 <span v-else class="text-gray-400 leading-relaxed">{{ item.text }}</span>
               </li>
             </ul>
+
+            <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block mt-5">
+              <img src="https://phongnhadiscovery.com/sites/all/themes/cassiopeia_theme/img/icon/BoCongThuong.png"
+                alt="Đã thông báo Bộ Công Thương" class="h-14 w-auto">
+            </a>
           </div>
 
           <!-- Product categories -->
@@ -111,11 +116,6 @@
                 data-hide-cover="true"
                 data-show-facepile="true">
               </div>
-
-              <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block rounded p-2">
-                <img src="https://phongnhadiscovery.com/sites/all/themes/cassiopeia_theme/img/icon/BoCongThuong.png"
-                  alt="Đã thông báo Bộ Công Thương" class="h-10 w-auto">
-              </a>
 
             </div>
           </div>
