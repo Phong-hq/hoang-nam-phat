@@ -6,6 +6,13 @@ export const SITE_URL = 'https://hnp.thanhtoan24on7.xyz'
 export const SITE_DESCRIPTION = 'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng.'
 export const SITE_KEYWORDS = 'dien thoai, laptop, tablet, phu kien, chinh hang'
 export const DEFAULT_OG_IMAGE = '/hnp.png'
+// Structured address for the LocalBusiness JSON-LD -- the CMS only holds it as one free-text line.
+export const BUSINESS_POSTAL_ADDRESS = {
+  '@type': 'PostalAddress',
+  streetAddress: '745/62/2 Quang Trung, P. An Hội Tây',
+  addressLocality: 'TP. Hồ Chí Minh',
+  addressCountry: 'VN',
+} as const
 // Shown wherever a product has no photo yet -- stands in for the missing thumbnail.
 export const PRODUCT_IMAGE_PLACEHOLDER = '/hnp_1.png'
 export const DEFAULT_TWITTER_CARD = 'summary_large_image' as const

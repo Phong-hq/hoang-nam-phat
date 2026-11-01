@@ -319,7 +319,7 @@ import { resolveOembedTags } from '~/utils'
 useSeo({
   title: 'Liên hệ',
   description:
-    'Liên hệ Hoàng Nam Phát để được tư vấn thiết bị mạng, camera quan sát, laptop. Hotline: 0937.813.788 – Email: info@hoangnamphat.vn – 745/62/2 Quang Trung, Cần Thơ.',
+    'Liên hệ Hoàng Nam Phát để được tư vấn thiết bị mạng, camera quan sát, laptop. Hotline: 0937.813.788 – Email: info@hoangnamphat.vn – 745/62/2 Quang Trung, TP.HCM.',
 })
 
 const SUBJECT_OPTIONS = [
@@ -362,7 +362,7 @@ const workingHourDisplay = computed(
   () => businessInfo.value?.working_hour ?? '08:00 – 18:00 (Thứ 2 – Thứ 7), Chủ nhật nghỉ',
 )
 const addressParts = computed(() =>
-  (businessInfo.value?.address ?? '745/62/2 Quang Trung, Phường An Hội Tây, Quận Ninh Kiều, Thành phố Cần Thơ')
+  (businessInfo.value?.address ?? '745/62/2 Quang Trung, Phường An Hội Tây, Thành phố Hồ Chí Minh')
     .split(',')
     .map(part => part.trim()),
 )

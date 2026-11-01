@@ -1,8 +1,8 @@
 // Business SEO composable
-// Applies CMS business_info (name, logo, address, phone, email) as global site meta + Organization JSON-LD
+// Applies CMS business_info (name, logo, address, phone, email) as global site meta + LocalBusiness JSON-LD
 // Call once, synchronously, in app.vue setup -- reacts to the business store once fetchBusinessInfo() resolves
 
-import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from '~/constants'
+import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE, BUSINESS_POSTAL_ADDRESS } from '~/constants'
 
 export function useBusinessSeo() {
   const businessStore = useBusinessStore()
@@ -37,22 +37,24 @@ export function useBusinessSeo() {
     },
   })
 
-  watch(
-    () => businessStore.businessInfo,
-    (info) => {
-      if (!info) return
-      useJsonLd({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: info.name,
-        url: siteUrl,
-        logo: logo.value ?? defaultOgImage,
-        image: logo.value ?? defaultOgImage,
-        email: info.email,
-        telephone: info.phone[0],
-        address: info.address,
-      }, 'jsonld-business')
-    },
-    { immediate: true },
-  )
+  // Registered once with a computed body (not from a watch callback, which never re-runs
+  // during SSR) so the schema is in the server HTML as soon as business_info has loaded.
+  const businessJsonLd = computed(() => {
+    const info = businessStore.businessInfo
+    return JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      name: siteName.value,
+      url: siteUrl,
+      logo: logo.value ?? defaultOgImage,
+      image: logo.value ?? defaultOgImage,
+      email: info?.email,
+      telephone: info?.phone[0],
+      address: BUSINESS_POSTAL_ADDRESS,
+    })
+  })
+
+  useHead({
+    script: [{ key: 'jsonld-business', type: 'application/ld+json', innerHTML: businessJsonLd }],
+  })
 }

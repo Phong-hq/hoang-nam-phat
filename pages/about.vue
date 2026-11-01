@@ -55,9 +55,11 @@ import { useIntroducePageStore } from '~/stores/introducePage'
 import { resolveOembedTags } from '~/utils'
 
 useSeo({
-  title: 'Giới thiệu',
+  title: 'Giới thiệu Hoàng Nam Phát – Thiết bị mạng, camera chính hãng tại TP.HCM',
   description:
-    'Công ty TNHH Công Nghệ Hoàng Nam Phát – đơn vị phân phối thiết bị mạng, camera quan sát, laptop và thiết bị công nghệ chính hãng uy tín tại Cần Thơ và toàn quốc.',
+    'Hoàng Nam Phát – nhà phân phối thiết bị mạng, camera, tổng đài IP chính hãng tại TP.HCM. Tư vấn đúng nhu cầu, thi công trọn gói, giao hàng toàn quốc.',
+  ogDescription:
+    'Chính hãng – Giá tốt – Hỗ trợ tận tâm. Tư vấn, thi công hạ tầng mạng, camera, tổng đài IP. Hotline/Zalo 0937.813.788.',
 })
 
 const introducePageStore = useIntroducePageStore()
