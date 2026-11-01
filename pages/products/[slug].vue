@@ -309,7 +309,13 @@ const { data: product, pending, error } = await useAsyncData(
     }
 
     servedFromCache = false
-    const detail = await fetchProductDetail(slug.value).catch(() => null)
+    // Only a real 404 from /view means "no such product". Timeouts, 5xx and
+    // network errors are rethrown so they surface as a temporary error page
+    // instead of a false "not found".
+    const detail = await fetchProductDetail(slug.value).catch((err) => {
+      if (err?.response?.status === 404) return null
+      throw err
+    })
     if (!detail) return null
 
     // The /view detail endpoint can return stale variant data; the product
@@ -326,10 +332,15 @@ const { data: product, pending, error } = await useAsyncData(
       variants: listMatch.variants,
     }
   },
-  { watch: [slug] },
+  // No `watch: [slug]`: each slug gets its own page instance (and its own
+  // `product-<slug>` key). Watching made the leaving page re-run this handler
+  // with an empty slug on navigation, firing a slug-less /view call (400).
 )
 
-if (error.value || !product.value) {
+if (error.value) {
+  throw createError({ statusCode: 503, statusMessage: 'Không tải được sản phẩm, vui lòng thử lại' })
+}
+if (!product.value) {
   throw createError({ statusCode: 404, statusMessage: 'Sản phẩm không tìm thấy' })
 }
 useProductSeo(product.value)

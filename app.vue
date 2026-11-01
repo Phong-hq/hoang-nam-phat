@@ -43,7 +43,7 @@ onBeforeUnmount(() => clearTimeout(splashTimer))
 <template>
   <div>
     <div id="fb-root" />
-        <Transition name="splash-fade">
+    <Transition name="splash-fade">
       <LayoutAppSplash v-if="showSplash" aria-hidden="true" />
     </Transition>
     <NuxtLoadingIndicator color="#e52020" />

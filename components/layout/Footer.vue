@@ -53,6 +53,11 @@
                 <span v-else class="text-gray-400 leading-relaxed">{{ item.text }}</span>
               </li>
             </ul>
+
+            <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block mt-5">
+              <img src="https://phongnhadiscovery.com/sites/all/themes/cassiopeia_theme/img/icon/BoCongThuong.png"
+                alt="Đã thông báo Bộ Công Thương" class="h-14 w-auto">
+            </a>
           </div>
 
           <!-- Product categories -->
@@ -112,11 +117,6 @@
                 data-show-facepile="true">
               </div>
 
-              <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block rounded p-2">
-                <img src="https://phongnhadiscovery.com/sites/all/themes/cassiopeia_theme/img/icon/BoCongThuong.png"
-                  alt="Đã thông báo Bộ Công Thương" class="h-10 w-auto">
-              </a>
-
             </div>
           </div>
 
@@ -127,10 +127,10 @@
           <p class="text-xs text-gray-500 text-center sm:text-left">
             © {{ new Date().getFullYear() }} Công Ty TNHH Công Nghệ Hoàng Nam Phát. Tất cả quyền được bảo lưu.
           </p>
-          <div class="flex items-center gap-4 text-xs text-gray-600">
+          <!-- <div class="flex items-center gap-4 text-xs text-gray-600">
             <NuxtLink to="/policy/1" class="hover:text-gray-400 transition-colors">Chính sách bảo hành</NuxtLink>
             <NuxtLink to="/returns" class="hover:text-gray-400 transition-colors">Đổi trả</NuxtLink>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
