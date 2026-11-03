@@ -133,6 +133,10 @@
 
               <h1 class="text-lg lg:text-xl font-bold leading-snug">{{ product.name }}</h1>
 
+              <p v-if="product.sku" class="-mt-2 text-sm text-base-content/60">
+                Mã sản phẩm: <span class="font-semibold text-base-content">{{ product.sku }}</span>
+              </p>
+
               <div class="space-y-2">
                 <span
                   v-if="isFlashSale"
@@ -357,6 +361,7 @@ if (servedFromCache) {
 
       product.value = {
         ...product.value,
+        sku: detail.sku,
         description: detail.description,
         specifications: detail.specifications,
         short_description: detail.short_description,

@@ -50,6 +50,7 @@ export interface ProductCatalogItem {
   id: number
   name: string
   slug: string
+  sku?: string | null
   unit_price: number
   compare_price: number | null
   brand: ProductBrand | null
