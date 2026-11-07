@@ -1,6 +1,7 @@
 import { orderService } from '~/services/order.service'
 import { validateCheckout, isCheckoutValid } from '~/validators/checkout.validator'
 import { useCartStore } from '~/stores/cart.store'
+import { useTracking } from '~/composables/useTracking'
 import type { CheckoutFormData, CheckoutErrors, CheckoutStatus, OrderResult, OrderCreateRequest } from '~/types'
 
 const CUSTOMER_INFO_KEY = 'checkout_customer_info'
@@ -99,6 +100,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
       }
 
       const { order } = await orderService.create(payload)
+      // Đo đơn thành công trước khi giỏ bị xoá bên dưới (sau đó không còn danh sách món).
+      useTracking().purchase(
+        String(order.id),
+        items.value.map((item) => ({ id: item.productId, name: item.name, price: item.price, quantity: item.quantity })),
+      )
       orderResult.value = {
         orderId: String(order.id),
         status: 'success',

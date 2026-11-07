@@ -4,6 +4,7 @@
 import { defineStore, skipHydrate } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import type { CartItem } from '~/types'
+import { useTracking } from '~/composables/useTracking'
 
 export const useCartStore = defineStore('cart', () => {
   // The cart only exists in the browser. initOnMounted: read localStorage after
@@ -17,12 +18,13 @@ export const useCartStore = defineStore('cart', () => {
 
   function addItem(item: Omit<CartItem, 'quantity'>, quantity = 1) {
     const existing = items.value.find((i) => i.id === item.id)
-    console.log(item)
     if (existing) {
       existing.quantity += quantity
     } else {
       items.value.push({ ...item, quantity })
     }
+    // Mọi nút "Thêm vào giỏ" trên site đều đi qua đây -- đo một chỗ là đủ.
+    useTracking().addToCart({ id: item.productId, name: item.name, price: item.price, quantity })
   }
 
   function removeItem(id: number) {

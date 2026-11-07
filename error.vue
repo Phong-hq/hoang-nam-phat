@@ -10,14 +10,14 @@
           {{ errorTitle }}
         </h1>
         <p class="text-base-content/70 mb-8">
-          {{ error?.message ?? 'Da co loi xay ra' }}
+          {{ error?.message ?? 'Đã có lỗi xảy ra' }}
         </p>
         <div class="flex gap-3 justify-center">
           <button class="btn btn-primary" @click="handleError">
-            Ve trang chu
+            Về trang chủ
           </button>
           <button class="btn btn-ghost" @click="clearError({ redirect: '/' })">
-            Thu lai
+            Thử lại
           </button>
         </div>
       </div>
@@ -30,9 +30,9 @@
 const props = defineProps<{ error: { statusCode?: number; message?: string } | null }>()
 
 const errorTitle = computed(() => {
-  if (props.error?.statusCode === 404) return 'Trang khong tim thay'
-  if (props.error?.statusCode === 403) return 'Khong co quyen truy cap'
-  return 'Loi he thong'
+  if (props.error?.statusCode === 404) return 'Không tìm thấy trang'
+  if (props.error?.statusCode === 403) return 'Không có quyền truy cập'
+  return 'Lỗi hệ thống'
 })
 
 function handleError() {
@@ -40,7 +40,7 @@ function handleError() {
 }
 
 useSeoMeta({
-  title: `Loi ${props.error?.statusCode ?? 500}`,
+  title: `Lỗi ${props.error?.statusCode ?? 500}`,
   robots: 'noindex, nofollow',
 })
 </script>

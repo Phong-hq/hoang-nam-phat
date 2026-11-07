@@ -94,6 +94,8 @@ const phoneHref = computed(() => `tel:${(businessInfo.value?.phone?.[0] ?? '0937
 useSeo({
   title: 'Giỏ hàng',
   description: 'Hoàn tất đơn hàng của bạn tại Hoàng Nam Phát.',
+  // Giỏ hàng là trang riêng của từng khách, không có nội dung để Google xếp hạng.
+  noIndex: true,
 })
 </script>
 

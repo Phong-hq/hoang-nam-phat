@@ -31,6 +31,13 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
+  // Trang /products tự tải danh sách (để chạy được trên server) rồi ghi kết quả vào đây,
+  // để trang chi tiết sản phẩm vẫn đọc được giá/biến thể mới nhất như trước.
+  function setProducts(items: ProductCatalogItem[], listMeta: ApiListMeta | null) {
+    products.value = items
+    meta.value = listMeta
+  }
+
   function setSelectedProduct(product: ProductCatalogItem) {
     selectedProduct.value = product
   }
@@ -52,6 +59,7 @@ export const useProductStore = defineStore('product', () => {
     error,
     selectedProduct,
     fetchProducts,
+    setProducts,
     setSelectedProduct,
     consumeSelectedProduct,
   }

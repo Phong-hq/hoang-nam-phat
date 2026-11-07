@@ -60,7 +60,7 @@
             </div>
 
             <div v-if="totalPages > 1" class="flex justify-center mt-8">
-              <BasePagination :current-page="currentPage" :total-pages="totalPages" @change="handlePageChange" />
+              <BasePagination :current-page="currentPage" :total-pages="totalPages" :page-href="pageHref" @change="handlePageChange" />
             </div>
           </template>
         </div>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useNewsPageStore } from '~/stores/newsPage'
@@ -102,6 +102,11 @@ const pagedNews = computed(() => {
   return newsList.value.slice(start, start + PER_PAGE)
 })
 
+// Link thật cho từng nút phân trang, để Google đi được sang trang 2, 3...
+function pageHref(page: number) {
+  return router.resolve({ query: { ...route.query, page: page > 1 ? String(page) : undefined } }).href
+}
+
 function handlePageChange(page: number) {
   currentPage.value = page
   router.replace({ query: { ...route.query, page: page > 1 ? String(page) : undefined } })
@@ -112,7 +117,9 @@ watch(totalPages, (pages) => {
   if (currentPage.value > pages) currentPage.value = pages
 })
 
-onMounted(() => {
-  newsPageStore.fetchNewsList()
+// Tải trên server để HTML gửi về (và Google đọc được) đã có sẵn danh sách bài viết.
+await useAsyncData('news-list', async () => {
+  await newsPageStore.fetchNewsList()
+  return true
 })
 </script>

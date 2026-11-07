@@ -393,6 +393,15 @@ onMounted(() => {
   productPromoStore.fetchProductPromo()
   businessStore.fetchBusinessInfo()
   flashSaleStore.fetchFlashSaleProducts()
+  if (product.value) {
+    useTracking().viewItem({
+      id: product.value.id,
+      name: product.value.name,
+      price: displayPrice.value,
+      brand: product.value.brand?.name,
+      category: product.value.category?.name,
+    })
+  }
 })
 
 const variant = computed<ProductVariant | undefined>(() => product.value?.variants)

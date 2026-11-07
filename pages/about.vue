@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useIntroducePageStore } from '~/stores/introducePage'
 import { resolveOembedTags } from '~/utils'
@@ -66,8 +66,10 @@ const introducePageStore = useIntroducePageStore()
 const { introduceInfo } = storeToRefs(introducePageStore)
 const introduceInfoHtml = computed(() => (introduceInfo.value?.info ? resolveOembedTags(introduceInfo.value.info) : ''))
 
-onMounted(() => {
-  introducePageStore.fetchIntroduceInfo()
+// Tải trên server để HTML gửi về (và Google đọc được) đã có sẵn nội dung giới thiệu.
+await useAsyncData('introduce-page', async () => {
+  await introducePageStore.fetchIntroduceInfo()
+  return true
 })
 </script>
 

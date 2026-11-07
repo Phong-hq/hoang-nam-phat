@@ -114,6 +114,12 @@ export default defineNuxtConfig({
       erpApiBaseUrl: process.env.NUXT_PUBLIC_ERP_API_BASE_URL || 'https://hoangnamphat-be.captain2.thanhtoan24on7.xyz/',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://hoangnamphat.vn',
       siteName: 'Hoàng Nam Phát',
+      // Mã đo lường -- để trống thì không nạp (xem plugins/analytics.client.ts).
+      gtmId: process.env.NUXT_PUBLIC_GTM_ID || '',
+      ga4Id: process.env.NUXT_PUBLIC_GA4_ID || '',
+      fbPixelId: process.env.NUXT_PUBLIC_FB_PIXEL_ID || '',
+      // Bật (=true) trên bản staging / bản test để Google không index trùng với site thật.
+      noIndex: process.env.NUXT_PUBLIC_NO_INDEX === 'true',
     },
   },
 

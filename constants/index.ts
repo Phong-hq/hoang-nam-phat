@@ -2,9 +2,10 @@
 // Import from here instead of defining inline magic strings
 
 export const SITE_NAME = 'Hoàng Nam Phát'
-export const SITE_URL = 'https://hnp.thanhtoan24on7.xyz'
+// Domain chính thức -- dùng cho canonical, og:image, JSON-LD khi env không đặt NUXT_PUBLIC_SITE_URL.
+export const SITE_URL = 'https://hoangnamphat.vn'
 export const SITE_DESCRIPTION = 'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng.'
-export const SITE_KEYWORDS = 'dien thoai, laptop, tablet, phu kien, chinh hang'
+export const DEFAULT_HOTLINE = '0937.813.788'
 export const DEFAULT_OG_IMAGE = '/hnp.png'
 // Structured address for the LocalBusiness JSON-LD -- the CMS only holds it as one free-text line.
 export const BUSINESS_POSTAL_ADDRESS = {
