@@ -433,9 +433,11 @@ watch(() => route.path, (path) => {
   isCategoryMenuOpen.value = path === '/'
 }, { immediate: true })
 
-// Measures the open dropdown's real rendered height into --category-menu-height so
-// HomeHero can grow its section background just tall enough to fully contain the list
-// (it auto-opens there) instead of the list spilling past the banner onto the next section.
+// Real rendered height of the auto-opened dropdown, shared with HomeHero so the
+// banner matches it exactly. HomeHero already uses a server-side estimate for the
+// first paint (see useCategoryMenuHeight); this measurement only corrects it in the
+// browser if the real height differs (font fallback, zoom, ...).
+const measuredCategoryMenuHeight = useMeasuredCategoryMenuHeight()
 let categoryMenuResizeObserver: ResizeObserver | null = null
 
 function onCategoryMenuRef(instance: { $el?: HTMLElement } | null) {
@@ -444,12 +446,11 @@ function onCategoryMenuRef(instance: { $el?: HTMLElement } | null) {
   const el = instance?.$el
   if (!el) return
 
-  const updateCategoryMenuHeight = () => {
-    document.documentElement.style.setProperty('--category-menu-height', `${el.offsetHeight}px`)
+  const update = () => {
+    if (el.offsetHeight > 0) measuredCategoryMenuHeight.value = el.offsetHeight
   }
-
-  updateCategoryMenuHeight()
-  categoryMenuResizeObserver = new ResizeObserver(updateCategoryMenuHeight)
+  update()
+  categoryMenuResizeObserver = new ResizeObserver(update)
   categoryMenuResizeObserver.observe(el)
 }
 

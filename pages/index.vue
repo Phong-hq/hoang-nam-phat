@@ -3,15 +3,17 @@
     <h1 class="sr-only">Hoàng Nam Phát – Thiết Bị Mạng & Camera Chính Hãng</h1>
     <HomeHero />
     <HomeFlashSale />
-    <HomeBestSellers />
+    <LazyHomeBestSellers hydrate-on-visible />
 
-    <!-- Product sections: đổi thứ tự / thêm / xóa tùy ý, bg tự xen kẽ -->
+    <!-- Product sections: đổi thứ tự / thêm / xóa tùy ý, bg tự xen kẽ.
+         HTML vẫn render đủ trên server (SEO), nhưng JS (Swiper, autoplay) chỉ chạy
+         khi section cuộn tới -- giảm mạnh Total Blocking Time lúc tải trang. -->
     <div v-for="(s, i) in productSections" :key="s.id" :class="altBgs[i % 2]">
-      <HomeProductSection v-bind="s.props" />
+      <LazyHomeProductSection v-bind="s.props" hydrate-on-visible />
     </div>
 
-    <div :class="altBgs[productSections.length % 2]"><HomeBrands /></div>
-    <div class="bg-primary"><HomeTrustFeatures /></div>
+    <div :class="altBgs[productSections.length % 2]"><LazyHomeBrands hydrate-on-visible /></div>
+    <div class="bg-primary"><LazyHomeTrustFeatures hydrate-on-visible /></div>
     <!-- <HomeNewsletter /> -->
   </div>
 </template>
@@ -31,8 +33,6 @@ const categoryStore = useCategoryStore()
 
 onMounted(() => {
   if (!categoryStore.categories.length) categoryStore.fetchCategories()
-    console.log('c', categoryStore.categories)
-
 })
 
 const altBgs = ['bg-[#EEF2F7]', 'bg-white']

@@ -47,14 +47,9 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap',
         },
       ],
-      script: [
-        {
-          src: 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v23.0',
-          async: true,
-          defer: true,
-          crossorigin: 'anonymous' as const,
-        },
-      ],
+      // Facebook SDK is NOT loaded here: it is ~250KB of JS that blocked the main
+      // thread on every page. Footer.vue injects it only when the Page plugin
+      // scrolls into view.
     },
   },
 

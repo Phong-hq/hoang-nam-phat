@@ -3,7 +3,7 @@
 // Flow: Composable -> Service -> API
 
 import { httpClient } from '~/utils/httpClient'
-import { normalizeProductPrice } from '~/utils/product'
+import { normalizeProductPrice, stripDetailOnlyFields } from '~/utils/product'
 import type { ApiListResponse, BestSellingApiRecord, BestSellingApiRecordRaw } from '~/types'
 
 const BEST_SELLING_API_URL = '/api/v1/frontend/cms/record/best_selling_product'
@@ -12,7 +12,7 @@ const BEST_SELLING_API_URL = '/api/v1/frontend/cms/record/best_selling_product'
 // API boundary so the rest of the app never has to know about that naming quirk.
 function normalizeRecord(record: BestSellingApiRecordRaw): BestSellingApiRecord {
   const { product2, ...rest } = record
-  return { ...rest, product: normalizeProductPrice(product2) }
+  return { ...rest, product: stripDetailOnlyFields(normalizeProductPrice(product2)) }
 }
 
 export const bestSellingService = {

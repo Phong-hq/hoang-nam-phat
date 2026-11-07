@@ -36,3 +36,15 @@ export function normalizeProductPrice<T extends PricedItem>(item: T): T {
     : item.variants
   return { ...item, unit_price: comparePrice, compare_price: null, variants } as T
 }
+
+// The ERP list endpoints also return heavy detail-only fields (spec tables as
+// HTML in additional_data, long descriptions). No list/card screen renders them --
+// the product page reads them from the detail endpoint -- yet SSR serialises every
+// fetched item into the page payload, which made the homepage HTML ~1.4MB.
+// Drop them once at the API boundary.
+const DETAIL_ONLY_FIELDS = new Set(['additional_data', 'description', 'specifications', 'short_description', 'warranty_description'])
+
+export function stripDetailOnlyFields<T extends object>(item: T): T {
+  if (!item) return item
+  return Object.fromEntries(Object.entries(item).filter(([key]) => !DETAIL_ONLY_FIELDS.has(key))) as T
+}

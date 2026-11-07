@@ -23,43 +23,26 @@ await callOnce('app-init', () =>
   ]),
 )
 
-// The splash is only an overlay on top of the real page: the page itself is
-// always rendered underneath (so crawlers still get the full HTML). It is part
-// of the server HTML so visitors see it right away, then fades out once the app
-// has taken over in the browser -- but no sooner than SPLASH_MIN_MS after the page
-// started loading, so the logo animation always plays through instead of flashing.
-const SPLASH_MIN_MS = 1600
-const showSplash = ref(true)
-let splashTimer: ReturnType<typeof setTimeout> | undefined
-onMounted(() => {
-  // performance.now() counts from the start of the page load, so a slow hydration
-  // eats into the minimum instead of adding to it.
-    showSplash.value = false
+// No splash overlay: a full-screen cover that only lifts after hydration made
+// the real page invisible until all JS had run, pushing LCP past 10s on mobile.
 
-})
-onBeforeUnmount(() => clearTimeout(splashTimer))
+// The hero banner (the LCP element) is painted as a CSS background, which the
+// browser's preload scanner cannot discover -- hint it so the download starts
+// together with the HTML instead of after CSS has been parsed.
+const firstHeroImage = computed(() => bannerStore.banner?.main?.[0])
+useHead(() => ({
+  link: firstHeroImage.value
+    ? [{ rel: 'preload', as: 'image', href: firstHeroImage.value, fetchpriority: 'high' as const }]
+    : [],
+}))
 </script>
 
 <template>
   <div>
     <div id="fb-root" />
-    <Transition name="splash-fade">
-      <LayoutAppSplash v-if="showSplash" aria-hidden="true" />
-    </Transition>
     <NuxtLoadingIndicator color="#e52020" />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-
   </div>
 </template>
-
-<style>
-.splash-fade-leave-active {
-  transition: opacity 0.4s ease;
-}
-
-.splash-fade-leave-to {
-  opacity: 0;
-}
-</style>

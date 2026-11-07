@@ -105,7 +105,7 @@
               </div>
 
               <!-- Facebook embed -->
-              <div class="fb-page block h-auto overflow-hidden rounded-lg"
+              <div ref="fbPageEl" class="fb-page block h-auto overflow-hidden rounded-lg"
               v-if="facebookHref"
                 :data-href="facebookHref"
                 data-tabs=""
@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, nextTick, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, nextTick, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useBusinessStore } from '~/stores/business.store'
 import { useCategoryStore } from '~/stores/category.store'
@@ -164,32 +164,56 @@ const companyName = computed(() => businessInfo.value?.name ?? 'Hoàng Nam Phát
 const zaloHref = computed(() => socialRecord.value?.zalo ?? '#')
 const facebookHref = computed(() => socialRecord.value?.facebook ?? '')
 
-// The fb-page div only appears once socialRecord loads from the API, which
-// happens after the Facebook SDK's own automatic XFBML scan already ran —
-// so it must be parsed manually once the div shows up in the DOM.
-// Browser only: `window.FB` doesn't exist during server-side rendering. With SSR
-// the link is usually already there on mount; the watch covers a later load.
-onMounted(() => {
-  if (facebookHref.value) parseFacebookPlugins()
-})
-watch(facebookHref, async (href) => {
-  if (!href) return
-  await nextTick()
-  parseFacebookPlugins()
-})
+// The Facebook SDK is heavy, so it is only loaded once the Page plugin is about
+// to scroll into view (it sits at the very bottom of every page). The SDK is
+// loaded with xfbml=1, so it parses the .fb-page div itself on load; if it is
+// already present (e.g. after a client-side navigation) we re-parse manually.
+const FB_SDK_SRC = 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v23.0'
+const fbPageEl = ref<HTMLElement | null>(null)
+let fbObserver: IntersectionObserver | undefined
 
-function parseFacebookPlugins() {
-  const win = window as any
+function loadFacebookPlugin() {
+  const win = window as Window & { FB?: { XFBML?: { parse: () => void } } }
   if (win.FB?.XFBML) {
     win.FB.XFBML.parse()
     return
   }
-  const previousInit = win.fbAsyncInit
-  win.fbAsyncInit = () => {
-    previousInit?.()
-    win.FB?.XFBML?.parse()
-  }
+  if (document.querySelector(`script[src="${FB_SDK_SRC}"]`)) return
+  const script = document.createElement('script')
+  script.src = FB_SDK_SRC
+  script.async = true
+  script.defer = true
+  script.crossOrigin = 'anonymous'
+  document.body.appendChild(script)
 }
+
+function observeFacebookPlugin() {
+  fbObserver?.disconnect()
+  const el = fbPageEl.value
+  if (!el) return
+  if (!('IntersectionObserver' in window)) {
+    loadFacebookPlugin()
+    return
+  }
+  fbObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        fbObserver?.disconnect()
+        loadFacebookPlugin()
+      }
+    },
+    { rootMargin: '300px' },
+  )
+  fbObserver.observe(el)
+}
+
+onMounted(observeFacebookPlugin)
+watch(facebookHref, async (href) => {
+  if (!href) return
+  await nextTick()
+  observeFacebookPlugin()
+})
+onBeforeUnmount(() => fbObserver?.disconnect())
 
 const contactInfo = computed(() => [
   {

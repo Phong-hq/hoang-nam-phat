@@ -1,5 +1,8 @@
 <template>
-  <section class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_24px)]">
+  <section
+    class="bg-[#0F172A] pt-0 lg:min-h-[calc(var(--category-menu-height,380px)_+_24px)]"
+    :style="{ '--category-menu-height': `${categoryMenuHeight}px` }"
+  >
     <div v-if="banner" class="container mx-auto px-4 lg:h-[calc(var(--category-menu-height,380px)_+_4px)] max-w-screen-xl">
 
       <!-- Mobile / tablet layout: main banner swiper with dots. Tablets also get the side
@@ -139,6 +142,9 @@ const mainAutoplay = { delay: 4000, disableOnInteraction: false, pauseOnMouseEnt
 const mobileMainSwiperModules = [Autoplay, Pagination]
 
 const bannerStore = useBannerStore()
+
+// Exact height from the server HTML on, so the banner never jumps on hydration.
+const categoryMenuHeight = useCategoryMenuHeight()
 
 const banner = computed(() => bannerStore.banner)
 
