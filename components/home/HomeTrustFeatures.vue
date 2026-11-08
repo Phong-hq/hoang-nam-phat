@@ -10,7 +10,7 @@
           </div>
           <div>
             <p class="text-white text-sm font-bold leading-tight">{{ feat.title }}</p>
-            <p class="text-white/90 text-xs mt-0.5">{{ feat.desc }}</p>
+            <p class="text-white text-xs mt-0.5">{{ feat.desc }}</p>
           </div>
         </div>
       </div>

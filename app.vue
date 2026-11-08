@@ -26,15 +26,8 @@ await callOnce('app-init', () =>
 // No splash overlay: a full-screen cover that only lifts after hydration made
 // the real page invisible until all JS had run, pushing LCP past 10s on mobile.
 
-// The hero banner (the LCP element) is painted as a CSS background, which the
-// browser's preload scanner cannot discover -- hint it so the download starts
-// together with the HTML instead of after CSS has been parsed.
-const firstHeroImage = computed(() => bannerStore.banner?.main?.[0])
-useHead(() => ({
-  link: firstHeroImage.value
-    ? [{ rel: 'preload', as: 'image', href: firstHeroImage.value, fetchpriority: 'high' as const }]
-    : [],
-}))
+// The hero banner (the LCP element) is preloaded by its own <NuxtImg preload> in
+// HomeHero.vue -- resized webp, home page only.
 </script>
 
 <template>

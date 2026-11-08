@@ -40,12 +40,10 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap',
-        },
+        // Roboto tự host (khai báo @font-face trong assets/scss/main.scss). Preload để
+        // font tải song song với CSS thay vì chờ CSS phân tích xong mới phát hiện.
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/roboto-latin.woff2', crossorigin: '' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/roboto-vietnamese.woff2', crossorigin: '' },
       ],
       // Facebook SDK is NOT loaded here: it is ~250KB of JS that blocked the main
       // thread on every page. Footer.vue injects it only when the Page plugin
@@ -118,6 +116,8 @@ export default defineNuxtConfig({
     // và làm mới ở nền, nên khách không bao giờ phải chờ.
     '/': { swr: 300 },
     '/products/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
+    // File font không đổi nội dung theo thời gian -> cho trình duyệt giữ 1 năm.
+    '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/admin/**': { ssr: false },
     '/api/**': { cors: true },
   },

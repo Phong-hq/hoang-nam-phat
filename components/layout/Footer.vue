@@ -8,7 +8,7 @@
         target="_blank"
         rel="noopener noreferrer"
         title="Chat Zalo"
-        class="w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full shadow-lg flex items-center justify-center text-white text-xs font-extrabold hover:scale-110 transition-all"
+        class="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-full shadow-lg flex items-center justify-center text-white text-xs font-extrabold hover:scale-110 transition-all"
       >
         Zalo
       </a>

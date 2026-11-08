@@ -74,10 +74,22 @@ export default defineNuxtPlugin((nuxtApp) => {
     fbq('track', 'PageView')
   }
 
-  onNuxtReady(() => {
+  // GTM + Pixel nặng ~230KB JS, chạy ngay khi trang vừa hiện sẽ chặn main thread
+  // (TBT trên mobile). Hoãn tới lần tương tác đầu tiên (cuộn / chạm / phím) hoặc 5s sau
+  // khi trang sẵn sàng, tuỳ cái nào tới trước. Sự kiện trước đó vẫn nằm trong hàng đợi.
+  let loaded = false
+  const interactionEvents = ['scroll', 'pointerdown', 'touchstart', 'keydown'] as const
+  function loadAnalytics() {
+    if (loaded) return
+    loaded = true
+    for (const e of interactionEvents) window.removeEventListener(e, loadAnalytics)
     if (gtmId) loadScript(`https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(gtmId)}`)
     else if (ga4Id) loadScript(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga4Id)}`)
     if (fbPixelId) loadScript('https://connect.facebook.net/en_US/fbevents.js')
+  }
+  onNuxtReady(() => {
+    for (const e of interactionEvents) window.addEventListener(e, loadAnalytics, { once: true, passive: true })
+    setTimeout(loadAnalytics, 5000)
   })
 
   // Lượt xem khi khách chuyển trang trong site (không tải lại trang).

@@ -10,40 +10,59 @@
            height only applies at lg+, so the stack grows with its content instead of
            overflowing into the next section. -->
       <div class="flex flex-col gap-3 py-3 lg:hidden">
-        <ClientOnly>
-          <Swiper
-            :modules="mobileMainSwiperModules"
-            :autoplay="mainAutoplay"
-            :loop="mainBannerStyles.length > 1"
-            :pagination="mainBannerStyles.length > 1 ? { clickable: true } : false"
-            class="hero-mobile-main w-full rounded-xl overflow-hidden aspect-[1.52] shadow-lg"
-          >
-            <SwiperSlide v-for="(style, i) in mainBannerStyles" :key="i">
-              <NuxtLink
-                to="/products"
-                aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
-                class="relative block w-full h-full"
-                :style="style"
+        <Swiper
+          v-if="swiperReady && mainBanners.length > 1"
+          :modules="mobileMainSwiperModules"
+          :autoplay="mainAutoplay"
+          :loop="true"
+          :pagination="{ clickable: true }"
+          class="hero-mobile-main w-full rounded-xl overflow-hidden aspect-[1.52] shadow-lg"
+        >
+          <SwiperSlide v-for="(img, i) in mainBanners" :key="i">
+            <NuxtLink to="/products" :aria-label="MAIN_LABEL" class="relative block w-full h-full" :style="MAIN_BG">
+              <NuxtImg
+                v-if="img"
+                :src="img"
+                :sizes="MAIN_SIZES"
+                format="webp"
+                :loading="i === 0 ? 'eager' : 'lazy'"
+                alt=""
+                class="absolute inset-0 w-full h-full object-fill"
               />
-            </SwiperSlide>
-          </Swiper>
-          <template #fallback>
-            <NuxtLink
-              to="/products"
-              aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
-              class="relative block rounded-xl overflow-hidden aspect-[1.52]"
-              :style="mainBannerStyles[0]"
-            />
-          </template>
-        </ClientOnly>
+            </NuxtLink>
+          </SwiperSlide>
+        </Swiper>
+        <!-- Server HTML + first paint: a plain image (the LCP element). Swiper only takes over
+             once the browser is idle, by which time this image is already in cache. -->
+        <NuxtLink
+          v-else
+          to="/products"
+          :aria-label="MAIN_LABEL"
+          class="relative block rounded-xl overflow-hidden aspect-[1.52] shadow-lg"
+          :style="MAIN_BG"
+        >
+          <NuxtImg
+            v-if="mainBanners[0]"
+            :src="mainBanners[0]"
+            :sizes="MAIN_SIZES"
+            format="webp"
+            loading="eager"
+            fetchpriority="high"
+            :preload="{ fetchPriority: 'high' }"
+            alt=""
+            class="absolute inset-0 w-full h-full object-fill"
+          />
+        </NuxtLink>
         <div v-if="sideBanners.length" class="hidden sm:grid sm:grid-cols-2 sm:gap-3">
           <NuxtLink
             v-for="b in sideBanners"
             :key="b.href"
             :to="b.href"
-            class="block rounded-lg overflow-hidden aspect-[3.21] shadow-md active:opacity-80 transition-opacity"
-            :style="b.style"
-          />
+            :aria-label="b.label"
+            class="relative block rounded-lg overflow-hidden aspect-[3.21] shadow-md active:opacity-80 transition-opacity"
+          >
+            <NuxtImg :src="b.image" sizes="sm:50vw md:50vw" format="webp" loading="lazy" alt="" class="absolute inset-0 w-full h-full object-fill" />
+          </NuxtLink>
         </div>
       </div>
 
@@ -59,68 +78,78 @@
           <!-- Large hero banner: height matches the header's category dropdown, so it fills
                the same vertical space the reserved gap on its left occupies -->
           <div class="col-span-2 relative rounded-xl overflow-hidden group h-full">
-            <ClientOnly>
-              <Swiper
-                :modules="mainSwiperModules"
-                :autoplay="mainAutoplay"
-                :loop="mainBannerStyles.length > 1"
-                class="h-full w-full"
-              >
-                <SwiperSlide v-for="(style, i) in mainBannerStyles" :key="i">
-                  <NuxtLink
-                    to="/products"
-                    aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
-                    class="block w-full h-full"
-                    :style="style"
+            <Swiper
+              v-if="swiperReady && mainBanners.length > 1"
+              :modules="mainSwiperModules"
+              :autoplay="mainAutoplay"
+              :loop="true"
+              class="h-full w-full"
+            >
+              <SwiperSlide v-for="(img, i) in mainBanners" :key="i">
+                <NuxtLink to="/products" :aria-label="MAIN_LABEL" class="relative block w-full h-full" :style="MAIN_BG">
+                  <NuxtImg
+                    v-if="img"
+                    :src="img"
+                    :sizes="MAIN_SIZES"
+                    format="webp"
+                    :loading="i === 0 ? 'eager' : 'lazy'"
+                    alt=""
+                    class="absolute inset-0 w-full h-full object-fill"
                   />
-                </SwiperSlide>
-              </Swiper>
-              <template #fallback>
-                <NuxtLink
-                  to="/products"
-                  aria-label="Thiết bị mạng và camera chính hãng Hoàng Nam Phát"
-                  class="block w-full h-full"
-                  :style="mainBannerStyles[0]"
-                />
-              </template>
-            </ClientOnly>
+                </NuxtLink>
+              </SwiperSlide>
+            </Swiper>
+            <!-- Same src + sizes as the mobile image, so the browser downloads it only once.
+                 Lazy: on phones this block is display:none and must not fetch anything. -->
+            <NuxtLink v-else to="/products" :aria-label="MAIN_LABEL" class="relative block w-full h-full" :style="MAIN_BG">
+              <NuxtImg
+                v-if="mainBanners[0]"
+                :src="mainBanners[0]"
+                :sizes="MAIN_SIZES"
+                format="webp"
+                loading="lazy"
+                alt=""
+                class="absolute inset-0 w-full h-full object-fill"
+              />
+            </NuxtLink>
           </div>
 
           <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
           <div class="relative h-full">
-            <ClientOnly>
-              <Swiper
-                :modules="heroSwiperModules"
-                direction="vertical"
-                :slides-per-view="HERO_SWIPER_SLIDES_PER_VIEW"
-                :space-between="10"
-                :observer="true"
-                :observe-parents="true"
-                :autoplay="heroAutoplay"
-                :loop="sideBanners.length > HERO_SWIPER_SLIDES_PER_VIEW"
-                class="h-full w-full"
-                style="position: absolute; inset: 0;"
+            <Swiper
+              v-if="swiperReady && sideBanners.length"
+              :modules="heroSwiperModules"
+              direction="vertical"
+              :slides-per-view="HERO_SWIPER_SLIDES_PER_VIEW"
+              :space-between="10"
+              :observer="true"
+              :observe-parents="true"
+              :autoplay="heroAutoplay"
+              :loop="sideBanners.length > HERO_SWIPER_SLIDES_PER_VIEW"
+              class="h-full w-full"
+              style="position: absolute; inset: 0;"
+            >
+              <SwiperSlide v-for="b in loopSideBanners" :key="b.key">
+                <NuxtLink
+                  :to="b.href"
+                  :aria-label="b.label"
+                  class="relative block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
+                >
+                  <NuxtImg :src="b.image" width="320" format="webp" loading="lazy" alt="" class="absolute inset-0 w-full h-full object-fill" />
+                </NuxtLink>
+              </SwiperSlide>
+            </Swiper>
+            <div v-else class="absolute inset-0 flex flex-col gap-2.5">
+              <NuxtLink
+                v-for="b in sideBanners.slice(0, HERO_SWIPER_SLIDES_PER_VIEW)"
+                :key="b.href"
+                :to="b.href"
+                :aria-label="b.label"
+                class="flex-1 relative rounded-xl overflow-hidden"
               >
-                <SwiperSlide v-for="b in loopSideBanners" :key="b.key">
-                  <NuxtLink
-                    :to="b.href"
-                    class="block w-full h-full rounded-xl overflow-hidden group hover:opacity-90 transition-opacity"
-                    :style="b.style"
-                  />
-                </SwiperSlide>
-              </Swiper>
-              <template #fallback>
-                <div class="absolute inset-0 flex flex-col gap-2.5">
-                  <NuxtLink
-                    v-for="b in sideBanners.slice(0, 4)"
-                    :key="b.href"
-                    :to="b.href"
-                    class="flex-1 relative rounded-xl overflow-hidden"
-                    :style="b.style"
-                  />
-                </div>
-              </template>
-            </ClientOnly>
+                <NuxtImg :src="b.image" width="320" format="webp" loading="lazy" alt="" class="absolute inset-0 w-full h-full object-fill" />
+              </NuxtLink>
+            </div>
           </div>
         </div>
       </div>
@@ -129,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Pagination } from 'swiper/modules'
 import { useBannerStore } from '~/stores/banner.store'
@@ -141,6 +170,13 @@ const mainSwiperModules = [Autoplay]
 const mainAutoplay = { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }
 const mobileMainSwiperModules = [Autoplay, Pagination]
 
+const MAIN_LABEL = 'Thiết bị mạng và camera chính hãng Hoàng Nam Phát'
+// Gradient behind the image: shows while it loads, and is the whole banner if the CMS has none.
+const MAIN_BG = 'background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%);'
+// Phones/tablets: full width. Desktop: 2 of 3 grid columns next to the 288px menu (~660px).
+// Must be identical in both layouts so both <img> resolve to the same file.
+const MAIN_SIZES = 'xs:100vw sm:100vw md:100vw lg:700px'
+
 const bannerStore = useBannerStore()
 
 // Exact height from the server HTML on, so the banner never jumps on hydration.
@@ -148,41 +184,49 @@ const categoryMenuHeight = useCategoryMenuHeight()
 
 const banner = computed(() => bannerStore.banner)
 
-function toBgStyle(image: string | undefined, fallbackGradient: string) {
-  return image
-    ? `background: url('${image}') center / 100% 100% no-repeat;`
-    : `background: ${fallbackGradient};`
-}
+// Swiper (+ autoplay) is mounted only once the page has loaded and the browser is idle.
+// Until then the server-rendered static image stays on screen, so the LCP image paints
+// with the HTML instead of waiting for Swiper's JS to run.
+const swiperReady = ref(false)
 
 onMounted(() => {
   bannerStore.fetchBanner()
+
+  const enable = () => {
+    const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
+      .requestIdleCallback
+    if (ric) ric(() => (swiperReady.value = true), { timeout: 3000 })
+    else setTimeout(() => (swiperReady.value = true), 200)
+  }
+  if (document.readyState === 'complete') enable()
+  else window.addEventListener('load', enable, { once: true })
 })
 
-// `main` is now a list of images -- always render at least one slide (a
-// gradient placeholder) so the swiper never ends up with zero slides.
-const mainBannerStyles = computed(() => {
-  const fallbackGradient = 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%)'
-  const images = banner.value?.main ?? []
-  return images.length ? images.map((img) => toBgStyle(img, fallbackGradient)) : [toBgStyle(undefined, fallbackGradient)]
+// `main` is a list of images -- always at least one entry ('' = gradient placeholder)
+// so the layout never ends up empty.
+const mainBanners = computed(() => {
+  const images = (banner.value?.main ?? []).filter(Boolean)
+  return images.length ? images : ['']
 })
 
 const rightBannersMeta = [
-  { href: '/products?category=camera', gradient: 'linear-gradient(135deg, #7C3AED, #5B21B6)', field: 'left', index: 0 },
-  { href: '/products?category=router', gradient: 'linear-gradient(135deg, #0891B2, #0E7490)', field: 'left', index: 1 },
-  { href: '/products?category=switch', gradient: 'linear-gradient(135deg, #1D4ED8, #1E40AF)', field: 'right', index: 0 },
-  { href: '/products?category=nas', gradient: 'linear-gradient(135deg, #7C3AED, #6D28D9)', field: 'right', index: 1 },
-  { href: '/products?category=laptop', gradient: 'linear-gradient(135deg, #334155, #1E293B)', field: 'right', index: 2 },
-  { href: '/products?category=accessories', gradient: 'linear-gradient(135deg, #D97706, #B45309)', field: 'right', index: 3 },
+  { href: '/products?category=camera', label: 'Camera quan sát', field: 'left', index: 0 },
+  { href: '/products?category=router', label: 'Router', field: 'left', index: 1 },
+  { href: '/products?category=switch', label: 'Switch', field: 'right', index: 0 },
+  { href: '/products?category=nas', label: 'Thiết bị lưu trữ NAS', field: 'right', index: 1 },
+  { href: '/products?category=laptop', label: 'Laptop', field: 'right', index: 2 },
+  { href: '/products?category=accessories', label: 'Phụ kiện', field: 'right', index: 3 },
 ] as const
 
-// A slot the CMS left without an image would render as a bare gradient block
-// (e.g. the orange accessories one) -- only list the banners that have a photo.
+// A slot the CMS left without an image would render as a bare block -- only list the
+// banners that have a photo.
 const sideBanners = computed(() =>
   rightBannersMeta
     .filter((m) => !!banner.value?.[m.field]?.[m.index])
     .map((m) => ({
       href: m.href,
-      style: toBgStyle(banner.value?.[m.field]?.[m.index], m.gradient),
+      label: m.label,
+      image: banner.value![m.field][m.index] as string,
     })),
 )
 

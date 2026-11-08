@@ -48,10 +48,14 @@
 
           <!-- Logo image -->
           <NuxtLink to="/" class="flex-shrink-0">
-            <img
-              src="~/assets/images/hnp.png"
-              width="250"
-              height="335"
+            <!-- Logo gốc 250x335 PNG (10KB) nhưng chỉ hiển thị cao tối đa 96px -> resize
+                 qua IPX đúng chiều cao hiển thị (x1/x2 cho màn hình retina), đổi sang webp. -->
+            <NuxtImg
+              src="/hnp.png"
+              width="72"
+              height="96"
+              densities="x1 x2"
+              format="webp"
               alt="Logo Công ty Công nghệ Hoàng Nam Phát"
               class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-24 w-auto object-contain"
             />

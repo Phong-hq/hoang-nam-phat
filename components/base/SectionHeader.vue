@@ -71,12 +71,14 @@ const colors = computed(() => {
       link: 'text-[#FFA500] border-[#FFA500]/30 bg-[#FFA500]/10 hover:bg-[#FFA500] hover:text-black',
     }
   }
+  // Chữ dùng đỏ đậm hơn primary (#e52020 trên nền xám/hồng nhạt chỉ đạt 3.8-4.3:1,
+  // dưới chuẩn WCAG 4.5:1); #C21818 đạt ~5.4:1. Vạch/nền/hover vẫn giữ màu primary.
   return {
-    label: 'text-primary',
+    label: 'text-[#C21818]',
     dot: 'bg-primary',
     line: 'bg-gradient-to-r from-primary via-primary/50 to-transparent',
     lineCenter: 'bg-gradient-to-r from-transparent via-primary to-transparent',
-    link: 'text-primary border-primary/25 bg-primary/5 hover:bg-primary hover:text-white',
+    link: 'text-[#C21818] border-primary/25 bg-primary/5 hover:bg-primary hover:text-white',
   }
 })
 </script>
