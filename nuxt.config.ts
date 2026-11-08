@@ -91,6 +91,16 @@ export default defineNuxtConfig({
   image: {
     quality: 80,
     format: ['webp', 'avif', 'jpeg'],
+    // Ảnh sản phẩm nằm trên server ERP. Domain phải có trong danh sách này thì
+    // <NuxtImg> mới resize + đổi sang webp qua /_ipx; nếu thiếu, nó trả nguyên
+    // file gốc (có ảnh PNG 2MB hiển thị trong ô 300px).
+    domains: ['hoangnamphat-be.captain2.thanhtoan24on7.xyz'],
+    // Ảnh đã resize được trình duyệt giữ 1 năm (ảnh mới upload lên ERP có tên file
+    // mới nên URL cũng mới). Mặc định IPX chỉ cho cache 5 phút.
+    ipx: {
+      http: { maxAge: 60 * 60 * 24 * 365 },
+      fs: { maxAge: 60 * 60 * 24 * 365 },
+    },
     screens: {
       xs: 320,
       sm: 640,
@@ -102,6 +112,11 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // Trang chủ giống nhau với mọi khách (giỏ hàng nằm ở localStorage, không có
+    // dữ liệu riêng từng người trong HTML) -> cache HTML 5 phút trên server thay vì
+    // gọi API ERP ở mỗi lượt truy cập (TTFB ~1.4s). Hết 5 phút vẫn trả bản cũ ngay
+    // và làm mới ở nền, nên khách không bao giờ phải chờ.
+    '/': { swr: 300 },
     '/products/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
     '/admin/**': { ssr: false },
     '/api/**': { cors: true },

@@ -8,7 +8,7 @@
           class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 border"
           :class="activeBrand?.id === brand.id
             ? 'bg-primary text-primary-content border-primary'
-            : 'bg-white text-base-content/60 border-base-200 hover:text-primary hover:border-primary'">
+            : 'bg-white text-base-content/70 border-base-200 hover:text-primary hover:border-primary'">
           {{ brand.name }}
         </button>
       </div>
@@ -87,14 +87,27 @@ watch(brands, (newBrands) => {
 // prices) are already in the HTML crawlers read. Categories -- and so
 // `activeBrand` -- are loaded in app.vue before any page renders; switching the
 // brand tab refetches on the client.
-const { data: rawProducts, status } = await useAsyncData(
+//
+// Performance: each section used to render the API's default page (up to 20
+// cards) -- across all sections that was ~170 product cards / 3,800 DOM nodes on
+// the homepage, the main cause of the 1.8s Total Blocking Time on mobile. A
+// carousel only shows 1-5 at a time and links to the full category, so 10 is
+// plenty. `transform` keeps only the fields a card needs, so the full ERP product
+// objects are not serialized into the page payload (__NUXT_DATA__).
+const HOME_SECTION_LIMIT = 10
+const { data: activeProducts, status } = await useAsyncData(
   `home-section-${props.categoryId}`,
   () =>
     fetchProducts({
       category_id: String(props.categoryId),
       ...(activeBrand.value ? { brand_id: String(activeBrand.value.id) } : {}),
+      'per-page': HOME_SECTION_LIMIT,
     }),
-  { watch: [activeBrand], default: () => [] as ProductCatalogItem[] },
+  {
+    watch: [activeBrand],
+    transform: (items: ProductCatalogItem[]) => items.slice(0, HOME_SECTION_LIMIT).map(toHomeProduct),
+    default: () => [] as HomeProduct[],
+  },
 )
 const isLoading = computed(() => status.value === 'pending')
 
@@ -114,8 +127,6 @@ function toHomeProduct(item: ProductCatalogItem): HomeProduct {
     image: getProductThumbnail(item),
   }
 }
-
-const activeProducts = computed(() => rawProducts.value.map(toHomeProduct))
 
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }

@@ -62,6 +62,7 @@
                 -{{ discountPercent(item) }}%
               </span>
               <NuxtImg
+                format="webp"
                 v-if="item.image"
                 :src="item.image"
                 :alt="item.name"

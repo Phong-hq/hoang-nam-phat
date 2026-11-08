@@ -12,7 +12,7 @@
       >
         <slot name="title">{{ title }}</slot>
       </h2>
-      <p v-if="subtitle" class="text-sm mt-1.5" :class="dark ? 'text-white/40' : 'text-base-content/50'">
+      <p v-if="subtitle" class="text-sm mt-1.5" :class="dark ? 'text-white/80' : 'text-base-content/70'">
         {{ subtitle }}
       </p>
       <div class="mt-3 h-1 w-20 rounded-full" :class="colors.line" />

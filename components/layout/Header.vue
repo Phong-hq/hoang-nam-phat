@@ -50,6 +50,8 @@
           <NuxtLink to="/" class="flex-shrink-0">
             <img
               src="~/assets/images/hnp.png"
+              width="250"
+              height="335"
               alt="Logo Công ty Công nghệ Hoàng Nam Phát"
               class="h-[4.5rem] sm:h-[5.25rem] md:h-24 lg:h-24 w-auto object-contain"
             />
@@ -95,7 +97,7 @@
           <div class="flex items-center gap-4 md:gap-5 ml-auto md:ml-0 flex-shrink-0">
 
             <!-- Cart -->
-            <NuxtLink to="/cart" class="flex items-center gap-2 group">
+            <NuxtLink to="/cart" aria-label="Giỏ hàng" class="flex items-center gap-2 group">
               <div class="relative" :class="{ 'animate-cart-bump': isCartBumping }">
                 <svg
                   class="w-6 h-6 md:w-7 md:h-7 text-primary"

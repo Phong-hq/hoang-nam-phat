@@ -33,6 +33,7 @@
                   >
                     <SwiperSlide v-for="(img, index) in galleryImages" :key="index">
                       <NuxtImg
+                        format="webp"
                         :src="img"
                         :class="{'scale-[0.4]': img === PRODUCT_IMAGE_PLACEHOLDER}"
                         :alt="productImageAlt"
@@ -71,6 +72,7 @@
 
                   <template #fallback>
                     <NuxtImg
+                      format="webp"
                       :src="galleryImages[activeImageIndex]"
                       :alt="productImageAlt"
                       width="600"
@@ -112,6 +114,7 @@
                   @click="goToGallerySlide(index)"
                 >
                   <NuxtImg
+                    format="webp"
                     :src="img"
                     :alt="`${product.name} ${index + 1}`"
                     width="64"

@@ -17,6 +17,7 @@
       >
         <figure class="aspect-square overflow-hidden bg-base-200">
           <NuxtImg
+            format="webp"
             :src="getProductThumbnail(item)"
             :alt="item.name"
             width="300"

@@ -137,6 +137,7 @@
                     -{{ getDiscountPercent(item) }}%
                   </span>
                   <NuxtImg
+                    format="webp"
                     :src="getProductThumbnail(item)"
                     :alt="item.name"
                     width="300"

@@ -35,7 +35,7 @@
                 />
                 <span
                   v-else
-                  class="text-sm font-extrabold text-base-content/50 tracking-wide"
+                  class="text-sm font-extrabold text-base-content/70 tracking-wide"
                 >
                   {{ brand.name }}
                 </span>
@@ -60,7 +60,7 @@
                   class="max-w-full max-h-full object-contain"
                   loading="lazy"
                 />
-                <span v-else class="text-sm font-extrabold text-base-content/50">{{ brand.name }}</span>
+                <span v-else class="text-sm font-extrabold text-base-content/70">{{ brand.name }}</span>
               </div>
             </div>
           </div>

@@ -32,7 +32,7 @@
           <div>
             <div class="mb-4">
               <p class="text-white text-xl font-extrabold tracking-tight">{{ companyName }}</p>
-              <p class="text-gray-500 text-xs mt-0.5">Thiết bị mạng &amp; Camera chính hãng</p>
+              <p class="text-gray-400 text-xs mt-0.5">Thiết bị mạng &amp; Camera chính hãng</p>
             </div>
             <ul class="space-y-2.5 text-sm">
               <li v-for="item in contactInfo" :key="item.text"
@@ -55,14 +55,14 @@
             </ul>
 
             <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block mt-5">
-              <img src="https://phongnhadiscovery.com/sites/all/themes/cassiopeia_theme/img/icon/BoCongThuong.png"
+              <img src="/images/bo-cong-thuong.webp" width="217" height="56" loading="lazy"
                 alt="Đã thông báo Bộ Công Thương" class="h-14 w-auto">
             </a>
           </div>
 
           <!-- Product categories -->
           <div>
-            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Sản phẩm</h4>
+            <h2 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Sản phẩm</h2>
             <ul class="space-y-2 text-sm">
               <li v-for="link in productLinks" :key="link.label">
                 <NuxtLink :to="link.href" class="text-gray-400 hover:text-white transition-colors">
@@ -74,7 +74,7 @@
 
           <!-- Support -->
           <div>
-            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Hỗ trợ</h4>
+            <h2 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Hỗ trợ</h2>
             <ul class="space-y-2 text-sm">
               <li v-for="link in supportLinks" :key="link.label">
                 <NuxtLink :to="link.href" class="text-gray-400 hover:text-white transition-colors">
@@ -86,7 +86,7 @@
 
           <!-- Contact CTA -->
           <div>
-            <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Liên hệ</h4>
+            <h2 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Liên hệ</h2>
             <div class="space-y-4">
 
               <!-- Social icons -->
@@ -124,7 +124,7 @@
 
         <!-- Copyright bar -->
         <div class="border-t border-gray-700 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p class="text-xs text-gray-500 text-center sm:text-left">
+          <p class="text-xs text-gray-400 text-center sm:text-left">
             © {{ new Date().getFullYear() }} Công Ty TNHH Công Nghệ Hoàng Nam Phát. Tất cả quyền được bảo lưu.
           </p>
           <!-- <div class="flex items-center gap-4 text-xs text-gray-600">

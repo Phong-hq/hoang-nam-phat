@@ -28,7 +28,7 @@
       >
         <svg
           class="w-3.5 h-3.5 transition-colors"
-          :class="wishlisted ? 'text-primary fill-primary' : 'text-base-content/40 fill-none'"
+          :class="wishlisted ? 'text-primary fill-primary' : 'text-base-content/70 fill-none'"
           viewBox="0 0 24 24"
           stroke="currentColor"
           stroke-width="2"
@@ -42,6 +42,7 @@
       </button>
       <!-- Product image -->
       <NuxtImg
+        format="webp"
         v-if="product.image"
         :src="product.image"
         :alt="product.name"
@@ -54,7 +55,7 @@
 
     <!-- Info -->
     <div class="p-3 flex flex-col flex-1">
-      <span class="text-[10px] font-bold uppercase tracking-widest text-base-content/40">
+      <span class="text-[10px] font-bold uppercase tracking-widest text-base-content/70">
         {{ product.brand }}
       </span>
       <h3 class="text-sm font-medium text-base-content mt-0.5 line-clamp-2 leading-snug h-10">
@@ -64,7 +65,7 @@
       <!-- Price -->
       <div class="mt-2 min-h-[38px]">
         <div
-          class="text-[11px] text-base-content/40 line-through leading-none mb-0.5"
+          class="text-[11px] text-base-content/70 line-through leading-none mb-0.5"
           :class="{ invisible: !product.originalPrice }"
         >
           {{ formatCurrency(product.originalPrice ?? 0) }}
@@ -80,7 +81,7 @@
           class="w-1.5 h-1.5 rounded-full flex-shrink-0"
           :class="product.inStock !== false ? 'bg-success' : 'bg-error'"
         />
-        <span class="text-[10px]" :class="product.inStock !== false ? 'text-success' : 'text-error'">
+        <span class="text-[10px]" :class="product.inStock !== false ? 'text-emerald-700' : 'text-error'">
           {{ product.inStock !== false ? 'Còn hàng' : 'Hết hàng' }}
         </span>
       </div>

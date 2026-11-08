@@ -9,13 +9,13 @@
               <span class="text-2xl">⚡</span>
               <h2 class="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">Flash Sale</h2>
             </div>
-            <p class="text-base-content/50 text-sm">Ưu đãi có hạn · Số lượng giới hạn mỗi ngày</p>
+            <p class="text-base-content/70 text-sm">Ưu đãi có hạn · Số lượng giới hạn mỗi ngày</p>
           </div>
         </div>
 
         <!-- Countdown -->
         <div class="flex items-center gap-2">
-          <span class="text-base-content/60 text-sm font-medium">Kết thúc sau:</span>
+          <span class="text-base-content/70 text-sm font-medium">Kết thúc sau:</span>
           <div class="flex items-center gap-1.5">
             <div
               v-for="(unit, i) in [
@@ -29,9 +29,9 @@
               <div class="bg-primary text-white font-extrabold text-xl w-12 h-12 rounded-lg flex items-center justify-center tabular-nums shadow-lg shadow-primary/40">
                 {{ unit.value }}
               </div>
-              <span class="text-base-content/40 text-[9px] font-bold tracking-widest mt-1">{{ unit.label }}</span>
+              <span class="text-base-content/70 text-[9px] font-bold tracking-widest mt-1">{{ unit.label }}</span>
             </div>
-            <span v-if="false" class="text-base-content/40 font-bold text-2xl -mt-4">:</span>
+            <span v-if="false" class="text-base-content/70 font-bold text-2xl -mt-4">:</span>
           </div>
         </div>
       </div>
@@ -52,13 +52,13 @@
           </Swiper>
 
           <button @click="swiper?.slidePrev()" aria-label="Trước"
-            class="absolute -left-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white border border-base-200 rounded-full items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex">
+            class="absolute -left-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white border border-base-200 rounded-full items-center justify-center text-base-content/70 hover:text-primary hover:border-primary transition-colors hidden md:flex">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button @click="swiper?.slideNext()" aria-label="Tiếp"
-            class="absolute -right-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white border border-base-200 rounded-full items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex">
+            class="absolute -right-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white border border-base-200 rounded-full items-center justify-center text-base-content/70 hover:text-primary hover:border-primary transition-colors hidden md:flex">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
