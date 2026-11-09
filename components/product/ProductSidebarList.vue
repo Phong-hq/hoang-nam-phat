@@ -63,6 +63,7 @@
               </span>
               <NuxtImg
                 format="webp"
+                fit="inside"
                 v-if="item.image"
                 :src="item.image"
                 :alt="item.name"
