@@ -92,7 +92,7 @@ export default defineNuxtConfig({
     // Ảnh sản phẩm nằm trên server ERP. Domain phải có trong danh sách này thì
     // <NuxtImg> mới resize + đổi sang webp qua /_ipx; nếu thiếu, nó trả nguyên
     // file gốc (có ảnh PNG 2MB hiển thị trong ô 300px).
-    domains: ['hoangnamphat-be.captain2.thanhtoan24on7.xyz'],
+    // domains: ['hoangnamphat-be.captain2.thanhtoan24on7.xyz'],
     // Ảnh đã resize được trình duyệt giữ 1 năm (ảnh mới upload lên ERP có tên file
     // mới nên URL cũng mới). Mặc định IPX chỉ cho cache 5 phút.
     ipx: {
