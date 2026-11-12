@@ -90,8 +90,6 @@
                   <NuxtImg
                     v-if="img"
                     :src="img"
-                    :sizes="MAIN_SIZES"
-                    format="webp"
                     :loading="i === 0 ? 'eager' : 'lazy'"
                     alt=""
                     class="absolute inset-0 w-full h-full object-fill"
@@ -104,15 +102,12 @@
             <NuxtLink v-else to="/products" :aria-label="MAIN_LABEL" class="relative block w-full h-full" :style="MAIN_BG">
               <NuxtImg
                 v-if="mainBanners[0]"
-                :src="mainBanners[0]"
-                :sizes="MAIN_SIZES"
-                format="webp"
-                loading="lazy"
+                :src="mainBanners[0]" 
                 alt=""
                 class="absolute inset-0 w-full h-full object-fill"
-              />
+              /> 
             </NuxtLink>
-          </div>
+          </div> 
 
           <!-- Right column: single vertical list, 4 visible at a time, 1 image per slide transition -->
           <div class="relative h-full">
