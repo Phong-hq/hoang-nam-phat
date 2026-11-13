@@ -315,6 +315,7 @@ const { data: product, pending, error } = await useAsyncData(
         specifications: '',
         short_description: '',
         warranty_description: '',
+        additional_data: [],
       }
     }
 
@@ -372,6 +373,9 @@ if (servedFromCache) {
         specifications: detail.specifications,
         short_description: detail.short_description,
         warranty_description: detail.warranty_description,
+        // Info/specs tabs (ProductDetailTabs) render from additional_data,
+        // which list items no longer carry (stripDetailOnlyFields).
+        additional_data: detail.additional_data,
       }
       useProductSeo(product.value)
     })
