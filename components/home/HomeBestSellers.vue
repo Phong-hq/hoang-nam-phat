@@ -39,9 +39,11 @@
             </svg>
           </button>
 
+          <!-- Same slide width / gap as the Swiper breakpoints below (sm/lg/xl = 640/1024/1280),
+               so cards keep their size when Swiper takes over -- no layout jump on hydration. -->
           <template #fallback>
-            <div class="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory">
-              <div v-for="p in products" :key="p.id" class="flex-shrink-0 w-[220px] snap-start">
+            <div class="flex gap-3 sm:gap-4 overflow-hidden">
+              <div v-for="p in products" :key="p.id" class="flex-shrink-0 pb-1 w-full sm:w-[calc((100%_-_32px)/3)] lg:w-[calc((100%_-_48px)/4)] xl:w-[calc((100%_-_64px)/5)]">
                 <HomeProductCard :product="p" />
               </div>
             </div>
