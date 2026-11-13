@@ -44,23 +44,24 @@
           </SwiperSlide>
         </Swiper>
 
+        <!-- Same box as the Swiper slide above (140px wide, 74px logo area, 16px gap),
+             so the strip keeps its height when Swiper takes over. -->
         <template #fallback>
-          <div class="flex gap-4 overflow-x-auto pb-2">
+          <div class="flex gap-4 overflow-hidden">
             <div
               v-for="brand in brands"
               :key="brand.id"
-              class="flex-shrink-0 w-[140px] flex flex-col items-center gap-2 rounded-xl border border-base-200 bg-white"
-              :class="{'p-4': !brand.icon?.length}"
+              class="flex-shrink-0 w-[140px] flex flex-col items-center justify-center gap-2 rounded-xl border border-base-200 bg-white"
             >
-              <div class="w-16 h-10 flex items-center justify-center">
+              <div class="w-full h-[74px] flex items-center justify-center">
                 <img
                   v-if="brand.icon?.length"
                   :src="brand.icon[0]"
                   :alt="brand.name"
-                  class="max-w-full max-h-full object-contain"
+                  class="w-auto h-auto max-w-full max-h-full object-contain"
                   loading="lazy"
                 />
-                <span v-else class="text-sm font-extrabold text-base-content/70">{{ brand.name }}</span>
+                <span v-else class="text-sm font-extrabold text-base-content/70 tracking-wide">{{ brand.name }}</span>
               </div>
             </div>
           </div>
