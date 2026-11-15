@@ -71,40 +71,98 @@
   border-radius: 0.5rem;
 }
 
-.cms-content figure.table {
-  margin: 1rem 0;
-  overflow-x: auto;
-  border-radius: 0.5rem;
-  border: 1px solid;
+// ----- Bảng -----
+// Màu viền/nền suy ra từ currentColor (color-mix) để vẫn theo màu chữ/theme bên ngoài,
+// chỉ nhạt hơn thay vì viền đen 1px như trước.
+.cms-content {
+  --cms-table-border: color-mix(in srgb, currentColor 12%, transparent);
+  --cms-table-head-bg: color-mix(in srgb, currentColor 6%, transparent);
+  --cms-table-stripe-bg: color-mix(in srgb, currentColor 2.5%, transparent);
+  --cms-table-hover-bg: color-mix(in srgb, currentColor 5%, transparent);
 }
-.cms-content figure.table table {
+
+.cms-content figure.table {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--cms-table-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.cms-content table {
   margin: 0;
   width: 100%;
-  min-width: 420px;
   border-collapse: collapse;
   text-align: left;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
-.cms-content figure.table td {
+.cms-content figure.table table {
+  min-width: 420px;
+  border: none !important;
+}
+
+.cms-content th,
+.cms-content td {
   padding: 0.75rem 1rem;
   vertical-align: top;
+  text-align: left;
   width: auto !important;
+  border: none !important;
 }
-.cms-content figure.table tr {
-  border-bottom: 1px solid;
+// Chỉ kẻ đường ngang mảnh giữa các hàng, không kẻ dọc cho thoáng.
+.cms-content tr + tr,
+.cms-content thead + tbody tr:first-child {
+  border-top: 1px solid var(--cms-table-border);
 }
-.cms-content figure.table tr:last-child {
-  border-bottom: none;
+
+// Hàng tiêu đề
+.cms-content thead th,
+.cms-content thead td {
+  background-color: var(--cms-table-head-bg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, currentColor 70%, transparent);
+  white-space: nowrap;
 }
-.cms-content figure.table td:first-child {
+
+// Sọc xen kẽ + hover để dễ dò theo hàng
+.cms-content tbody tr:nth-child(even) {
+  background-color: var(--cms-table-stripe-bg);
+}
+.cms-content tbody tr {
+  transition: background-color 0.15s ease;
+}
+.cms-content tbody tr:hover {
+  background-color: var(--cms-table-hover-bg);
+}
+
+// Cột đầu (tên thông số) đậm hơn; bảng 2 cột kiểu "thông số – chi tiết" thì cố định 40%.
+.cms-content tbody td:first-child,
+.cms-content tbody th {
+  font-weight: 600;
+}
+.cms-content tr > :first-child:nth-last-child(2) {
   width: 40% !important;
-  font-weight: 500;
+}
+
+.cms-content figure.table figcaption {
+  padding: 0.625rem 1rem;
+  border-top: 1px solid var(--cms-table-border);
+  font-size: 0.875rem;
+  text-align: center;
+  color: color-mix(in srgb, currentColor 60%, transparent);
 }
 
 // Fallback cho <table> không được CMS bọc trong figure.table — vẫn cần cuộn ngang
 // trên mobile thay vì bị cha (overflow-hidden) cắt mất nội dung.
 .cms-content table:not(figure.table table) {
   display: block;
-  margin: 1rem 0;
+  margin: 1.25rem 0;
   overflow-x: auto;
   white-space: nowrap;
+  border: 1px solid var(--cms-table-border);
+  border-radius: 0.75rem;
 }
