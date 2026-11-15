@@ -56,7 +56,7 @@
         <div v-if="sideBanners.length" class="hidden sm:grid sm:grid-cols-2 sm:gap-3">
           <NuxtLink
             v-for="b in sideBanners"
-            :key="b.href"
+            :key="b.label"
             :to="b.href"
             :aria-label="b.label"
             class="relative block rounded-lg overflow-hidden aspect-[3.21] shadow-md active:opacity-80 transition-opacity"
@@ -137,7 +137,7 @@
             <div v-else class="absolute inset-0 flex flex-col gap-2.5">
               <NuxtLink
                 v-for="b in sideBanners.slice(0, HERO_SWIPER_SLIDES_PER_VIEW)"
-                :key="b.href"
+                :key="b.label"
                 :to="b.href"
                 :aria-label="b.label"
                 class="flex-1 relative rounded-xl overflow-hidden"
@@ -205,12 +205,12 @@ const mainBanners = computed(() => {
 })
 
 const rightBannersMeta = [
-  { href: '/products?category=camera', label: 'Camera quan sát', field: 'left', index: 0 },
-  { href: '/products?category=router', label: 'Router', field: 'left', index: 1 },
-  { href: '/products?category=switch', label: 'Switch', field: 'right', index: 0 },
-  { href: '/products?category=nas', label: 'Thiết bị lưu trữ NAS', field: 'right', index: 1 },
-  { href: '/products?category=laptop', label: 'Laptop', field: 'right', index: 2 },
-  { href: '/products?category=accessories', label: 'Phụ kiện', field: 'right', index: 3 },
+  { href: '/category/camera-quan-sat', label: 'Camera quan sát', field: 'left', index: 0 },
+  { href: '/category/router', label: 'Router', field: 'left', index: 1 },
+  { href: '/category/switch', label: 'Switch', field: 'right', index: 0 },
+  { href: '/products', label: 'Thiết bị lưu trữ NAS', field: 'right', index: 1 },
+  { href: '/products', label: 'Laptop', field: 'right', index: 2 },
+  { href: '/category/phu-kien', label: 'Phụ kiện', field: 'right', index: 3 },
 ] as const
 
 // A slot the CMS left without an image would render as a bare block -- only list the
@@ -236,7 +236,7 @@ const loopSideBanners = computed(() => {
   const repeated = []
   for (let i = 0; repeated.length < minSlides; i++) {
     const b = banners[i % banners.length]
-    repeated.push({ ...b, key: `${b.href}-${i}` })
+    repeated.push({ ...b, key: `${b.label}-${i}` })
   }
   return repeated
 })

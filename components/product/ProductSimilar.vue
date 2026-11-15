@@ -79,8 +79,5 @@ const similarProducts = computed<ProductCatalogItem[]>(() =>
     .slice(0, 4),
 )
 
-const viewMoreLink = computed(() => {
-  const base = `/products?category=${encodeURIComponent(props.categorySlug)}`
-  return props.subCategory ? `${base}&sub_category=${encodeURIComponent(props.subCategory.slug)}` : base
-})
+const viewMoreLink = computed(() => categoryPath(props.categorySlug, props.subCategory?.slug))
 </script>

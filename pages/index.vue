@@ -58,7 +58,7 @@ const productSections = computed<SectionConfig[]>(() =>
       label: c.description?.trim(),
       title: c.name,
       subtitle: c.description,
-      to: `/products?category=${c.slug}`,
+      to: categoryPath(c.slug),
       autoplayDelay: 4000,
       categoryId: c.id,
     },

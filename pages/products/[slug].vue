@@ -12,7 +12,7 @@
         <ul>
           <li><NuxtLink to="/">Trang chủ</NuxtLink></li>
           <li><NuxtLink to="/products">Sản phẩm</NuxtLink></li>
-          <li><NuxtLink :to="`/products?category=${product.category.slug}`">{{ product.category.name }}</NuxtLink></li>
+          <li><NuxtLink :to="categoryPath(product.category.slug)">{{ product.category.name }}</NuxtLink></li>
           <li class="text-base-content/60">{{ product.name }}</li>
         </ul>
       </nav>
@@ -261,7 +261,7 @@
         <ProductSidebarList
           title="Có thể bạn quan tâm"
           :subtitle="sidebarSubtitle"
-          :view-more-link="`/products?category=${product.category.slug}`"
+          :view-more-link="categoryPath(product.category.slug)"
           :items="sidebarItems"
           empty-text="Không có sản phẩm liên quan"
           @select="(item: unknown) => productStore.setSelectedProduct(item as ProductCatalogItem)"

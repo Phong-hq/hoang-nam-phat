@@ -64,7 +64,7 @@ export function useProductSeo(product: ProductDetail) {
   useBreadcrumb([
     { name: 'Trang chủ', path: '/' },
     { name: 'Sản phẩm', path: '/products' },
-    { name: product.category.name, path: `/products?category=${product.category.slug}` },
+    { name: product.category.name, path: categoryPath(product.category.slug) },
     { name: product.name },
   ])
 

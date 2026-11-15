@@ -60,30 +60,78 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useNewsPageStore } from '~/stores/newsPage'
-import { formatDate, resolveOembedTags } from '~/utils'
+import { SITE_NAME, SITE_URL, DEFAULT_OG_IMAGE } from '~/constants'
+import { formatDate, newsPath, newsSlug, resolveOembedTags, slugify } from '~/utils'
 
+// Bài tin tức: /news/<slug>. URL cũ /news/<id> chuyển 301 sang URL có slug.
 const route = useRoute()
-const id = computed(() => Number(route.params.id))
+const param = String(route.params.slug)
+const runtimeConfig = useRuntimeConfig()
+const siteUrl = (runtimeConfig.public.siteUrl || SITE_URL).replace(/\/$/, '')
 
 const newsPageStore = useNewsPageStore()
 
-const { data: item, pending, error } = await useAsyncData(
-  `news-${id.value}`,
-  async () => {
-    await newsPageStore.fetchNewsList()
-    return newsPageStore.getById(id.value) ?? null
-  },
-  { watch: [id] },
-)
+const { data: item, pending, error } = await useAsyncData(`news-${param}`, async () => {
+  await newsPageStore.fetchNewsList()
+  return newsPageStore.newsList.find((n) => newsSlug(n) === param) ?? null
+})
+
+// URL không khớp slug hiện tại của bài nào -> thử các dạng URL cũ rồi 301 sang URL đúng:
+//   /news/<id>                 URL đầu tiên của site
+//   /news/<slug dựng từ title> URL tạm khi bài chưa có slug; admin điền/sửa slug tay sau đó
+if (!item.value) {
+  const legacy = /^\d+$/.test(param)
+    ? newsPageStore.getById(Number(param))
+    : newsPageStore.newsList.find((n) => slugify(n.title) === param)
+  if (legacy) await navigateTo(newsPath(legacy), { redirectCode: 301 })
+}
 
 if (error.value || !item.value) {
   throw createError({ statusCode: 404, statusMessage: 'Không tìm thấy bài viết tin tức' })
 }
 
+const article = item.value
+const canonical = `${siteUrl}${newsPath(article)}`
+const image = article.banner || `${siteUrl}${DEFAULT_OG_IMAGE}`
+
 useSeo({
-  title: item.value.title,
-  description: item.value.description ?? undefined,
+  title: article.title,
+  description: article.description ?? undefined,
+  canonical,
+  ogType: 'article',
+  ogImage: article.banner || undefined,
 })
+
+useBreadcrumb([
+  { name: 'Trang chủ', path: '/' },
+  { name: 'Tin tức', path: '/news' },
+  { name: article.title, path: newsPath(article) },
+])
+
+useJsonLd(
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    ...(article.description ? { description: article.description } : {}),
+    image: [image],
+    datePublished: toIsoDate(article.created_at),
+    dateModified: toIsoDate(article.updated_at || article.created_at),
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    author: { '@type': 'Organization', name: SITE_NAME, url: siteUrl },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: `${siteUrl}${DEFAULT_OG_IMAGE}` },
+    },
+  },
+  'jsonld-article',
+)
+
+// ERP trả "YYYY-MM-DD HH:mm:ss" (giờ VN); schema cần ISO 8601 kèm múi giờ.
+function toIsoDate(value: string): string {
+  return /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(value) ? `${value.replace(' ', 'T')}+07:00` : value
+}
 
 const infoHtml = computed(() => (item.value?.info ? resolveOembedTags(item.value.info) : ''))
 </script>

@@ -322,7 +322,7 @@
                   </button>
                   <NuxtLink
                     v-else
-                    :to="`/products?category=${cat.slug}`"
+                    :to="categoryPath(cat.slug)"
                     class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                     @click="isMenuOpen = false"
                   >
@@ -337,7 +337,7 @@
                     <template v-if="cat.children?.length">
                       <li v-for="child in cat.children" :key="child.id">
                         <NuxtLink
-                          :to="`/products?category=${cat.slug}&sub_category=${child.slug}`"
+                          :to="categoryPath(cat.slug, child.slug)"
                           class="flex items-center gap-2 pl-8 pr-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
                           @click="isMenuOpen = false"
                         >
@@ -346,7 +346,7 @@
                         <ul v-if="child.brands.length" class="pb-1">
                           <li v-for="brand in child.brands" :key="brand.id">
                             <NuxtLink
-                              :to="`/products?category=${cat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
+                              :to="`${categoryPath(cat.slug, child.slug)}?brand=${brand.id}`"
                               class="flex items-center gap-2 pl-12 pr-4 py-1.5 text-sm text-gray-500 hover:bg-gray-100"
                               @click="isMenuOpen = false"
                             >
@@ -359,7 +359,7 @@
                     <template v-else>
                       <li v-for="brand in cat.brands" :key="brand.id">
                         <NuxtLink
-                          :to="`/products?category=${cat.slug}&brand=${brand.id}`"
+                          :to="`${categoryPath(cat.slug)}?brand=${brand.id}`"
                           class="flex items-center gap-2 pl-8 pr-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
                           @click="isMenuOpen = false"
                         >
@@ -369,7 +369,7 @@
                     </template>
                     <li>
                       <NuxtLink
-                        :to="`/products?category=${cat.slug}`"
+                        :to="categoryPath(cat.slug)"
                         class="block pl-8 pr-4 py-2 text-sm text-primary font-semibold hover:underline"
                         @click="isMenuOpen = false"
                       >

@@ -37,7 +37,7 @@
               <NuxtLink
                 v-for="item in pagedNews"
                 :key="item.id"
-                :to="`/news/${item.id}`"
+                :to="newsPath(item)"
                 class="group flex items-center gap-4 p-5 hover:bg-gray-50 transition-colors"
               >
                 <div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">

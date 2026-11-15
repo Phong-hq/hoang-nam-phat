@@ -3,7 +3,7 @@
 // Always call server-side (in setup or useAsyncData) -- never inside onMounted()
 //
 // Accepts a plain object, a ref or a getter. Pages whose content changes without
-// remounting (e.g. /products?category=a -> ?category=b) pass a getter so the title,
+// remounting (e.g. /category/a?sort=price-asc -> ?page=2) pass a getter so the title,
 // description and canonical follow the current URL.
 
 import type { MaybeRefOrGetter } from 'vue'

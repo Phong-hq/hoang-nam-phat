@@ -12,7 +12,7 @@
           @mouseenter="onCatHover(cat, $event)"
         >
           <NuxtLink
-            :to="`/products?category=${cat.slug}`"
+            :to="categoryPath(cat.slug)"
             :class="[
               'flex items-center justify-between px-3.5 py-[9px] text-sm transition-colors',
               hoveredCat?.id === cat.id
@@ -75,7 +75,7 @@
         >
           <div v-for="child in hoveredCat.children" :key="child.id" class="min-w-0">
             <NuxtLink
-              :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}`"
+              :to="categoryPath(hoveredCat.slug, child.slug)"
               class="block text-sm font-bold text-gray-800 truncate mb-1.5 -mx-2 px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
               @click="$emit('navigate')"
             >
@@ -84,7 +84,7 @@
             <ul v-if="child.brands.length" class="space-y-1">
               <li v-for="brand in child.brands" :key="brand.id">
                 <NuxtLink
-                  :to="`/products?category=${hoveredCat.slug}&sub_category=${child.slug}&brand=${brand.id}`"
+                  :to="`${categoryPath(hoveredCat.slug, child.slug)}?brand=${brand.id}`"
                   class="block text-sm text-gray-500 truncate -mx-2 px-2 py-1 rounded-md hover:bg-primary hover:text-white transition-colors"
                   @click="$emit('navigate')"
                 >
@@ -99,7 +99,7 @@
           <NuxtLink
             v-for="brand in hoveredCat.brands"
             :key="brand.id"
-            :to="`/products?category=${hoveredCat.slug}&brand=${brand.id}`"
+            :to="`${categoryPath(hoveredCat.slug)}?brand=${brand.id}`"
             class="group flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-primary transition-colors"
             @click="$emit('navigate')"
           >
@@ -108,7 +108,7 @@
         </div>
         <div class="border-t border-gray-100 mt-3 pt-3">
           <NuxtLink
-            :to="`/products?category=${hoveredCat.slug}`"
+            :to="categoryPath(hoveredCat.slug)"
             class="text-sm text-primary hover:underline font-semibold flex items-center gap-1"
             @click="$emit('navigate')"
           >

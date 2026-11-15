@@ -264,7 +264,7 @@ const contactInfo = computed(() => [
 ])
 
 const productLinks = computed(() =>
-  categories.value.map(c => ({ label: c.name, href: `/products?category=${c.slug}` })),
+  categories.value.map(c => ({ label: c.name, href: categoryPath(c.slug) })),
 )
 
 const supportLinks = [

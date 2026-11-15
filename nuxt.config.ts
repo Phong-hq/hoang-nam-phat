@@ -77,11 +77,26 @@ export default defineNuxtConfig({
 
   sitemap: {
     sitemaps: {
+      pages: {
+        sources: ['/api/__sitemap__/pages'],
+      },
       products: {
         sources: ['/api/__sitemap__/products'],
       },
       categories: {
         sources: ['/api/__sitemap__/categories'],
+      },
+      brands: {
+        sources: ['/api/__sitemap__/brands'],
+      },
+      news: {
+        sources: ['/api/__sitemap__/news'],
+      },
+      solutions: {
+        sources: ['/api/__sitemap__/solutions'],
+      },
+      policies: {
+        sources: ['/api/__sitemap__/policies'],
       },
     },
   },
@@ -116,6 +131,8 @@ export default defineNuxtConfig({
     // và làm mới ở nền, nên khách không bao giờ phải chờ.
     '/': { swr: 300 },
     '/products/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
+    '/category/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
+    '/brand/**': { ssr: true, headers: { 'cache-control': 's-maxage=3600' } },
     // File font không đổi nội dung theo thời gian -> cho trình duyệt giữ 1 năm.
     '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/admin/**': { ssr: false },
