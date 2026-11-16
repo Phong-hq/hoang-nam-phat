@@ -12,6 +12,9 @@ import { useJsonLd } from './useJsonLd'
 // Google cắt mô tả ở khoảng 155-160 ký tự.
 const MAX_DESCRIPTION_LENGTH = 160
 
+// Trang "Chính sách giao hàng, đổi trả" (CMS policy_page id 3).
+const RETURN_POLICY_PATH = '/policy/3'
+
 function stripHtml(value?: string | null): string {
   return (value ?? '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
 }
@@ -68,13 +71,15 @@ export function useProductSeo(product: ProductDetail) {
     { name: product.name },
   ])
 
-  // Same price the page shows (variant first, then product). 0/empty renders
-  // "Liên hệ báo giá" -- quote-only, no fixed price to advertise. Emitting
-  // price: 0 would misrepresent the offer to Google, so the Offer is dropped
-  // entirely in that case instead of carrying a fake price.
+  // Same price the page shows (variant first, then product). "Liên hệ báo giá"
+  // (flag from BE, or no price) is quote-only, with no fixed price to advertise.
+  // Emitting price: 0 would misrepresent the offer to Google, so the Offer is
+  // dropped entirely in that case instead of carrying a fake price.
   const price = listPrice
-  const offers = price > 0
-    ? {
+  const isContactPrice = !!product.is_contact_price || !(price > 0)
+  const offers = isContactPrice
+    ? null
+    : {
         '@type': 'Offer',
         priceCurrency: 'VND',
         price,
@@ -85,8 +90,15 @@ export function useProductSeo(product: ProductDetail) {
           '@type': 'Organization',
           name: SITE_NAME,
         },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'VN',
+          // Chính sách đổi trả (/policy/3) không có số ngày cố định: chỉ nhận đổi trả
+          // khi giao sai/thiếu/lỗi, đổi do đặt nhầm xét từng trường hợp. Không bịa số ngày.
+          returnPolicyCategory: 'https://schema.org/MerchantReturnUnspecified',
+          merchantReturnLink: `${siteUrl}${RETURN_POLICY_PATH}`,
+        },
       }
-    : null
 
   // Real product photos only, as absolute URLs -- the shop-logo placeholder
   // isn't a product image and must not be reported as one.
@@ -97,7 +109,8 @@ export function useProductSeo(product: ProductDetail) {
     '@type': 'Product',
     name: product.name,
     description: seoDescription,
-    sku: String(product.id),
+    // Mã sản phẩm thật từ ERP; sản phẩm chưa có mã thì bỏ trống thay vì dùng id nội bộ.
+    ...(product.sku?.trim() ? { sku: product.sku.trim() } : {}),
     url: canonicalUrl,
     category: product.category.name,
     ...(images.length ? { image: images } : {}),

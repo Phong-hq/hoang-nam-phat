@@ -15,13 +15,13 @@
           :space-between="16"
           :autoplay="autoplay"
           :speed="4000"
-          :loop="true"
+          :loop="loopBrands.length > MAX_VISIBLE_BRANDS"
           :free-mode="{ enabled: true, momentum: false }"
           :grab-cursor="false"
           :allow-touch-move="false"
           class="brands-swiper"
         >
-          <SwiperSlide v-for="brand in brands" :key="brand.id" style="width: 140px;">
+          <SwiperSlide v-for="brand in loopBrands" :key="brand.loopKey" style="width: 140px;">
             <div
               class="w-full h-full flex flex-col items-center justify-center my-auto gap-2 rounded-xl border border-base-200 bg-white"
             >
@@ -86,6 +86,22 @@ const { brands: allBrands } = storeToRefs(brandStore)
 // Home strip only shows brands the CMS marked to appear on the homepage --
 // the full list still backs the /products filter sidebar elsewhere.
 const brands = computed(() => allBrands.value.filter((brand) => brand.show_on_home === 1))
+
+// slidesPerView 'auto': 140px slide + 16px gap in a max 1248px container shows ~8 logos.
+// Swiper loop needs more slides than are visible, otherwise it warns and the marquee
+// stops -- so repeat the list until there's a full extra screen of logos.
+const MAX_VISIBLE_BRANDS = 8
+const loopBrands = computed(() => {
+  const list = brands.value
+  if (!list.length) return []
+  const minSlides = MAX_VISIBLE_BRANDS * 2
+  const repeated = []
+  for (let i = 0; i < Math.max(list.length, minSlides); i++) {
+    const brand = list[i % list.length]!
+    repeated.push({ ...brand, loopKey: `${brand.id}-${i}` })
+  }
+  return repeated
+})
 </script>
 
 <style>

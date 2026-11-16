@@ -14,7 +14,7 @@
           v-if="swiperReady && mainBanners.length > 1"
           :modules="mobileMainSwiperModules"
           :autoplay="mainAutoplay"
-          :loop="true"
+          :loop="mainBanners.length > 1"
           :pagination="{ clickable: true }"
           class="hero-mobile-main w-full rounded-xl overflow-hidden aspect-[1.52] shadow-lg"
         >
@@ -82,7 +82,7 @@
               v-if="swiperReady && mainBanners.length > 1"
               :modules="mainSwiperModules"
               :autoplay="mainAutoplay"
-              :loop="true"
+              :loop="mainBanners.length > 1"
               class="h-full w-full"
             >
               <SwiperSlide v-for="(img, i) in mainBanners" :key="i">

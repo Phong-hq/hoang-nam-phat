@@ -19,7 +19,7 @@
             :modules="swiperModules"
             :breakpoints="breakpoints"
             :autoplay="autoplay"
-            :loop="true"
+            :loop="reviews.length > MAX_SLIDES_PER_VIEW"
             @swiper="onSwiper"
           >
             <SwiperSlide v-for="review in reviews" :key="review.id" class="!h-auto pb-1">
@@ -77,6 +77,8 @@ import type { Swiper as SwiperType } from 'swiper'
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
 const swiperModules = [Autoplay]
+// Swiper loop needs more slides than the widest breakpoint shows (lg = 3).
+const MAX_SLIDES_PER_VIEW = 3
 const breakpoints = {
   320: { slidesPerView: 1.1, spaceBetween: 12 },
   640: { slidesPerView: 2, spaceBetween: 16 },

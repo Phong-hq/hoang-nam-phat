@@ -40,7 +40,7 @@
                 <svg class="w-4 h-4 text-gray-500 flex-shrink-0"
                   :class="{ 'mt-0.5': item.align === 'items-start' }"
                   :fill="item.icon.mode === 'fill' ? 'currentColor' : 'none'"
-                  :viewBox="item.icon.viewBox"
+                  :viewBox.attr="item.icon.viewBox"
                   :stroke="item.icon.mode === 'stroke' ? 'currentColor' : undefined"
                   :stroke-width="item.icon.mode === 'stroke' ? 2 : undefined">
                   <path v-for="(d, i) in item.icon.paths" :key="i" :d="d"

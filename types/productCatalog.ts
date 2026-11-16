@@ -70,6 +70,8 @@ export interface ProductAdditionalDataItem {
 }
 
 export interface ProductDetail extends ProductCatalogItem {
+  // true = "Liên hệ báo giá": BE trả unit_price/compare_price = null.
+  is_contact_price?: boolean | number | null
   specifications: string
   description: string
   short_description: string

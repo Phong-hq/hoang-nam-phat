@@ -43,7 +43,7 @@
             :modules="swiperModules"
             :breakpoints="breakpoints"
             :autoplay="autoplay"
-            :loop="true"
+            :loop="products.length > MAX_SLIDES_PER_VIEW"
             @swiper="onSwiper"
           >
             <SwiperSlide v-for="product in products" :key="product.id" class="pb-1">
@@ -89,6 +89,8 @@ import { useFlashSaleStore } from '~/stores/flashSale.store'
 const swiper = ref<SwiperType | null>(null)
 const onSwiper = (s: SwiperType) => { swiper.value = s }
 const swiperModules = [Autoplay]
+// Swiper loop needs more slides than the widest breakpoint shows (xl = 5).
+const MAX_SLIDES_PER_VIEW = 5
 const breakpoints = {
   320: { slidesPerView: 1, spaceBetween: 12 },
   640: { slidesPerView: 3, spaceBetween: 16 },
