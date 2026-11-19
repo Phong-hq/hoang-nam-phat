@@ -140,7 +140,7 @@
           <BaseRadio
             v-model="form.paymentMethod"
             value="cod"
-            label="Thanh toán khi nhận hàng (COD)"
+            label="Đặt cọc trước, thanh toán phần còn lại khi nhận hàng (COD)"
             name="paymentMethod"
           />
         </div>
