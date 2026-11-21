@@ -20,6 +20,9 @@ export interface ProductCategoryChild {
   parent_id: number
   priority: number
   show_on_home: number
+  // Meta SEO admin nhập tay (null = tự sinh như cũ).
+  meta_title?: string | null
+  meta_description?: string | null
   brands: CategoryBrand[]
 }
 
@@ -36,6 +39,9 @@ export interface ProductCategory {
   children?: ProductCategoryChild[]
   status: number
   slug: string
+  // Meta SEO admin nhập tay (null = tự sinh như cũ).
+  meta_title?: string | null
+  meta_description?: string | null
 }
 
 // The category menu renders the same payload as the list endpoint -- alias kept

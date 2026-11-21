@@ -193,6 +193,12 @@
               <BasePagination :current-page="currentPage" :total-pages="totalPages" :page-href="pageHref" @change="handlePageChange" />
             </div>
           </template>
+
+          <!-- Đoạn giới thiệu SEO admin nhập (HTML đã lọc mã độc ở backend). Chỉ hiện ở trang 1
+               để trang 2, 3... không lặp lại cùng 1 nội dung dài. -->
+          <section v-if="seoContent && currentPage === 1" class="mt-10 rounded-lg bg-white p-6">
+            <div class="cms-content" v-html="seoContent" />
+          </section>
         </div>
       </div>
     </div>
@@ -218,6 +224,8 @@ import { useProductStore } from '~/stores/product.store'
 import { useCartStore } from '~/stores/cart.store'
 import { useUiStore } from '~/stores/ui.store'
 import { productCatalogService } from '~/services/productCatalog.service'
+import { categoryService } from '~/services/category.service'
+import { brandService } from '~/services/brand.service'
 import type { ProductCatalogItem } from '~/types/productCatalog'
 import type { BreadcrumbItem, CategoryBrand, ProductCategoryChild, ProductQueryParams } from '~/types'
 
@@ -564,19 +572,45 @@ const breadcrumbs = computed<BreadcrumbItem[]>(() => {
 
 if (breadcrumbs.value.length > 2) useBreadcrumb(breadcrumbs.value)
 
+// Danh mục / danh mục phụ / thương hiệu mà trang này đại diện -- nguồn của meta admin nhập tay.
+// Trang danh mục có lọc ?brand= vẫn là trang danh mục.
+const pageEntity = computed(() => selectedSubCategoryChild.value ?? selectedCategory.value ?? pageBrandInfo.value)
+
 // Canonical mặc định của useSeo = đường dẫn + ?page, bỏ ?brand / ?sort -- đúng ý:
 // biến thể lọc trỏ về trang danh mục gốc.
 useSeo(() => {
   const name = pageName.value
   const pageSuffix = currentPage.value > 1 ? ` - Trang ${currentPage.value}` : ''
   const intro = pageIntro.value ? `${pageIntro.value.replace(/[.\s]+$/, '')}. ` : ''
+  // Admin nhập meta tay thì dùng, trống thì tự sinh như cũ.
+  const metaTitle = pageEntity.value?.meta_title?.trim()
+  const metaDescription = pageEntity.value?.meta_description?.trim()
 
   return {
-    title: name ? `${name} chính hãng, giá tốt${pageSuffix}` : `Tất cả sản phẩm${pageSuffix}`,
-    description: name
-      ? `${intro}Mua ${name} chính hãng tại Hoàng Nam Phát: giá tốt, bảo hành chính hãng, tư vấn tận tâm, giao hàng toàn quốc.`
-      : 'Khám phá router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng tại Hoàng Nam Phát.',
+    title: metaTitle
+      ? `${metaTitle}${pageSuffix}`
+      : name
+        ? `${name} chính hãng, giá tốt${pageSuffix}`
+        : `Tất cả sản phẩm${pageSuffix}`,
+    description:
+      metaDescription ||
+      (name
+        ? `${intro}Mua ${name} chính hãng tại Hoàng Nam Phát: giá tốt, bảo hành chính hãng, tư vấn tận tâm, giao hàng toàn quốc.`
+        : 'Khám phá router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng tại Hoàng Nam Phát.'),
   }
+})
+
+// Đoạn giới thiệu SEO dài (HTML) -- tải riêng qua API view vì cây danh mục không chứa nó.
+// Tải trên server để Google đọc được. Lỗi API thì bỏ qua, trang vẫn hiện bình thường.
+const { data: seoContent } = await useAsyncData(`seo-content:${ownPath}`, async () => {
+  try {
+    const category = selectedSubCategoryChild.value ?? selectedCategory.value
+    if (category) return await categoryService.getSeoContent(category.id)
+    if (pageBrand.value) return await brandService.getSeoContent(pageBrand.value.id)
+  } catch {
+    // ignore
+  }
+  return null
 })
 
 // ---------------------------------------------------------------------------

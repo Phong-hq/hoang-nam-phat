@@ -50,13 +50,15 @@ export function useProductSeo(product: ProductDetail) {
   const canonicalUrl = `${siteUrl}/products/${product.slug}`
   const image = getProductThumbnail(product)
   const listPrice = product.variants?.unit_price || product.unit_price || 0
-  const seoDescription = buildDescription(product, listPrice, hotline)
+  // Admin nhập meta tay thì dùng, trống thì tự sinh như cũ.
+  const seoTitle = product.meta_title?.trim() || product.name
+  const seoDescription = product.meta_description?.trim() || buildDescription(product, listPrice, hotline)
 
   useSeo({
-    title: product.name,
+    title: seoTitle,
     description: seoDescription,
     canonical: canonicalUrl,
-    ogTitle: product.name,
+    ogTitle: seoTitle,
     ogDescription: seoDescription,
     ogImage: image,
     ogType: 'product',

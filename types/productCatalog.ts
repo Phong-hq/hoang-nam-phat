@@ -72,6 +72,9 @@ export interface ProductAdditionalDataItem {
 export interface ProductDetail extends ProductCatalogItem {
   // true = "Liên hệ báo giá": BE trả unit_price/compare_price = null.
   is_contact_price?: boolean | number | null
+  // Meta SEO admin nhập tay (null = tự sinh như cũ).
+  meta_title?: string | null
+  meta_description?: string | null
   specifications: string
   description: string
   short_description: string

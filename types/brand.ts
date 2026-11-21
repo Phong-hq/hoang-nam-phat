@@ -13,4 +13,9 @@ export interface Brand {
   priority: number
   parent_id: number | null
   show_on_home: number
+  // Meta SEO admin nhập tay (null = tự sinh như cũ).
+  meta_title?: string | null
+  meta_description?: string | null
+  // HTML giới thiệu -- chỉ API view trả (không có trong danh sách).
+  seo_content?: string | null
 }

@@ -17,4 +17,10 @@ export const brandService = {
     const res = await httpClient.get<ApiListResponse<Brand>>(`${BRAND_API_URL}${query}`)
     return res.items
   },
+
+  // Đoạn giới thiệu SEO (HTML) của 1 thương hiệu. Chỉ API view trả field này.
+  async getSeoContent(id: number): Promise<string | null> {
+    const res = await httpClient.get<Pick<Brand, 'seo_content'> | null>(`${BRAND_API_URL}view?id=${id}`)
+    return res?.seo_content || null
+  },
 }

@@ -19,4 +19,13 @@ export const categoryService = {
     const res = await httpClient.get<ApiListResponse<ProductCategoryMenuItem>>(CATEGORY_API_URL)
     return res.items
   },
+
+  // Đoạn giới thiệu SEO (HTML) của 1 danh mục / danh mục phụ. Chỉ API view trả field này --
+  // cây danh mục (menu, tải ở mọi trang) cố tình không có để HTML trang nhẹ.
+  async getSeoContent(id: number): Promise<string | null> {
+    const res = await httpClient.get<{ category?: { seo_content?: string | null } }>(
+      `${CATEGORY_API_URL}/view?id=${id}`,
+    )
+    return res?.category?.seo_content || null
+  },
 }
