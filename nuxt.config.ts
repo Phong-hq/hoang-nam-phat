@@ -29,14 +29,12 @@ export default defineNuxtConfig({
       title: 'Thiết Bị Mạng & Camera Chính Hãng',
       meta: [
         { name: 'description', content: 'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng; giá tốt, tư vấn tận tâm, giao hàng toàn quốc.' },
-        { name: 'keywords', content: 'thiết bị mạng chính hãng, router, switch, wifi, camera, tổng đài ip' },
         { name: 'robots', content: 'index, follow' },
         { name: 'theme-color', content: '#ffffff' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'Hoàng Nam Phát' },
         { property: 'og:image', content: `${SITE_URL}${DEFAULT_OG_IMAGE}` },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:site', content: '@hoangnamphat' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

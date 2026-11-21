@@ -35,15 +35,18 @@
               <p class="text-gray-400 text-xs mt-0.5">Thiết bị mạng &amp; Camera chính hãng</p>
             </div>
             <ul class="space-y-2.5 text-sm">
-              <li v-for="item in contactInfo" :key="item.text"
+              <li
+v-for="item in contactInfo" :key="item.text"
                 :class="['flex gap-2.5', item.align]">
-                <svg class="w-4 h-4 text-gray-500 flex-shrink-0"
+                <svg
+class="w-4 h-4 text-gray-500 flex-shrink-0"
                   :class="{ 'mt-0.5': item.align === 'items-start' }"
                   :fill="item.icon.mode === 'fill' ? 'currentColor' : 'none'"
                   :viewBox.attr="item.icon.viewBox"
                   :stroke="item.icon.mode === 'stroke' ? 'currentColor' : undefined"
                   :stroke-width="item.icon.mode === 'stroke' ? 2 : undefined">
-                  <path v-for="(d, i) in item.icon.paths" :key="i" :d="d"
+                  <path
+v-for="(d, i) in item.icon.paths" :key="i" :d="d"
                     :stroke-linecap="item.icon.mode === 'stroke' ? 'round' : undefined"
                     :stroke-linejoin="item.icon.mode === 'stroke' ? 'round' : undefined" />
                 </svg>
@@ -54,8 +57,9 @@
               </li>
             </ul>
 
-            <a :href="socialRecord?.moit_verification_url" v-if="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block mt-5">
-              <img src="/images/bo-cong-thuong.webp" width="217" height="56" loading="lazy"
+            <a v-if="socialRecord?.moit_verification_url" :href="socialRecord?.moit_verification_url" target="_blank" rel="noopener noreferrer" class="inline-block mt-5">
+              <img
+src="/images/bo-cong-thuong.webp" width="217" height="56" loading="lazy"
                 alt="Đã thông báo Bộ Công Thương" class="h-14 w-auto">
             </a>
           </div>
@@ -91,7 +95,8 @@
 
               <!-- Social icons -->
               <div class="flex items-center gap-3">
-                <a v-for="social in socialLinks" :key="social.label"
+                <a
+v-for="social in socialLinks" :key="social.label"
                   :href="social.href" target="_blank" rel="noopener noreferrer" :title="social.label"
                   :class="[
                     'flex items-center justify-center text-gray-400 hover:text-white transition-colors',
@@ -105,8 +110,9 @@
               </div>
 
               <!-- Facebook embed -->
-              <div ref="fbPageEl" class="fb-page block h-auto overflow-hidden rounded-lg"
-              v-if="facebookHref"
+              <div
+v-if="facebookHref" ref="fbPageEl"
+              class="fb-page block h-auto overflow-hidden rounded-lg"
                 :data-href="facebookHref"
                 data-tabs=""
                 data-width="380"
@@ -114,8 +120,7 @@
                 data-small-header="true"
                 data-adapt-container-width="true"
                 data-hide-cover="true"
-                data-show-facepile="true">
-              </div>
+                data-show-facepile="true"/>
 
             </div>
           </div>

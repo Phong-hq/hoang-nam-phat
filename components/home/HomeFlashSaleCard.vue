@@ -11,9 +11,9 @@
         -{{ product.discount }}%
       </span>
       <NuxtImg
+        v-if="product.image"
         format="webp"
         fit="inside"
-        v-if="product.image"
         :src="product.image"
         :alt="product.name"
         width="300" height="300" loading="lazy"

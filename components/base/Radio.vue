@@ -8,7 +8,7 @@
       :checked="modelValue === value"
       :disabled="disabled"
       @change="$emit('update:modelValue', value)"
-    />
+    >
     <span class="text-sm font-medium text-base-content select-none">{{ label }}</span>
   </label>
 </template>

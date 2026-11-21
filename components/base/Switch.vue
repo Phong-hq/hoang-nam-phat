@@ -7,7 +7,7 @@
         :disabled="disabled"
         class="toggle"
         @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
-      />
+      >
       <span v-if="label" class="label-text">{{ label }}</span>
     </label>
   </div>

@@ -52,7 +52,6 @@ export function useSeo(input: MaybeRefOrGetter<SeoMeta>) {
   useSeoMeta({
     title: () => title.value,
     description: () => meta.value.description,
-    keywords: () => meta.value.keywords,
     robots: () => robots.value,
     ogTitle: () => meta.value.ogTitle ?? meta.value.title ?? siteName,
     ogDescription: () => meta.value.ogDescription ?? meta.value.description,

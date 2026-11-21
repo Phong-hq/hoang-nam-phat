@@ -26,7 +26,7 @@
             :checked="isSelected(item.id)"
             class="sr-only"
             @change="handleChange(item.id, ($event.target as HTMLInputElement).checked)"
-          />
+          >
           <span
             v-if="item.icon"
             class="w-5 h-5 flex-shrink-0 flex items-center justify-center transition-colors"

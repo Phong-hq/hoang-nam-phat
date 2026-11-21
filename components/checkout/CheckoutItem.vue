@@ -4,9 +4,9 @@
     <NuxtLink :to="`/products/${item.slug}`" class="flex-shrink-0">
       <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border border-base-200 bg-base-50 overflow-hidden">
         <NuxtImg
+          v-if="item.thumbnail"
           format="webp"
           fit="inside"
-          v-if="item.thumbnail"
           :src="item.thumbnail"
           :alt="item.name"
           width="80"

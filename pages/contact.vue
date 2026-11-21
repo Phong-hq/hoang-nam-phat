@@ -99,7 +99,8 @@
           <div v-if="socialItems.length" class="bg-white rounded-2xl border border-gray-200 shadow p-4 sm:p-6">
             <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-3">Kết nối mạng xã hội</p>
             <div class="flex items-center gap-3">
-              <a v-for="social in socialItems" :key="social.label"
+              <a
+v-for="social in socialItems" :key="social.label"
                 :href="social.href" target="_blank" rel="noopener noreferrer" :title="social.label"
                 class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary hover:text-white transition-colors"
               >
@@ -134,7 +135,7 @@
                     placeholder="Nguyễn Văn A"
                     required
                     class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-primary transition-colors"
-                  />
+                  >
                 </div>
 
                 <!-- Phone -->
@@ -148,7 +149,7 @@
                     placeholder="0937.813.788"
                     required
                     class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-primary transition-colors"
-                  />
+                  >
                 </div>
               </div>
 
@@ -160,7 +161,7 @@
                   type="email"
                   placeholder="example@gmail.com"
                   class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:border-primary transition-colors"
-                />
+                >
               </div>
 
               <!-- Subject -->
@@ -196,7 +197,7 @@
                   type="checkbox"
                   required
                   class="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary flex-shrink-0"
-                />
+                >
                 <span class="text-sm text-gray-600">
                   Tôi đã đọc, hiểu và đồng ý với
                   <button

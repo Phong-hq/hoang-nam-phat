@@ -22,7 +22,7 @@
             :alt="item.name"
             class="w-full h-full object-contain"
             @error="brokenImages.add(item.id)"
-          />
+          >
           <svg v-else class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"

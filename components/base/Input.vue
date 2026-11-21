@@ -12,7 +12,7 @@
       :class="['input input-bordered w-full', { 'input-error': error }]"
       v-bind="$attrs"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    />
+    >
     <label v-if="error" class="label">
       <span class="label-text-alt text-error">{{ error }}</span>
     </label>

@@ -8,8 +8,8 @@ import type { ApiListResponse } from '~/types'
 const RECORD_TEST_API_URL = '/api/v1/frontend/cms/record'
 
 export const recordTestService = {
-  async getList(recordType: string = 'test'): Promise<any[]> {
-    const res = await httpClient.get<ApiListResponse<any>>(`${RECORD_TEST_API_URL}/${recordType}`)
+  async getList<T = Record<string, unknown>>(recordType: string = 'test'): Promise<T[]> {
+    const res = await httpClient.get<ApiListResponse<T>>(`${RECORD_TEST_API_URL}/${recordType}`)
     return res.items
   },
 }

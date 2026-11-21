@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import daisyui from 'daisyui'
 
 // Tailwind CSS + DaisyUI configuration
 // Centralizes design tokens, themes, and plugin settings
@@ -54,7 +55,7 @@ export default {
       },
     },
   },
-  plugins: [require('daisyui')],
+  plugins: [daisyui],
   daisyui: {
     themes: [
       {

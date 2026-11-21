@@ -26,7 +26,6 @@ useSeo({
   title: 'Thiết Bị Mạng & Camera Chính Hãng - Hoàng Nam Phát',
   description:
     'Hoàng Nam Phát cung cấp router, switch, WiFi, camera, tổng đài IP và thiết bị mạng chính hãng; giá tốt, tư vấn tận tâm, giao hàng toàn quốc.',
-  keywords: 'thiết bị mạng chính hãng, router mikrotik, camera hikvision, switch cisco, wifi tp-link',
 })
 
 const categoryStore = useCategoryStore()

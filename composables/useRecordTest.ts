@@ -4,7 +4,7 @@
 import { recordTestService } from '~/services/recordTest.service'
 
 export function useRecordTest() {
-  async function fetchRecordTest(recordType?: string): Promise<any[]> {
+  async function fetchRecordTest(recordType?: string): Promise<Record<string, unknown>[]> {
     return recordTestService.getList(recordType)
   }
 

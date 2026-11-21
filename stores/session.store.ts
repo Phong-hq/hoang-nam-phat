@@ -18,7 +18,7 @@ export const useSessionStore = defineStore('session', () => {
       if(session.value.length > 0) {
         return
       }
-      session.value = await recordTestService.getList(recordType)
+      session.value = await recordTestService.getList<SessionRecord>(recordType)
       console.log('Fetched session records:', session.value)
     } catch {
       error.value = 'Không thể tải dữ liệu'

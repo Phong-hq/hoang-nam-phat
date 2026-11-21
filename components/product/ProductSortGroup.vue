@@ -14,7 +14,7 @@
             :checked="modelValue === option.value"
             class="sr-only"
             @change="$emit('update:modelValue', option.value)"
-          />
+          >
           <span
             class="flex-1 min-w-0 truncate text-sm transition-colors select-none"
             :class="modelValue === option.value ? 'text-primary font-semibold' : 'text-base-content/70'"

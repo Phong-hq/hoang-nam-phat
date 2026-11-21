@@ -18,7 +18,7 @@
       :min="minVal"
       :max="maxVal"
       @change="onInputChange"
-    />
+    >
 
     <button
       type="button"

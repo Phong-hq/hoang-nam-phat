@@ -10,7 +10,7 @@
       :value="value"
       :checked="modelValue === value"
       @change="$emit('update:modelValue', value)"
-    />
+    >
     <span class="flex-1 min-w-0">
       <span class="block text-sm font-semibold text-base-content">{{ title }}</span>
       <span v-if="description" class="block text-xs text-base-content/50 mt-0.5">{{ description }}</span>

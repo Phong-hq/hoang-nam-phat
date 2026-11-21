@@ -1,7 +1,7 @@
 // Cart store -- Pinia setup store
 // Persists cart items to localStorage so the cart survives page reloads
 
-import { defineStore, skipHydrate } from 'pinia'
+import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import type { CartItem } from '~/types'
 import { useTracking } from '~/composables/useTracking'

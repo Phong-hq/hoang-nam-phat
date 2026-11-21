@@ -18,7 +18,7 @@
             required
             class="input input-bordered flex-1 focus:input-primary text-sm"
             :disabled="submitted"
-          />
+          >
           <button
             type="submit"
             class="btn btn-primary text-white font-semibold px-6 flex-shrink-0"

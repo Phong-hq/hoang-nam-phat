@@ -72,7 +72,7 @@
                 @focus="openSearch"
                 @blur="scheduleCloseSearch"
                 @keydown.esc="isSearchOpen = false"
-              />
+              >
               <button
                 class="bg-primary text-white px-5 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
                 aria-label="Tìm kiếm"
@@ -168,7 +168,7 @@
                 @focus="openSearch"
                 @blur="scheduleCloseSearch"
                 @keydown.esc="isSearchOpen = false"
-              />
+              >
               <button
                 class="bg-primary text-white px-4 flex-shrink-0 flex items-center justify-center hover:bg-primary/90 transition-colors"
                 aria-label="Tìm kiếm"

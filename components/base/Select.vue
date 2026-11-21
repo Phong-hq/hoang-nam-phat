@@ -21,7 +21,7 @@
         @input="onInput"
         @keydown.esc="close"
         @blur="onBlur"
-      />
+      >
       <svg
         class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 pointer-events-none"
         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"

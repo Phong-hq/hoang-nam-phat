@@ -4,11 +4,12 @@
       <BaseSectionHeader :label="label" :title="title" :subtitle="subtitle" :to="to" />
 
       <div v-if="brands.length" class="flex gap-1.5 overflow-x-auto scrollbar-none -mt-4 mb-6">
-        <button v-for="brand in brands" :key="brand.id" @click="activeBrand = brand"
-          class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 border"
+        <button
+v-for="brand in brands" :key="brand.id" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors flex-shrink-0 border"
           :class="activeBrand?.id === brand.id
             ? 'bg-primary text-primary-content border-primary'
-            : 'bg-white text-base-content/70 border-base-200 hover:text-primary hover:border-primary'">
+            : 'bg-white text-base-content/70 border-base-200 hover:text-primary hover:border-primary'"
+          @click="activeBrand = brand">
           {{ brand.name }}
         </button>
       </div>
@@ -21,14 +22,16 @@
             </SwiperSlide>
           </Swiper>
 
-          <button @click="swiper?.slidePrev()" aria-label="Trước"
-            class="absolute -left-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white rounded-full shadow-md border border-base-200 items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex">
+          <button
+aria-label="Trước" class="absolute -left-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white rounded-full shadow-md border border-base-200 items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex"
+            @click="swiper?.slidePrev()">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <button @click="swiper?.slideNext()" aria-label="Tiếp"
-            class="absolute -right-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white rounded-full shadow-md border border-base-200 items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex">
+          <button
+aria-label="Tiếp" class="absolute -right-4 top-1/2 -translate-y-6 z-10 w-9 h-9 bg-white rounded-full shadow-md border border-base-200 items-center justify-center text-base-content/60 hover:text-primary hover:border-primary transition-colors hidden md:flex"
+            @click="swiper?.slideNext()">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>

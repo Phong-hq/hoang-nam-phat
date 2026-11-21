@@ -17,10 +17,10 @@
         <!-- Left sidebar: filter -->
         <aside class="hidden lg:flex flex-col gap-3 w-60 flex-shrink-0 sticky top-[var(--header-height)] z-10">
           <ProductSortGroup
+            v-model="sortOrder"
             title="Sắp xếp"
             name="sort-desktop"
             :options="SORT_OPTIONS"
-            v-model="sortOrder"
           />
           <ProductFilterGroup
             title="Danh mục"
@@ -62,10 +62,10 @@
             </button>
             <div v-if="mobileFilterOpen" class="mt-2 flex flex-col gap-3">
               <ProductSortGroup
+                v-model="sortOrder"
                 title="Sắp xếp"
                 name="sort-mobile"
                 :options="SORT_OPTIONS"
-                v-model="sortOrder"
               />
               <ProductFilterGroup
                 title="Danh mục"

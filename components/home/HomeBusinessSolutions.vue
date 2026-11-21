@@ -13,7 +13,7 @@
           </span>
 
           <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
-            Hạ tầng CNTT<br />
+            Hạ tầng CNTT<br >
             <span class="text-primary">toàn diện</span> cho doanh nghiệp
           </h2>
 

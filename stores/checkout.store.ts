@@ -167,7 +167,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
     form.taxCode = ''
     form.companyAddress = ''
 
-    Object.keys(touchedFields).forEach((key) => delete touchedFields[key])
+    Object.keys(touchedFields).forEach((key) => { touchedFields[key] = false })
     showAllErrors.value = false
     orderResult.value = null
     status.value = 'idle'

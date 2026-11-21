@@ -33,7 +33,7 @@
                 :src="item.banner"
                 :alt="item.title"
                 class="w-full rounded-xl mb-6 object-cover max-h-96"
-              />
+              >
               <div class="cms-content" v-html="infoHtml" />
             </div>
 

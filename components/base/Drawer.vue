@@ -1,6 +1,6 @@
 <template>
   <div class="drawer" :class="{ 'drawer-open': modelValue }">
-    <input type="checkbox" class="drawer-toggle" :checked="modelValue" />
+    <input type="checkbox" class="drawer-toggle" :checked="modelValue" >
     <div class="drawer-content">
       <slot />
     </div>

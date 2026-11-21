@@ -32,7 +32,7 @@
                   :alt="brand.name"
                   class="w-auto h-auto max-w-full max-h-full object-contain"
                   loading="lazy"
-                />
+                >
                 <span
                   v-else
                   class="text-sm font-extrabold text-base-content/70 tracking-wide"
@@ -60,7 +60,7 @@
                   :alt="brand.name"
                   class="w-auto h-auto max-w-full max-h-full object-contain"
                   loading="lazy"
-                />
+                >
                 <span v-else class="text-sm font-extrabold text-base-content/70 tracking-wide">{{ brand.name }}</span>
               </div>
             </div>

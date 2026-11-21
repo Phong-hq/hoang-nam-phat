@@ -4,7 +4,6 @@
 export interface SeoMeta {
   title?: string
   description?: string
-  keywords?: string
   robots?: string
   canonical?: string
   ogTitle?: string

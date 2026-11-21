@@ -23,8 +23,8 @@
       <button
         class="absolute top-2 right-2 z-10 w-8 h-8 bg-white rounded-full shadow-sm border border-base-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
         :class="{ '!opacity-100': wishlisted }"
-        @click.prevent="wishlisted = !wishlisted"
         :aria-label="wishlisted ? 'Bỏ yêu thích' : 'Yêu thích'"
+        @click.prevent="wishlisted = !wishlisted"
       >
         <svg
           class="w-3.5 h-3.5 transition-colors"
@@ -42,9 +42,9 @@
       </button>
       <!-- Product image -->
       <NuxtImg
+        v-if="product.image"
         format="webp"
         fit="inside"
-        v-if="product.image"
         :src="product.image"
         :alt="product.name"
         width="300"
